@@ -1,0 +1,21 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+            MyFunc()
+        });
+        async function MyFunc() {
+            try {
+                console.log(await id())
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+    </script>
+</head>
+<body></body>
+</html>
