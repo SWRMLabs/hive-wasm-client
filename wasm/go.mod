@@ -1,4 +1,4 @@
-module github.com/asabya/hive-wasm-client
+module github.com/StreamSpace/hive-wasm-client
 
 go 1.14
 
