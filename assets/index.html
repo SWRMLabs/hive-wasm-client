@@ -6,16 +6,141 @@
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
-            MyFunc()
+            //document.getElementById("id") = false;
+            //MyFunc()
         });
-        async function MyFunc() {
+        // async function MyFunc() {
+        //     try {
+        //         console.log(await id())
+        //         console.log(await Status())
+        //         console.log(await Peers())
+        //     } catch (err) {
+        //         console.error('Caught exception', err)
+        //     }
+        // }
+        async function GetId() {
             try {
-                console.log(await id())
+                const data = await Id()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetStatus() {
+            try {
+                const data = await Status()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetConfig() {
+            try {
+                const data = await Config()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetPeers() {
+            try {
+                const data = await Peers()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetProfile() {
+            try {
+                const data = await Profile()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetMainBalance() {
+            try {
+                const data = await MainBalance()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetSettlementBalance() {
+            try {
+                const data = await SettlementBalance()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetCycleBalance() {
+            try {
+                const data = await CycleBalance()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function Earning() {
+            try {
+                const data = await Earning()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetSettings() {
+            try {
+                const data = await Settings()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+        async function GetVersion() {
+            try {
+                const data = await Version()
+                jsonOP = JSON.parse(data)
+                console.log(jsonOP.val)
             } catch (err) {
                 console.error('Caught exception', err)
             }
         }
     </script>
 </head>
-<body></body>
+<body>
+ <button onClick="GetId();" id="id">Id</button>
+ <button onClick="GetStatus();" id="status">Status</button>
+ <button onClick="GetConfig();" id="config">Config</button>
+ <button onClick="GetPeers();" id="peers">Peers</button>
+ <button onClick="GetProfile();" id="profile">Profile</button>
+ <button onClick="GetMainBalance();" id="mainBalance">Balance</button>
+ <button onClick="GetSettlementBalance();" id="settlementBalance">Settlement Balance</button>
+ <button onClick="GetCycleBalance();" id="cycleBalance">Cycle Balance</button>
+ <button onClick="Earning();" id="earning">Earning</button>
+ <button onClick="GetSettings();" id="settings">Settings</button>
+ <button onClick="GetVersion();" id="version">Version</button>
+
+</body>
 </html>
