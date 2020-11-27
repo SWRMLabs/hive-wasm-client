@@ -22,7 +22,7 @@
             try {
                 const data = await Id()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -32,7 +32,7 @@
             try {
                 const data = await Status()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -42,7 +42,7 @@
             try {
                 const data = await Config()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -52,7 +52,7 @@
             try {
                 const data = await Peers()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -62,7 +62,7 @@
             try {
                 const data = await Profile()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -72,7 +72,7 @@
             try {
                 const data = await MainBalance()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -82,7 +82,7 @@
             try {
                 const data = await SettlementBalance()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -92,17 +92,17 @@
             try {
                 const data = await CycleBalance()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
         }
 
-        async function Earning() {
+        async function GetEarning() {
             try {
                 const data = await Earning()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -112,7 +112,7 @@
             try {
                 const data = await Settings()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
@@ -122,13 +122,14 @@
             try {
                 const data = await Version()
                 jsonOP = JSON.parse(data)
-                console.log(jsonOP.val)
+                console.log(jsonOP.data)
             } catch (err) {
                 console.error('Caught exception', err)
             }
         }
     </script>
 </head>
+
 <body>
  <button onClick="GetId();" id="id">Id</button>
  <button onClick="GetStatus();" id="status">Status</button>
@@ -138,7 +139,7 @@
  <button onClick="GetMainBalance();" id="mainBalance">Balance</button>
  <button onClick="GetSettlementBalance();" id="settlementBalance">Settlement Balance</button>
  <button onClick="GetCycleBalance();" id="cycleBalance">Cycle Balance</button>
- <button onClick="Earning();" id="earning">Earning</button>
+ <button onClick="GetEarning();" id="earning">Earning</button>
  <button onClick="GetSettings();" id="settings">Settings</button>
  <button onClick="GetVersion();" id="version">Version</button>
 

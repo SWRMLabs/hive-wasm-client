@@ -48,8 +48,10 @@ func ID() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -95,9 +97,10 @@ func Status() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -146,8 +149,10 @@ func Config() js.Func {
 					return
 				}
 
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -161,7 +166,6 @@ func Config() js.Func {
 
 	return jsonFunc
 }
-
 
 func Peers() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -196,8 +200,10 @@ func Peers() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -245,8 +251,10 @@ func Profile() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -294,8 +302,10 @@ func MainBalance() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -343,8 +353,10 @@ func SettlementBalance() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -392,8 +404,10 @@ func CycleBalance() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -441,8 +455,10 @@ func Earning() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -457,7 +473,6 @@ func Earning() js.Func {
 	return jsonFunc
 }
 
-
 func Settings() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -467,7 +482,7 @@ func Settings() js.Func {
 
 			go func() {
 				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#settings%$#-j",
+					"val": "hive-cli.exe%$#settings%$#-g%$#-j",
 				}
 
 				buf, err := json.Marshal(payload)
@@ -491,8 +506,10 @@ func Settings() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -540,8 +557,10 @@ func Version() js.Func {
 					reject.Invoke("Failed")
 					return
 				}
-				log.Debug(string(respBuf))
-				resolve.Invoke(string(respBuf))
+				data := make(map[string]string)
+				json.Unmarshal(respBuf, &data)
+				log.Debug(data["val"])
+				resolve.Invoke(data["val"])
 			}()
 
 			return nil
@@ -556,9 +575,8 @@ func Version() js.Func {
 	return jsonFunc
 }
 
-
 func main() {
-	//logger.SetLogLevel("*", "Debug")
+	logger.SetLogLevel("*", "Debug")
 
 	js.Global().Set("Id", ID())
 	js.Global().Set("Status", Status())
