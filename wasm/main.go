@@ -1,593 +1,72 @@
 package main
 
-//go:generate GOOS=js GOARCH=wasm go build -o  ../assets/hive.wasm
-
 import (
-	"bytes"
+	"bufio"
 	"encoding/json"
-	"io/ioutil"
+	logger "github.com/ipfs/go-log/v2"
 	"net/http"
 	"syscall/js"
-
-	logger "github.com/ipfs/go-log/v2"
+	"time"
+	"github.com/StreamSpace/hive-wasm-client/types"
 )
 
-var log = logger.Logger("sock/server")
+var log = logger.Logger("events")
 
 const (
-	GATEWAY = "http://localhost:4343/v3/execute"
+	EVENTS = "http://localhost:4343/v3/events"
 )
 
-func ID() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			resolve := args[0]
-			reject := args[1]
 
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#id%$#-j",
-				}
+func Events() js.Func {
 
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
+	jsonfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
+		jsDoc := js.Global().Get("document")
+		if !jsDoc.Truthy() {
+			log.Debug("Unable to get document object")
 			return nil
-		})
+		}
 
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-	return jsonFunc
-}
-
-func Status() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#status%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
+		jsonOutputTextArea := jsDoc.Call("getElementById", "count")
+		if !jsonOutputTextArea.Truthy() {
+			log.Debug("Unable to get output text area")
 			return nil
 
-		})
+		}
 
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
+		go func() {
+			resp, err := http.Post(EVENTS, "application/json", nil)
+			if err != nil {
+				log.Error(err.Error())
+				return
+			}
+			reader := bufio.NewReader(resp.Body)
+			for {
+				line, _, err := reader.ReadLine()
+				if err != nil {
+					log.Debug("Update Complete")
+					return
+				} else {
+					//log.Debug("I just received the message %s", string(line))
+
+					data := make(map[string]map[string]string)
+					json.Unmarshal(line, &data)
+					log.Debug(data)
+					udata := data["result"]["val"]
+					log.Debug(udata)
+
+					time.Sleep(1 * time.Second)
+				}
+
+			}
+		}()
 		return nil
 	})
-
-	return jsonFunc
-}
-
-func Config() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#config%$#show%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func Peers() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func Profile() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#profile%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func MainBalance() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#balance%$#-t%$#all%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func SettlementBalance() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#balance%$#-t%$#settlement%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func CycleBalance() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#balance%$#-t%$#cycle%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func Earning() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#earning%$#-g%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func Settings() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#settings%$#-g%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
-}
-
-func Version() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
-			resolve := args[0]
-			reject := args[1]
-
-			go func() {
-				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#version%$#-j",
-				}
-
-				buf, err := json.Marshal(payload)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-
-				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				defer resp.Body.Close()
-
-				respBuf, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Error(err.Error())
-					reject.Invoke("Failed")
-					return
-				}
-				data := make(map[string]string)
-				json.Unmarshal(respBuf, &data)
-				log.Debug(data["val"])
-				resolve.Invoke(data["val"])
-			}()
-
-			return nil
-
-		})
-
-		promiseConstructor := js.Global().Get("Promise")
-		return promiseConstructor.New(handler)
-		return nil
-	})
-
-	return jsonFunc
+	return jsonfunc
 }
 
 func main() {
 	logger.SetLogLevel("*", "Debug")
-
-	js.Global().Set("Id", ID())
-	js.Global().Set("Status", Status())
-	js.Global().Set("Peers", Peers())
-	js.Global().Set("Config", Config())
-	js.Global().Set("Profile", Profile())
-	js.Global().Set("MainBalance", MainBalance())
-	js.Global().Set("SettlementBalance", SettlementBalance())
-	js.Global().Set("CycleBalance", CycleBalance())
-	js.Global().Set("Earning", Earning())
-	js.Global().Set("Settings", Settings())
-	js.Global().Set("Version", Version())
+	js.Global().Set("Events", Events())
 	<-make(chan bool)
 }
