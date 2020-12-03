@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"syscall/js"
 	"time"
-	"github.com/StreamSpace/hive-wasm-client/types"
+	"github.com/StreamSpace/hive-wasm-client/wasm/types"
 )
 
 var log = logger.Logger("events")
