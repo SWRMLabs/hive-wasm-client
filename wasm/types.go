@@ -1,9 +1,21 @@
-package types
+package main
 
 import (
 	"encoding/json"
 	store "github.com/StreamSpace/ss-store"
 )
+
+type Event struct {
+	Topic string `json:"topic,omitempty"`
+	Val   string `json:"val,omitempty"`
+}
+
+type Out struct {
+	Status  int         `json:"status"`
+	Message string      `json:"message"` // Message is for the curators
+	Data    interface{} `json:"data,omitempty"`
+	Details string      `json:"details,omitempty"` // For Debugging
+}
 
 type AuthResponse struct {
 	User  User  `json:"user"`

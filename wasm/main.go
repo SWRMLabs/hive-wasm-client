@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"syscall/js"
 	"time"
-	"github.com/StreamSpace/hive-wasm-client/wasm/types"
 )
 
 var log = logger.Logger("events")
@@ -48,16 +47,28 @@ func Events() js.Func {
 					return
 				} else {
 					//log.Debug("I just received the message %s", string(line))
-
-					data := make(map[string]map[string]string)
-					json.Unmarshal(line, &data)
-					log.Debug(data)
-					udata := data["result"]["val"]
-					log.Debug(udata)
-
+					event := make(map[string]Event)
+					err = json.Unmarshal(line, &event)
+					if err != nil {
+						log.Debug(err)
+						return
+					}
+					log.Debugf("%+v",event)
+					val, err:= json.Marshal(event["Val"])
+					if err != nil {
+						log.Debug(err)
+						return
+					}
+					log.Debug(val)
+					out := make(map[string]Out)
+					err = json.Unmarshal(val, &out)
+					if err != nil {
+						log.Debug(err)
+						return
+					}
+					log.Debugf("%+v",out)
 					time.Sleep(1 * time.Second)
 				}
-
 			}
 		}()
 		return nil
