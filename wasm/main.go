@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"syscall/js"
 	"time"
+	//"io/ioutil"
 )
 
 var log = logger.Logger("events")
@@ -39,34 +40,46 @@ func Events() js.Func {
 				log.Error(err.Error())
 				return
 			}
+
 			reader := bufio.NewReader(resp.Body)
+
 			for {
 				line, _, err := reader.ReadLine()
 				if err != nil {
 					log.Debug("Update Complete")
 					return
 				} else {
-					//log.Debug("I just received the message %s", string(line))
-					event := make(map[string]Event)
+
+					var event Event
 					err = json.Unmarshal(line, &event)
 					if err != nil {
 						log.Debug(err)
 						return
 					}
-					log.Debugf("%+v",event)
-					val, err:= json.Marshal(event["Val"])
+					//log.Debugf("%+v",event.Result.Val)
+
+					var out Out
+					err = json.Unmarshal([]byte(event.Result.Val), &out)
 					if err != nil {
 						log.Debug(err)
 						return
 					}
-					log.Debug(val)
-					out := make(map[string]Out)
-					err = json.Unmarshal(val, &out)
-					if err != nil {
-						log.Debug(err)
-						return
+					log.Debugf("%+v %+v",event.Result.Topic,out.Data)
+					if event.Result.Topic == "Settlement" {
+						val, err := json.Marshal(out.Data)
+						if err != nil {
+							log.Debug(err)
+							return
+						}
+						var settlement Settlement
+						err = json.Unmarshal(val, &settlement)
+						if err != nil {
+							log.Debug(err)
+							return
+						}
+						log.Debug(settlement.Cycle)
 					}
-					log.Debugf("%+v",out)
+
 					time.Sleep(1 * time.Second)
 				}
 			}

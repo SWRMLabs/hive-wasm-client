@@ -6,8 +6,10 @@ import (
 )
 
 type Event struct {
-	Topic string `json:"topic,omitempty"`
-	Val   string `json:"val,omitempty"`
+	Result struct {
+		Topic string `json:"topic,omitempty"`
+		Val   string    `json:"val,Out,omitempty"`
+	}
 }
 
 type Out struct {
@@ -86,8 +88,8 @@ func (do *DeviceOwner) Unmarshal(val []byte) error {
 }
 
 type Settlement struct {
-	Date  string  `json:"settlementDate"`
 	Cycle int64   `json:"bcn"`
+	Date  string  `json:"settlementDate"`
 	Rate  float64 `json:"dataRatePerByte"`
 }
 
