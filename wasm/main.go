@@ -1,3 +1,5 @@
+// GOOS=js GOARCH=wasm go build -o  ../assets/hive.wasm
+
 package main
 
 import (
@@ -7,6 +9,7 @@ import (
 	"net/http"
 	"syscall/js"
 	"time"
+	"fmt"
 	//"io/ioutil"
 )
 
@@ -21,18 +24,6 @@ func Events() js.Func {
 
 	jsonfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-		jsDoc := js.Global().Get("document")
-		if !jsDoc.Truthy() {
-			log.Debug("Unable to get document object")
-			return nil
-		}
-
-		jsonOutputTextArea := jsDoc.Call("getElementById", "count")
-		if !jsonOutputTextArea.Truthy() {
-			log.Debug("Unable to get output text area")
-			return nil
-
-		}
 
 		go func() {
 			resp, err := http.Post(EVENTS, "application/json", nil)
@@ -45,9 +36,9 @@ func Events() js.Func {
 
 			for {
 				line, _, err := reader.ReadLine()
-				if err != nil {
+				if err != nil || line == nil {
 					log.Debug("Update Complete")
-					return
+					Events()
 				} else {
 
 					var event Event
@@ -56,7 +47,6 @@ func Events() js.Func {
 						log.Debug(err)
 						return
 					}
-					//log.Debugf("%+v",event.Result.Val)
 
 					var out Out
 					err = json.Unmarshal([]byte(event.Result.Val), &out)
@@ -64,20 +54,119 @@ func Events() js.Func {
 						log.Debug(err)
 						return
 					}
-					log.Debugf("%+v %+v",event.Result.Topic,out.Data)
-					if event.Result.Topic == "Settlement" {
-						val, err := json.Marshal(out.Data)
-						if err != nil {
-							log.Debug(err)
-							return
+					log.Debugf("%+v %+v",event.Result.Topic, out.Data)
+
+					val, err := json.MarshalIndent(out.Data, "", " ")
+					if err != nil {
+						log.Debug(err)
+						log.Debug("Error encountered")
+						return
+					}
+
+					switch event.Result.Topic {
+
+						case "Status": {
+							log.Debug("Status Hit")
+							var status Status
+							err = json.Unmarshal(val, &status)
+							if err != nil {
+								log.Debug(err)
+								return
+							}
+							log.Debug(status)
+
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Debug("Unable to get document object")
+								return
+							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "status")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+
+							}
+
+							sStatus := fmt.Sprintf("%+v", status)
+
+							jsonOutputTextArea.Set("innerHTML", sStatus)
+
 						}
-						var settlement Settlement
-						err = json.Unmarshal(val, &settlement)
-						if err != nil {
-							log.Debug(err)
-							return
+
+
+						case "BalanceCycle": {
+							log.Debug("BCN Hit")
+							var bcnBalance BCNBalance
+							err = json.Unmarshal(val, &bcnBalance)
+							if err != nil {
+								log.Debug(err)
+								return
+							}
+							log.Debug(bcnBalance)
+
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Debug("Unable to get document object")
+								return
+							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "bcnbalance")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+
+							}
+
+							sBcnBalance := fmt.Sprintf("%+v", bcnBalance)
+
+							jsonOutputTextArea.Set("innerHTML", sBcnBalance)
+
 						}
-						log.Debug(settlement.Cycle)
+
+						case "Settings": {
+							log.Debug("Settings Hit")
+							var settings Settings
+
+							err = json.Unmarshal(val, &settings)
+							if err != nil {
+								log.Debug(err)
+								return
+							}
+							log.Debug(settings)
+
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Debug("Unable to get document object")
+								return
+							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "settings")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+
+							}
+
+							sSettings := fmt.Sprintf("%+v", settings)
+							jsonOutputTextArea.Set("innerHTML", sSettings)
+
+						}
+						default:{
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Debug("Unable to get document object")
+								return
+							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "state")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+
+							}
+							jsonOutputTextArea.Set("innerHTML", "Process Halted")
+						}
 					}
 
 					time.Sleep(1 * time.Second)
