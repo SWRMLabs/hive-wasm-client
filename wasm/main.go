@@ -40,14 +40,14 @@ func Events() js.Func {
 					log.Debug("Update Complete")
 					Events()
 				} else {
-
+					log.Debug(string(line))
 					var event Event
 					err = json.Unmarshal(line, &event)
 					if err != nil {
 						log.Debug(err)
 						return
 					}
-
+					log.Debug(event)
 					var out Out
 					err = json.Unmarshal([]byte(event.Result.Val), &out)
 					if err != nil {
@@ -81,17 +81,30 @@ func Events() js.Func {
 								return
 							}
 
-							jsonOutputTextArea := jsDoc.Call("getElementById", "status")
-							if !jsonOutputTextArea.Truthy() {
-								log.Debug("Unable to get output text area")
-								return
-
+							for _,task := range(status.TaskManagerStatus) {
+								log.Debug(task)
+								sTask := fmt.Sprintf("%d. %s : %s", task.Id, task.Name, task.Status)
+								jsonOutputTextArea := jsDoc.Call("createElement", "li")
+								if !jsonOutputTextArea.Truthy() {
+									log.Debug("Unable to get output text area")
+									return
+								}
+								jsonOutputTextArea.Set("innerHTML", sTask)
+								jsDoc.Call("getElementById", "taskmanagerstatus").Call("appendChild", jsonOutputTextArea)
 							}
 
-							sStatus := fmt.Sprintf("%+v", status)
+							ToDisplay := []string{"LoggedIn", "DaemonRunning", "TotalUptimePercentage"}
 
-							jsonOutputTextArea.Set("innerHTML", sStatus)
-
+							for _,value := range(ToDisplay) {
+								jsonOutputTextArea := jsDoc.Call("getElementById", key)
+								if !jsonOutputTextArea.Truthy() {
+									log.Debug("Unable to get output text area")
+									return
+								}
+								sKey := 
+								sValue := fmt.Sprintf("%s", status.)
+								jsonOutputTextArea.Set("innerHTML", sValue)
+							}
 						}
 
 
