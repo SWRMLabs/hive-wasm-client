@@ -11,5 +11,4 @@ func main() {
 		fmt.Println("Failed to start server", err)
 		return
 	}
-
 }

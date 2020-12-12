@@ -18,16 +18,38 @@
       <h3>Status:</h3>
       <div id = "status">
           <ol id = "taskmanagerstatus"></ol>
-          <div id="LoggedIn"></div>
-          <div id="TotalUptimePercentage"></div>
-          <div id="DaemonRunning"></div>
+          <Label for="LoggedIn">LoggedIn:</Label><div id="LoggedIn"></div>
+          <Label for="DaemonRunning">DaemonRunning:</Label><div id="DaemonRunning"></div>
+          <Label for="SessionStartTime">SessionStartTime:</Label><div id="SessionStartTime"></div>
+          <br>
+          <Label for="secondsfrominception">SecondsFromInception:</Label><div id="secondsfrominception"></div>
+          <Label for="percentage">TotalUptimePercentage:</Label><progress id="percentage" max = "100"></progress>
       </div>
 
       <h3>BCN:</h3>
-      <div id = "bcnbalance"></div>
+      <div id = "bcnbalance">
+          <Label for="BytesDownloaded">BytesDownloaded:</Label><div id="BytesDownloaded"></div>
+          <Label for="BytesServed">BytesServed:</Label><div id="BytesServed"></div>
+      </div>
 
       <h3>Settings:</h3>
-      <p id = "settings"></p>
+      <div id = "settings">
+          <Label for="Name">Name:</Label><div id="Name"></div>
+          <Label for="Location">Location:</Label><div id="Location"></div>
+          <Label for="IPAddress">IPAddress:</Label><div id="IPAddress"></div>
+          <Label for="IsReachable">IsReachable:</Label><div id="IsReachable"></div>
+          <Label for="MaxStorage">MaxStorage:</Label><div id="MaxStorage"></div>
+          <Label for="UsedStorage">UsedStorage:</Label><div id="UsedStorage"></div>
+          <Label for="PinnedStorage">PinnedStorage:</Label><div id="PinnedStorage"></div>
+          <Label for="HiveStorage">HiveStorage:</Label><div id="HiveStorage"></div>
+          <Label for="Role">Role:</Label><div id="Role"></div>
+          <Label for="PeerID">PeerID:</Label><div id="PeerID"></div>
+      </div>
+
+      <h3>Peers:</h3>
+      <div id="Peers">
+        <Label for="Data">Data:</Label><div id="Data"></div>
+      </div>
 
       <h3>State:</h3>
       <p id = "state"></p>

@@ -10,6 +10,7 @@ import (
 	"syscall/js"
 	"time"
 	"fmt"
+	"reflect"
 	//"io/ioutil"
 )
 
@@ -82,7 +83,6 @@ func Events() js.Func {
 							}
 
 							for _,task := range(status.TaskManagerStatus) {
-								log.Debug(task)
 								sTask := fmt.Sprintf("%d. %s : %s", task.Id, task.Name, task.Status)
 								jsonOutputTextArea := jsDoc.Call("createElement", "li")
 								if !jsonOutputTextArea.Truthy() {
@@ -93,18 +93,42 @@ func Events() js.Func {
 								jsDoc.Call("getElementById", "taskmanagerstatus").Call("appendChild", jsonOutputTextArea)
 							}
 
-							ToDisplay := []string{"LoggedIn", "DaemonRunning", "TotalUptimePercentage"}
 
-							for _,value := range(ToDisplay) {
-								jsonOutputTextArea := jsDoc.Call("getElementById", key)
+							//DisplayKey := []string{"status.", "DaemonRunning", "TotalUptimePercentage"}
+
+							values := reflect.ValueOf(&status).Elem()
+
+							for key := 0; key < values.NumField(); key++ {
+								name := values.Type().Field(key).Name
+								value := values.Field(key).Interface()
+
+								if (name == "TaskManagerStatus") || (name == "TotalUptimePercentage"){
+									continue
+								}
+								log.Debug(values.Type().Field(key).Name)
+								jsonOutputTextArea := jsDoc.Call("getElementById", name)
 								if !jsonOutputTextArea.Truthy() {
 									log.Debug("Unable to get output text area")
 									return
 								}
-								sKey := 
-								sValue := fmt.Sprintf("%s", status.)
-								jsonOutputTextArea.Set("innerHTML", sValue)
+								//sValue := fmt.Sprintf("%s:%s", name, value)
+
+								jsonOutputTextArea.Set("innerHTML", value)
 							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "percentage")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+							}
+							jsonOutputTextArea.Set("value", status.TotalUptimePercentage.Percentage)
+
+							jsonOutputTextArea = jsDoc.Call("getElementById", "secondsfrominception")
+							if !jsonOutputTextArea.Truthy() {
+								log.Debug("Unable to get output text area")
+								return
+							}
+							jsonOutputTextArea.Set("innerHTML", status.TotalUptimePercentage.SecondsFromInception)
 						}
 
 
@@ -124,16 +148,46 @@ func Events() js.Func {
 								return
 							}
 
-							jsonOutputTextArea := jsDoc.Call("getElementById", "bcnbalance")
+
+							values := reflect.ValueOf(&bcnBalance).Elem()
+
+							for key := 0; key < values.NumField(); key++ {
+								name := values.Type().Field(key).Name
+								value := values.Field(key).Interface()
+
+								if (name == "Owed") || (name == "Owe") || (name == "Id"){
+									continue
+								}
+								log.Debug(values.Type().Field(key).Name)
+								jsonOutputTextArea := jsDoc.Call("getElementById", name)
+								if !jsonOutputTextArea.Truthy() {
+									log.Debug("Unable to get output text area")
+									return
+								}
+
+								jsonOutputTextArea.Set("innerHTML", value)
+							}
+
+
+						}
+
+						case "Peers": {
+							log.Debug("Peers Hit")
+
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Debug("Unable to get document object")
+								return
+							}
+
+							jsonOutputTextArea := jsDoc.Call("getElementById", "Peers")
 							if !jsonOutputTextArea.Truthy() {
 								log.Debug("Unable to get output text area")
 								return
-
 							}
+							sValue := fmt.Sprintf("%s", val)
+							jsonOutputTextArea.Set("innerHTML", sValue)
 
-							sBcnBalance := fmt.Sprintf("%+v", bcnBalance)
-
-							jsonOutputTextArea.Set("innerHTML", sBcnBalance)
 
 						}
 
@@ -154,17 +208,28 @@ func Events() js.Func {
 								return
 							}
 
-							jsonOutputTextArea := jsDoc.Call("getElementById", "settings")
-							if !jsonOutputTextArea.Truthy() {
-								log.Debug("Unable to get output text area")
-								return
+							values := reflect.ValueOf(&settings).Elem()
 
+							for key := 0; key < values.NumField(); key++ {
+								name := values.Type().Field(key).Name
+								value := values.Field(key).Interface()
+								log.Debug(name)
+								if (name == "NodeIndex") || (name == "DeviceID") || (name == "PublicKey") || (name == "IsDNSEligible") || (name == "DesktopApplicationNotification") || (name == "DesktopApplicationAutoStart") || (name == "DNS") {
+									continue
+								}
+
+								log.Debug(values.Type().Field(key).Name)
+								jsonOutputTextArea := jsDoc.Call("getElementById", name)
+								if !jsonOutputTextArea.Truthy() {
+									log.Debug("Unable to get output text area")
+									return
+								}
+								// sValue := fmt.Sprintf("%s:%s", name, value)
+
+								jsonOutputTextArea.Set("innerHTML", value)
 							}
-
-							sSettings := fmt.Sprintf("%+v", settings)
-							jsonOutputTextArea.Set("innerHTML", sSettings)
-
 						}
+
 						default:{
 							jsDoc := js.Global().Get("document")
 							if !jsDoc.Truthy() {

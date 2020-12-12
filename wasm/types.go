@@ -106,6 +106,11 @@ func (s *Settlement) Unmarshal(val []byte) error {
 	return json.Unmarshal(val, s)
 }
 
+type Peers struct {
+	NumberOfPeers   int64	`json:"numberofpeers,omitempty"`
+}
+
+
 type Balance struct {
 	UserId  string  `json:"userId,omitempty"`
 	Balance float64 `json:"balance,omitempty"`
