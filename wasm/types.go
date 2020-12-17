@@ -106,11 +106,6 @@ func (s *Settlement) Unmarshal(val []byte) error {
 	return json.Unmarshal(val, s)
 }
 
-type Peers struct {
-	NumberOfPeers   int64	`json:"numberofpeers,omitempty"`
-}
-
-
 type Balance struct {
 	UserId  string  `json:"userId,omitempty"`
 	Balance float64 `json:"balance,omitempty"`
@@ -156,7 +151,7 @@ func (b *BCNBalance) Factory() store.SerializedItem {
 
 type Settings struct {
 	NodeIndex                      float64 `json:"nodeIndex,omitempty"`
-	DeviceID                       string  `json:",omitempty"`
+	DeviceID                       string  `json:"deviceId,omitempty"`
 	Name                           string  `json:"name,omitempty"`
 	Location                       string  `json:"location,omitempty"`
 	IPAddress                      string  `json:"ipAddress,omitempty"`
@@ -197,6 +192,7 @@ type TaskStatus struct {
 	Id     int
 	Name   string
 	Status string
+	AdditionalStatus string
 }
 type TaskWithProgressStatus struct {
 	Description string
