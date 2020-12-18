@@ -928,7 +928,7 @@
 	font-size: 24px;
 	color: rgba(255,255,255,1);
 }
-.RPC_Class {
+.RPCLabel_Class {
 	left: 180px;
 	top: 1013px;
 	position: absolute;
@@ -940,9 +940,9 @@
 	font-style: normal;
 	font-weight: bold;
 	font-size: 24px;
-	color: rgba(255,255,255,1);
+	color: rgba(244,105,49,1);
 }
-.HTTP_Class {
+.HTTPLabel_Class {
 	left: 180px;
 	top: 1063px;
 	position: absolute;
@@ -954,9 +954,9 @@
 	font-style: normal;
 	font-weight: bold;
 	font-size: 24px;
-	color: rgba(255,255,255,1);
+	color: rgba(244,105,49,1);
 }
-.PROXY_Class {
+.PROXYLabel_Class {
 	left: 180px;
 	top: 1119px;
 	position: absolute;
@@ -967,6 +967,51 @@
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: bold;
+	font-size: 24px;
+	color: rgba(244,105,49,1);
+}
+.RPC_Class {
+	opacity: 0.76;
+	left: 294px;
+	top: 1013px;
+	position: absolute;
+	overflow: visible;
+	width: 89px;
+	white-space: nowrap;
+	text-align: center;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 24px;
+	color: rgba(255,255,255,1);
+}
+.HTTP_Class {
+	opacity: 0.76;
+	left: 294px;
+	top: 1063px;
+	position: absolute;
+	overflow: visible;
+	width: 89px;
+	white-space: nowrap;
+	text-align: center;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 24px;
+	color: rgba(255,255,255,1);
+}
+.PROXY_Class {
+	opacity: 0.76;
+	left: 294px;
+	top: 1119px;
+	position: absolute;
+	overflow: visible;
+	width: 89px;
+	white-space: nowrap;
+	text-align: center;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
 	font-size: 24px;
 	color: rgba(255,255,255,1);
 }
@@ -984,7 +1029,7 @@
 	font-size: 25px;
 	color: rgba(244,105,50,1);
 }
-.Pending_Class {
+.PendingLabel_Class {
 	left: 725px;
 	top: 369px;
 	position: absolute;
@@ -1561,7 +1606,8 @@
 	position: absolute;
 	overflow: visible;
 	width: 557px;
-	white-space: nowrap;
+	white-space: wrap;
+	word-wrap: break-word;
 	text-align: left;
 	font-family: Segoe UI;
 	font-style: normal;
@@ -1653,7 +1699,7 @@
 	font-size: 33px;
 	color: rgba(255,255,255,1);
 }
-.ID003345_Class {
+.Time_Class {
 	opacity: 0.45;
 	left: 725px;
 	top: 717px;
@@ -1702,7 +1748,7 @@
 	font-size: 23px;
 	color: rgba(255,255,255,1);
 }
-.-0002347_SWRM_Class {
+.Pending_Class {
 	left: 638px;
 	top: 311px;
 	position: absolute;
@@ -1922,7 +1968,7 @@
 }
 .MaxStorage_Class {
 	opacity: 0.85;
-	left: 1059px;
+	left: 1020px;
 	top: 648px;
 	position: absolute;
 	overflow: visible;
@@ -1950,7 +1996,7 @@
 	font-size: 33px;
 	color: rgba(255,255,255,1);
 }
-.ID117__Class {
+.UsedStorage_Class {
 	left: 1056px;
 	top: 800px;
 	position: absolute;
@@ -1993,6 +2039,8 @@
 	position: absolute;
 	overflow: visible;
 	width: 33px;
+	/* overflow-x: hidden;
+    overflow-y: auto; */
 	white-space: nowrap;
 	text-align: center;
 	font-family: Segoe UI;

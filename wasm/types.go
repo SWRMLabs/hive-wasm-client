@@ -126,7 +126,7 @@ func (b *Balance) Unmarshal(val []byte) error {
 }
 
 type BCNBalance struct {
-	Owed            float64 `json:"owned"`
+	Owned           float64 `json:"owned"`
 	Owe             float64 `json:"owe"`
 	BytesServed     int64   `json:"served"`
 	BytesDownloaded int64   `json:"downloaded"`
@@ -199,12 +199,20 @@ type TaskWithProgressStatus struct {
 	FileName    string
 	Progress    float64
 }
+
+type ServerStatus struct {
+	Rpc   string `json:"Rpc"`
+	Http  string `json:"Http"`
+	Proxy string `json:"Proxy"`
+}
+
 type Status struct {
 	LoggedIn              bool
 	DaemonRunning         bool
 	TotalUptimePercentage UptimePercentage
 	SessionStartTime      int64
 	TaskManagerStatus     []TaskStatus
+	ServerDetails 		  ServerStatus `json:"ServerStatus"`
 }
 type UptimePercentage struct {
 	Status               bool
