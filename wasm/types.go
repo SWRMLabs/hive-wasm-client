@@ -8,7 +8,7 @@ import (
 type Event struct {
 	Result struct {
 		Topic string `json:"topic,omitempty"`
-		Val   string    `json:"val,Out,omitempty"`
+		Val   string `json:"val,Out,omitempty"`
 	}
 }
 
@@ -17,6 +17,28 @@ type Out struct {
 	Message string      `json:"message"` // Message is for the curators
 	Data    interface{} `json:"data,omitempty"`
 	Details string      `json:"details,omitempty"` // For Debugging
+}
+
+type ID struct {
+	PeerID    string   `json:"id,omitempty"`
+	Publickey string   `json:"PublicKey,omitempty"`
+	Addresses []string `json:"Addresses,omitempty"`
+}
+
+type SwarmPeers struct {
+	Peers []string
+}
+
+type Profile struct {
+	Id              string `json:"_id,omitempty"`
+	Email           string `json:"email,omitempty"`
+	FirstName       string `json:"firstName,omitempty"`
+	PhoneNumber     string `json:"phoneNumber,omitempty"`
+	Role            string `json:"role,omitempty"`
+	MFAType         int64  `json:"mfaType,omitempty"`
+	IsMFAEnabled    bool   `json:"isMfaEnabled,omitempty"`
+	LastLoginAt     string `json:"lastLoginAt,omitempty"`
+	IsEmailVerified bool   `json:"isEmailVerified",omitempty"`
 }
 
 type AuthResponse struct {
@@ -189,9 +211,9 @@ type Location struct {
 	City string `json:"city"`
 }
 type TaskStatus struct {
-	Id     int
-	Name   string
-	Status string
+	Id               int
+	Name             string
+	Status           string
 	AdditionalStatus string
 }
 type TaskWithProgressStatus struct {
@@ -212,7 +234,7 @@ type Status struct {
 	TotalUptimePercentage UptimePercentage
 	SessionStartTime      int64
 	TaskManagerStatus     []TaskStatus
-	ServerDetails 		  ServerStatus `json:"ServerStatus"`
+	ServerDetails         ServerStatus `json:"ServerStatus"`
 }
 type UptimePercentage struct {
 	Status               bool

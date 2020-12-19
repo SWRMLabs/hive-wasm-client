@@ -11,9 +11,12 @@
 	const go = new Go();
 	WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
 		go.run(result.instance);
+		GetProfile();
+		GetStorageLocation();
+		GetPeers();
+		GetID();
 		Events();
 	});
-
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
 </head>
@@ -191,7 +194,7 @@
 				<stop offset="0" stop-color="#252525" stop-opacity="1"></stop>
 				<stop offset="1" stop-color="#383737" stop-opacity="1"></stop>
 			</linearGradient>
-			<rect class="Rectangle_2_bz_Class" rx="0" ry="0" x="0" y="0" width="773" height="318">
+			<rect id = "AddressBox" class="Rectangle_2_bz_Class" rx="0" ry="0" x="0" y="0">
 			</rect>
 		</svg>
 	</div>
@@ -388,9 +391,9 @@
 	<div class="Uptime_Class">
 		<span>Uptime</span>
 	</div>
-	<div class="See_all_Class">
-		<span>See all</span>
-	</div>
+	<button onclick="displayAddresses()" id="SeeAll" class="See_all_Class">
+		See all
+	</button>
 	<div class="Next_Distribution_Class">
 		<span>Next Distribution</span>
 	</div>
@@ -413,7 +416,7 @@
 	<div class="Storage_Path_Class">
 		<span>Storage Path:</span>
 	</div>
-	<div class="Email_Class">
+	<div class="EmailLabel_Class">
 		<span>Email:</span>
 	</div>
 	<div id="RoleLabel" class="RoleLabel_Class">
@@ -425,7 +428,7 @@
 	<div class="OUTGOING_Class">
 		<span>OUTGOING</span>
 	</div>
-	<div class="Address_Class">
+	<div class="AddressLabel_Class">
 		<span>Address:</span>
 	</div>
 	<div class="TASK_MANAGER_Class">
@@ -474,28 +477,22 @@
 			</div>
 		</div>
 	</div>
-	<div class="ip4122172338tcp4342p2p12D3KooW_Class">
-		<span>ip4/122.172.3.38/tcp/4342/p2p/12D3KooWPzxzXD2n<br/>rVhW9HAiyHnXHsa4zZRsfg3BF8bB4yTHfRQy</span>
-	</div>
-	<div class="ip4122172338tcp4342p2p12D3KooW_ek_Class">
-		<span>ip4/122.172.3.38/tcp/4342/p2p/12D3KooWPzxzXD2n<br/>rVhW9HAiyHnXHsa4zZRsfg3BF8bB4yTHfRQy</span>
-	</div>
-	<div class="ip4122172338tcp4342p2p12D3KooW_el_Class">
-		<span>ip4/122.172.3.38/tcp/4342/p2p/12D3KooWPzxzXD2n<br/>rVhW9HAiyHnXHsa4zZRsfg3BF8bB4yTHfRQy</span>
+	<div id = "Peers" class="Peers_Class">
+
 	</div>
 	<div id="PeerID" class="PeerID_Class">
 
 	</div>
-	<div class="kishanswrmlabsio_Class">
-		<span>kishan@swrmlabs.io</span>
+	<div id = "Email" class="Email_Class">
+
 	</div>
 	<div id="Role" class="Role_Class">
 
 	</div>
-	<div class="CUsersXYZswrmlabs_Class">
-		<span>C:\Users\XYZ\.swrmlabs</span>
+	<div id = "StoragePath" class="StoragePath_Class">
+
 	</div>
-	<div class="ip4122172338tcp4342p2p12D3KooW_eq_Class">
+	<div id = "Address" class="Address_Class">
 
 	</div>
 	<div id="confirmedBalance" class="confirmedBalance_Class">
@@ -673,16 +670,14 @@
 			</path>
 		</svg>
 	</div>
-	<svg class="Rectangle_7">
+	<!-- <svg class="Rectangle_7">
 		<rect class="Rectangle_7_Class" rx="7.5" ry="7.5" x="0" y="0" width="15" height="244">
 		</rect>
 	</svg>
 	<svg class="Rectangle_8">
 		<rect class="Rectangle_8_Class" rx="5.5" ry="5.5" x="0" y="0" width="11" height="81">
 		</rect>
-	</svg>
-	<img class="Mask_Group_5_Class" src="Mask_Group_5.png" srcset="Mask_Group_5.png 1x, Mask_Group_5@2x.png 2x">
-
+	</svg> -->
 	</svg>
 	<div class="Repeat_Grid_2_Class">
 		<div class=" Repeat_Grid_2_0_Class">

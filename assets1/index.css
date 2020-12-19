@@ -430,6 +430,8 @@
 }
 .Rectangle_2_bz_Class {
 	fill: url(#Rectangle_2_bz);
+	width: 773px;
+	height: 318px;
 }
 .Rectangle_2_bz {
 	position: absolute;
@@ -1176,8 +1178,11 @@
 	color: rgba(244,105,50,1);
 }
 .See_all_Class {
+	display: block;
 	left: 1182px;
 	top: 553px;
+	text-decoration: none;
+	background: none;
 	position: absolute;
 	overflow: visible;
 	width: 64px;
@@ -1189,6 +1194,7 @@
 	font-size: 22px;
 	color: rgba(244,105,50,1);
 }
+
 .Next_Distribution_Class {
 	left: 672px;
 	top: 543px;
@@ -1283,7 +1289,7 @@
 	font-size: 25px;
 	color: rgba(133,133,133,1);
 }
-.Email_Class {
+.EmailLabel_Class {
 	left: 1460px;
 	top: 127px;
 	position: absolute;
@@ -1339,7 +1345,7 @@
 	font-size: 18px;
 	color: rgba(133,133,133,1);
 }
-.Address_Class {
+.AddressLabel_Class {
 	left: 1071px;
 	top: 481px;
 	position: absolute;
@@ -1558,19 +1564,35 @@
 	font-size: 14px;
 	color: rgba(244,104,49,1);
 }
-.ip4122172338tcp4342p2p12D3KooW_Class {
+.Peers_Class {
 	left: 1254px;
 	top: 689px;
 	position: absolute;
-	overflow: visible;
-	width: 430px;
-	white-space: nowrap;
+	overflow-y: scroll;
+	width: 500px;
+	height: 200px;
+	white-space: wrap;
+	word-wrap: break-word;
 	text-align: left;
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: bold;
 	font-size: 18px;
 	color: rgba(133,133,133,1);
+}
+div::-webkit-scrollbar {
+	width: 0.8rem;
+}
+div::-webkit-scrollbar-track{
+	 background-color: rgba(138,138,138,1);
+	 border-radius: 10px;
+}
+div::-webkit-scrollbar-button{
+	display: none;
+}
+div::-webkit-scrollbar-thumb{
+  background-color: rgba(78,78,78,1);
+  border-radius: 10px;
 }
 .ip4122172338tcp4342p2p12D3KooW_ek_Class {
 	left: 1254px;
@@ -1615,7 +1637,7 @@
 	font-size: 24px;
 	color: rgba(255,255,255,1);
 }
-.kishanswrmlabsio_Class {
+.Email_Class {
 	left: 1545px;
 	top: 127px;
 	position: absolute;
@@ -1643,7 +1665,7 @@
 	font-size: 24px;
 	color: rgba(255,255,255,1);
 }
-.CUsersXYZswrmlabs_Class {
+.StoragePath_Class {
 	left: 1182px;
 	top: 304px;
 	position: absolute;
@@ -1657,19 +1679,23 @@
 	font-size: 24px;
 	color: rgba(255,255,255,1);
 }
-.ip4122172338tcp4342p2p12D3KooW_eq_Class {
+.Address_Class {
 	left: 1182px;
 	top: 481px;
 	position: absolute;
-	overflow: visible;
+	overflow: hidden;
 	width: 559px;
-	white-space: nowrap;
+	white-space: wrap;
+	word-wrap: break-word;
 	text-align: left;
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: bold;
-	font-size: 24px;
+	font-size: 20px;
 	color: rgba(255,255,255,1);
+}
+#Address{
+	height: 61px;
 }
 .confirmedBalance_Class {
 	left: 172px;
@@ -1721,7 +1747,8 @@
 	position: absolute;
 	overflow: visible;
 	width: 86px;
-	white-space: nowrap;
+	white-space: wrap;
+	word-wrap: break-word;
 	line-height: 35px;
 	margin-top: -6px;
 	text-align: left;
@@ -1738,7 +1765,8 @@
 	position: absolute;
 	overflow: visible;
 	width: 86px;
-	white-space: nowrap;
+	white-space: wrap;
+	word-wrap: break-word;
 	line-height: 35px;
 	margin-top: -6px;
 	text-align: left;
@@ -3000,8 +3028,9 @@
 	top: 1045px;
 	position: absolute;
 	overflow: visible;
-	width: 451px;
-	white-space: nowrap;
+	width: 430px;
+	white-space: wrap;
+	word-wrap: break-word;
 	line-height: 35px;
 	margin-top: -6px;
 	text-align: left;
