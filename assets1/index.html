@@ -184,7 +184,7 @@
 			</rect>
 		</svg>
 	</div>
-	<div id="AddressBox" class="AddressBox_Class">
+	<div class="AddressBox_Class">
 		<svg class="Rectangle_1_bx">
 			<rect class="Rectangle_1_bx_Class" rx="0" ry="0" x="0" y="0" width="724" height="307">
 			</rect>
@@ -194,7 +194,7 @@
 				<stop offset="0" stop-color="#252525" stop-opacity="1"></stop>
 				<stop offset="1" stop-color="#383737" stop-opacity="1"></stop>
 			</linearGradient>
-			<rect id = "AddressBox" class="Rectangle_2_bz_Class" rx="0" ry="0" x="0" y="0">
+			<rect class="Rectangle_2_bz_Class" rx="0" ry="0" x="0" y="0">
 			</rect>
 		</svg>
 	</div>
@@ -391,9 +391,14 @@
 	<div class="Uptime_Class">
 		<span>Uptime</span>
 	</div>
-	<button onclick="displayAddresses()" id="SeeAll" class="See_all_Class">
-		See all
+	<button onclick="GoLeft()" id="AddressLeft" class="AddressLeft_Class">
+		<span>&#8592;</span>
 	</button>
+	<button onclick="GoRight()" id="AddressRight" class="AddressRight_Class">
+		<span>&#8594;</span>
+	</button>
+
+
 	<div class="Next_Distribution_Class">
 		<span>Next Distribution</span>
 	</div>
@@ -480,19 +485,23 @@
 	<div id = "Peers" class="Peers_Class">
 
 	</div>
-	<div id="PeerID" class="PeerID_Class">
+	<div id = "InfoBox" class="InfoBox_Class">
+		<div id = "StoragePath" class="StoragePath_Class">
 
+		</div>
+		<div id="PeerID" class="PeerID_Class">
+
+		</div>
+		<div id="Role" class="Role_Class">
+
+		</div>
+
+		<div id = "Address" class="Address_Class">
+
+		</div>
 	</div>
+
 	<div id = "Email" class="Email_Class">
-
-	</div>
-	<div id="Role" class="Role_Class">
-
-	</div>
-	<div id = "StoragePath" class="StoragePath_Class">
-
-	</div>
-	<div id = "Address" class="Address_Class">
 
 	</div>
 	<div id="confirmedBalance" class="confirmedBalance_Class">
@@ -647,7 +656,7 @@
 			</path>
 		</svg>
 	</div>
-	<div class="Group_9_Class">
+	<!-- <div class="Group_9_Class">
 		<svg class="Ellipse_4">
 			<ellipse class="Ellipse_4_Class" rx="112.5" ry="112.5" cx="112.5" cy="112.5">
 			</ellipse>
@@ -655,7 +664,7 @@
 		<img class="Mask_Group_2_Class" src="Mask_Group_2.png" srcset="Mask_Group_2.png 1x, Mask_Group_2@2x.png 2x">
 
 		</svg>
-	</div>
+	</div> -->
 	<div class="Group_17_Class">
 		<svg class="Polygon_3" viewBox="0 0 129 112">
 			<path class="Polygon_3_Class" d="M 96.75 0 L 129 55.99999618530273 L 96.75 111.9999923706055 L 32.24999618530273 111.9999923706055 L 0 55.99999237060547 L 32.25000762939453 0 Z">

@@ -413,7 +413,6 @@
 	height: 334px;
 	left: 995px;
 	top: 280px;
-	overflow: visible;
 }
 .Rectangle_1_bx_Class {
 	opacity: 0.56;
@@ -1177,10 +1176,10 @@
 	font-size: 25px;
 	color: rgba(244,105,50,1);
 }
-.See_all_Class {
+.AddressLeft_Class {
 	display: block;
-	left: 1182px;
-	top: 553px;
+	left: 1600px;
+	top: 550px;
 	text-decoration: none;
 	background: none;
 	position: absolute;
@@ -1191,9 +1190,29 @@
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: normal;
-	font-size: 22px;
+	font-size: 30px;
+	outline: none;
 	color: rgba(244,105,50,1);
 }
+.AddressRight_Class {
+	display: block;
+	left: 1650px;
+	top: 550px;
+	text-decoration: none;
+	background: none;
+	position: absolute;
+	overflow: visible;
+	width: 64px;
+	white-space: nowrap;
+	text-align: left;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 30px;
+	outline: none;
+	color: rgba(244,105,50,1);
+}
+
 
 .Next_Distribution_Class {
 	left: 672px;
@@ -1567,6 +1586,7 @@
 .Peers_Class {
 	left: 1254px;
 	top: 689px;
+	padding:3px;
 	position: absolute;
 	overflow-y: scroll;
 	width: 500px;
@@ -1683,19 +1703,18 @@ div::-webkit-scrollbar-thumb{
 	left: 1182px;
 	top: 481px;
 	position: absolute;
-	overflow: hidden;
 	width: 559px;
+	height: 68px;
+	padding:2px;
+	overflow-y:hidden;
 	white-space: wrap;
 	word-wrap: break-word;
 	text-align: left;
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 24px;
 	color: rgba(255,255,255,1);
-}
-#Address{
-	height: 61px;
 }
 .confirmedBalance_Class {
 	left: 172px;
@@ -1727,8 +1746,8 @@ div::-webkit-scrollbar-thumb{
 }
 .Time_Class {
 	opacity: 0.45;
-	left: 725px;
-	top: 717px;
+	left: 595px;
+	top: 700px;
 	position: absolute;
 	overflow: visible;
 	width: 89px;
@@ -1737,7 +1756,7 @@ div::-webkit-scrollbar-thumb{
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: normal;
-	font-size: 24px;
+	font-size: 28px;
 	color: rgba(255,255,255,1);
 }
 .taskmanagerstatusstatus_Class {

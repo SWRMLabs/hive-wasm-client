@@ -7,9 +7,11 @@
  * Code subject to change.
  **/
 
-function displayAddresses(){
-    document.getElementById("Address").style.height = "400px";
-    document.getElementById("SeeAll").style.display = "none"
+function GoRight(){
+    document.getElementById("Address").scrollTop += 102;
+}
+function GoLeft(){
+    document.getElementById("Address").scrollTop -= 102;
 }
 
 if (window.console==null) { window["console"] = { log : function() {} } }; // some browsers do not set console

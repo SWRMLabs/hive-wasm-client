@@ -42,7 +42,6 @@ func Events() js.Func {
 			for {
 				line, _, err := reader.ReadLine()
 				if err != nil || line == nil {
-					log.Debug("Update Complete")
 					Events()
 				} else {
 					log.Debug(string(line))
@@ -94,14 +93,14 @@ func Events() js.Func {
 								}
 								OutputArea.Set("innerHTML", "")
 
-								OutputArea := jsDoc.Call("getElementById", "taskmanagerstatusstatus")
+								OutputArea = jsDoc.Call("getElementById", "taskmanagerstatusstatus")
 								if !OutputArea.Truthy() {
 									log.Debug("Unable to get output area task manager status")
 									return
 								}
 								OutputArea.Set("innerHTML", "")
 
-								OutputArea := jsDoc.Call("getElementById", "taskmanagerstatusAS")
+								OutputArea = jsDoc.Call("getElementById", "taskmanagerstatusAS")
 								if !OutputArea.Truthy() {
 									log.Debug("Unable to get output area task manager Additional Status")
 									return
@@ -193,7 +192,7 @@ func Events() js.Func {
 
 								}
 
-								OutputArea := jsDoc.Call("getElementById", "Time")
+								OutputArea = jsDoc.Call("getElementById", "Time")
 								if !OutputArea.Truthy() {
 									log.Debug("Unable to get output text area in Time")
 									return
@@ -207,7 +206,7 @@ func Events() js.Func {
 								minutes := time / 60
 								time = time % 60
 								seconds := time
-								sValue := fmt.Sprintf("%d:%d:%d:%d", days, hours, minutes, seconds)
+								sValue := fmt.Sprintf("%ddays %dhours %dmins %dsecs", days, hours, minutes, seconds)
 								log.Debug(sValue)
 								OutputArea.Set("innerHTML", sValue)
 
@@ -411,24 +410,24 @@ func GetID() js.Func {
 			}
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
-				log.Debug("Unable to get document object in status")
+				log.Debug("Unable to get document object in ID")
 				return
 			}
 			OutputArea := jsDoc.Call("getElementById", "Address")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in Address")
 				return
 			}
 			var sAddress string
-			for _, value := range id.Addresses {
-				sAddress = sAddress + "\n" + value
+			for key, value := range id.Addresses {
+				sAddress = sAddress + fmt.Sprintf("%d)%s\n",(key+1),value)
 			}
 			log.Debug(sAddress)
 			OutputArea.Set("innerHTML", sAddress)
 
 			OutputArea = jsDoc.Call("getElementById", "PeerID")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in PeerID")
 				return
 			}
 			log.Debug("This is Peer ID")
@@ -446,7 +445,6 @@ func GetPeers() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
 			}
-
 			buf, err := json.Marshal(payload)
 			if err != nil {
 				log.Error(err.Error())
@@ -490,18 +488,17 @@ func GetPeers() js.Func {
 			}
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
-				log.Debug("Unable to get document object in status")
+				log.Debug("Unable to get document object in Peers")
 				return
 			}
 			OutputArea := jsDoc.Call("getElementById", "Peers")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in Peers")
 				return
 			}
 			var sPeers string
-			for _, value := range swarmPeers {
-				sPeers = sPeers + "\n" + value
-
+			for key, value := range swarmPeers {
+				sPeers = sPeers + fmt.Sprintf("%d)%s\n",(key+1),value)
 			}
 			log.Debug(sPeers)
 			OutputArea.Set("innerHTML", sPeers)
@@ -550,12 +547,12 @@ func GetStorageLocation() js.Func {
 
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
-				log.Debug("Unable to get document object in status")
+				log.Debug("Unable to get document object in StoragePath")
 				return
 			}
 			OutputArea := jsDoc.Call("getElementById", "StoragePath")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in StoragePath")
 				return
 			}
 			log.Debug(out.Data)
@@ -605,7 +602,7 @@ func GetProfile() js.Func {
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
 				log.Debug(err)
-				log.Debug("Error encountered in Marshalling ID")
+				log.Debug("Error encountered in Marshalling Profile")
 				return
 			}
 			var profile Profile
@@ -619,19 +616,19 @@ func GetProfile() js.Func {
 
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
-				log.Debug("Unable to get document object in status")
+				log.Debug("Unable to get document object in Profile")
 				return
 			}
 			OutputArea := jsDoc.Call("getElementById", "Email")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in Email")
 				return
 			}
 			OutputArea.Set("innerHTML", profile.Email)
 
 			OutputArea = jsDoc.Call("getElementById", "Role")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in ID")
+				log.Debug("Unable to get output area in Role")
 				return
 			}
 			OutputArea.Set("innerHTML", profile.Role)
