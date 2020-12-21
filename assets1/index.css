@@ -44,25 +44,13 @@
 	top: 0px;
 	overflow: visible;
 }
-.Rectangle_1_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1 {
-	position: absolute;
-	overflow: visible;
-	width: 421px;
-	height: 184px;
-	left: 22px;
-	top: 62px;
-}
 .Rectangle_2_p_Class {
 	fill: url(#Rectangle_2_p);
 }
 .Rectangle_2_p {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 394px;
 	height: 169px;
 	left: 0px;
@@ -78,8 +66,8 @@
 }
 .Rectangle_1_r_Class {
 	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
+	filter: blur(5.5px);
+	fill: #262626;
 }
 .Rectangle_1_r {
 	position: absolute;
@@ -99,7 +87,9 @@
 	height: 318px;
 	left: 0px;
 	top: 0px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 .UptimeBox_Class {
 	position: absolute;
 	width: 393px;
@@ -108,25 +98,14 @@
 	top: 626px;
 	overflow: visible;
 }
-.Rectangle_1_v_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_v {
-	position: absolute;
-	overflow: visible;
-	width: 411px;
-	height: 334px;
-	left: 28px;
-	top: 26px;
-}
+
 .Rectangle_2_x_Class {
 	fill: url(#Rectangle_2_x);
 }
 .Rectangle_2_x {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 393px;
 	height: 279px;
 	left: 0px;
@@ -140,25 +119,13 @@
 	top: 1415px;
 	overflow: visible;
 }
-.Rectangle_1_z_Class {
-	opacity: 0.45;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_z {
-	position: absolute;
-	overflow: visible;
-	width: 1056px;
-	height: 499px;
-	left: 28px;
-	top: 26px;
-}
 .Rectangle_2_ba_Class {
 	fill: url(#Rectangle_2_ba);
 }
 .Rectangle_2_ba {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 1038px;
 	height: 444px;
 	left: 0px;
@@ -172,25 +139,13 @@
 	top: 939px;
 	overflow: visible;
 }
-.Rectangle_1__Class {
-	opacity: 0.45;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_ {
-	position: absolute;
-	overflow: visible;
-	width: 1212px;
-	height: 496px;
-	left: 28px;
-	top: 26px;
-}
 .Rectangle_2_bc_Class {
 	fill: url(#Rectangle_2_bc);
 }
 .Rectangle_2_bc {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 1194px;
 	height: 441px;
 	left: 0px;
@@ -204,25 +159,13 @@
 	top: 626px;
 	overflow: visible;
 }
-.Rectangle_1_ba_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(50,0,18,1);
-}
-.Rectangle_1_ba {
-	position: absolute;
-	overflow: visible;
-	width: 229px;
-	height: 180px;
-	left: 28px;
-	top: 26px;
-}
 .Rectangle_2_be_Class {
 	fill: url(#Rectangle_2_be);
 }
 .Rectangle_2_be {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 211px;
 	height: 125px;
 	left: 0px;
@@ -236,25 +179,13 @@
 	top: 780px;
 	overflow: visible;
 }
-.Rectangle_1_bb_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(9,42,0,1);
-}
-.Rectangle_1_bb {
-	position: absolute;
-	overflow: visible;
-	width: 229px;
-	height: 180px;
-	left: 28px;
-	top: 26px;
-}
 .Rectangle_2_bg_Class {
 	fill: url(#Rectangle_2_bg);
 }
 .Rectangle_2_bg {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 211px;
 	height: 125px;
 	left: 0px;
@@ -287,11 +218,13 @@
 	top: 280px;
 	overflow: visible;
 }
-.Rectangle_1_bh_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
+/* .Rectangle_1_bh_Class {
+	opacity: 0.26;
+	border-radius: 5px;
+	filter: blur(22px);
+	backdrop-filter: blur(5.5px);
+	fill: rgba(46,46,46,1);
+} */
 .Rectangle_1_bh {
 	position: absolute;
 	overflow: visible;
@@ -306,6 +239,7 @@
 .Rectangle_2_bj {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 393px;
 	height: 145px;
 	left: 0px;
@@ -338,6 +272,7 @@
 .Rectangle_2_bn {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 182px;
 	height: 140px;
 	left: 0px;
@@ -370,6 +305,7 @@
 .Rectangle_2_br {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 182px;
 	height: 140px;
 	left: 0px;
@@ -402,6 +338,7 @@
 .Rectangle_2_bv {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 393px;
 	height: 145px;
 	left: 0px;
@@ -435,6 +372,7 @@
 .Rectangle_2_bz {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 773px;
 	height: 318px;
 	left: 0px;
@@ -863,6 +801,7 @@
 .Rectangle_2_da {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 393px;
 	height: 111px;
 	left: 0px;
@@ -876,25 +815,13 @@
 	top: 934px;
 	overflow: visible;
 }
-.Rectangle_1_da_Class {
-	opacity: 0.45;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_da {
-	position: absolute;
-	overflow: visible;
-	width: 411px;
-	height: 333px;
-	left: 28px;
-	top: 0px;
-}
 .Rectangle_2_dc_Class {
 	fill: url(#Rectangle_2_dc);
 }
 .Rectangle_2_dc {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 393px;
 	height: 242px;
 	left: 0px;
@@ -1704,7 +1631,7 @@ div::-webkit-scrollbar-thumb{
 	top: 481px;
 	position: absolute;
 	width: 559px;
-	height: 68px;
+	height: 65px;
 	padding:2px;
 	overflow-y:hidden;
 	white-space: wrap;
@@ -1825,25 +1752,13 @@ div::-webkit-scrollbar-thumb{
 	top: 0px;
 	overflow: visible;
 }
-.Rectangle_1_ez_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_ez {
-	position: absolute;
-	overflow: visible;
-	width: 571px;
-	height: 200px;
-	left: 22px;
-	top: 22px;
-}
 .Rectangle_2_fa_Class {
 	fill: url(#Rectangle_2_fa);
 }
 .Rectangle_2_fa {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 544px;
 	height: 145px;
 	left: 0px;
@@ -1893,25 +1808,13 @@ div::-webkit-scrollbar-thumb{
 	top: 0px;
 	overflow: visible;
 }
-.Rectangle_1_e_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_e {
-	position: absolute;
-	overflow: visible;
-	width: 289px;
-	height: 200px;
-	left: 22px;
-	top: 22px;
-}
 .Rectangle_2_fc_Class {
 	fill: url(#Rectangle_2_fc);
 }
 .Rectangle_2_fc {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 262px;
 	height: 145px;
 	left: 0px;
@@ -1961,25 +1864,13 @@ div::-webkit-scrollbar-thumb{
 	top: 0px;
 	overflow: visible;
 }
-.Rectangle_1_fd_Class {
-	opacity: 0.56;
-	filter: blur(11px);
-	fill: rgba(38,38,38,1);
-}
-.Rectangle_1_fd {
-	position: absolute;
-	overflow: visible;
-	width: 289px;
-	height: 200px;
-	left: 22px;
-	top: 22px;
-}
 .Rectangle_2_ff_Class {
 	fill: url(#Rectangle_2_ff);
 }
 .Rectangle_2_ff {
 	position: absolute;
 	overflow: visible;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	width: 262px;
 	height: 145px;
 	left: 0px;
