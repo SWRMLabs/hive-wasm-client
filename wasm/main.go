@@ -63,7 +63,7 @@ func Events() js.Func {
 				var out Out
 				err = json.Unmarshal([]byte(event.Result.Val), &out)
 				if err != nil {
-					log.Error("Error in Unmarshalling Out in %s : ", event.Result.Val,err.Error())
+					log.Error("Error in Unmarshalling Out in %s : ", event.Result.Val, err.Error())
 					return
 				}
 				val, err := json.MarshalIndent(out.Data, "", " ")
@@ -83,7 +83,7 @@ func Events() js.Func {
 								log.Error("Error in Unmarshalling Status:", err.Error())
 								return
 							}
-							log.Debug("This is Status: ",status)
+							log.Debug("This is Status: ", status)
 							jsDoc := js.Global().Get("document")
 							if !jsDoc.Truthy() {
 								log.Error("Unable to get document object in status")
@@ -248,7 +248,7 @@ func Events() js.Func {
 								}
 							}
 							sValue := fmt.Sprintf("%s %s", sFloat, "SWRM")
-							log.Debugf("This is Main Balance: %s",sValue)
+							log.Debugf("This is Main Balance: %s", sValue)
 							OutputArea.Set("innerHTML", sValue)
 						}
 
@@ -261,7 +261,7 @@ func Events() js.Func {
 								log.Error("Error Unmarshalling settlement: ", err.Error())
 								return
 							}
-							log.Debug("This is Settlement: ",settlement)
+							log.Debug("This is Settlement: ", settlement)
 							jsDoc := js.Global().Get("document")
 							if !jsDoc.Truthy() {
 								log.Error("Unable to get document object in settlement")
@@ -328,7 +328,7 @@ func Events() js.Func {
 								log.Error("Error in Unmarshalling Settings: ", err.Error())
 								return
 							}
-							log.Debug("This is Settings: ",settings)
+							log.Debug("This is Settings: ", settings)
 							jsDoc := js.Global().Get("document")
 							if !jsDoc.Truthy() {
 								log.Error("Unable to get document object in settings")
@@ -383,18 +383,18 @@ func GetID() js.Func {
 			}
 			buf, err := json.Marshal(payload)
 			if err != nil {
-				log.Error("Error in marshalling payload in GetID: ",err.Error())
+				log.Error("Error in marshalling payload in GetID: ", err.Error())
 				return
 			}
 			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 			if err != nil {
-				log.Error("Error in getting response in GetID: ",err.Error())
+				log.Error("Error in getting response in GetID: ", err.Error())
 				return
 			}
 			defer resp.Body.Close()
 			respBuf, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Error("Error in reading body in GetID: ",err.Error())
+				log.Error("Error in reading body in GetID: ", err.Error())
 				return
 			}
 			data := make(map[string]string)
