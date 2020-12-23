@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"time"
 	store "github.com/StreamSpace/ss-store"
 )
 
@@ -39,6 +40,15 @@ type Profile struct {
 	IsMFAEnabled    bool   `json:"isMfaEnabled,omitempty"`
 	LastLoginAt     string `json:"lastLoginAt,omitempty"`
 	IsEmailVerified bool   `json:"isEmailVerified",omitempty"`
+}
+
+type Version struct {
+	AppVersion 		string `json:"appversion,omitempty"`
+	CurrentCommit 	string `json:"currentcommit,omitempty"`
+	Debug 			string   `json:"debug,omitempty"`
+	Environment 	string `json:"environment,omitempty"`
+	Epoch 			string `json:"epoch,omitempty"`
+	CycleDuration 	string `json:"cycleduration,omitempty"`
 }
 
 type AuthResponse struct {
@@ -111,7 +121,7 @@ func (do *DeviceOwner) Unmarshal(val []byte) error {
 
 type Settlement struct {
 	Cycle int64   `json:"bcn"`
-	Date  string  `json:"settlementDate"`
+	Date  time.Time  `json:"settlementDate"`
 	Rate  float64 `json:"dataRatePerByte"`
 }
 
@@ -384,9 +394,9 @@ func (f *CustomerFile) FileStatus() FileStatus {
 	return FileStatus(f.Status)
 }
 
-type Version struct {
-	Version string
-}
+// type Version struct {
+// 	Version string
+// }
 
 func (v *Version) GetNamespace() string {
 	return "Version"
@@ -395,10 +405,10 @@ func (v *Version) GetId() string {
 	return "1"
 }
 func (v *Version) Marshal() ([]byte, error) {
-	return []byte(v.Version), nil
+	return []byte(v.AppVersion), nil
 }
 func (v *Version) Unmarshal(val []byte) error {
-	v.Version = string(val)
+	v.AppVersion = string(val)
 	return nil
 }
 

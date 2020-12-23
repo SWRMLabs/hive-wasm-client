@@ -20,9 +20,6 @@ var log = logger.Logger("events")
 
 const (
 	EVENTS = "http://localhost:4343/v3/events"
-)
-
-const (
 	GATEWAY = "http://localhost:4343/v3/execute"
 )
 
@@ -58,7 +55,6 @@ func Events() js.Func {
 						log.Debug(err)
 						return
 					}
-					// log.Debugf("%+v %+v",event.Result.Topic, out.Data)
 
 					val, err := json.MarshalIndent(out.Data, "", " ")
 					if err != nil {
@@ -67,7 +63,7 @@ func Events() js.Func {
 						return
 					}
 
-					if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") {
+					if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") || (event.Result.Topic == "Settlement") {
 						switch event.Result.Topic {
 
 						case "Status":
@@ -192,6 +188,18 @@ func Events() js.Func {
 
 								}
 
+								OutputArea = jsDoc.Call("getElementById", "LastConnected")
+								if !OutputArea.Truthy() {
+									log.Debug("Unable to get output text area in Time")
+									return
+								}
+								timeStamp := time.Unix(1608705500,0)
+
+								sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
+								log.Debug(sTimeStamp)
+								OutputArea.Set("innerHTML",sTimeStamp)
+
+
 								OutputArea = jsDoc.Call("getElementById", "Time")
 								if !OutputArea.Truthy() {
 									log.Debug("Unable to get output text area in Time")
@@ -218,7 +226,6 @@ func Events() js.Func {
 								sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 								sValue = fmt.Sprintf("%s %s", sFloat, "%")
 								OutputArea.Set("innerHTML", sValue)
-
 							}
 
 						case "Balance":
@@ -245,6 +252,33 @@ func Events() js.Func {
 								}
 								sValue := fmt.Sprintf("%s %s", sFloat, "SWRM")
 								OutputArea.Set("innerHTML", sValue)
+							}
+
+						case "Settlement":
+							{
+								log.Debug("Settlement Hit")
+								var settlement Settlement
+								err = json.Unmarshal(val, &settlement)
+								if err != nil {
+									log.Debug(err)
+									return
+								}
+								log.Debug("Settlement:", settlement)
+
+								jsDoc := js.Global().Get("document")
+								if !jsDoc.Truthy() {
+									log.Debug("Unable to get document object in settlement")
+									return
+								}
+
+								OutputArea := jsDoc.Call("getElementById", "NextDistribution")
+								if !OutputArea.Truthy() {
+									log.Debug("Unable to get output text area in settlement")
+									return
+								}
+								date := (settlement.Date).Format("01-01-2006 3:45 AM")
+								sDate := fmt.Sprintf("%s", date)
+								OutputArea.Set("innerHTML", sDate)
 							}
 
 						case "BalanceCycle":
@@ -279,7 +313,6 @@ func Events() js.Func {
 						case "Peers":
 							{
 								log.Debug("Peers Hit")
-
 								jsDoc := js.Global().Get("document")
 								if !jsDoc.Truthy() {
 									log.Debug("Unable to get document object in peers")
@@ -295,6 +328,7 @@ func Events() js.Func {
 								sValue := fmt.Sprintf("%s", val)
 								log.Debug("Peers:%s", sValue)
 								OutputArea.Set("innerHTML", sValue)
+								GetPeers()
 
 							}
 
@@ -351,7 +385,7 @@ func Events() js.Func {
 						log.Debug("Not Handled Yet")
 					}
 
-					time.Sleep(1 * time.Second)
+					// time.Sleep(1 * time.Second)
 				}
 			}
 		}()
@@ -398,8 +432,7 @@ func GetID() js.Func {
 			log.Debug(out)
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
-				log.Debug(err)
-				log.Debug("Error encountered in Marshalling ID")
+				log.Debugf("Error encountered in Marshalling ID: %s", err)
 				return
 			}
 			var id ID
@@ -415,15 +448,26 @@ func GetID() js.Func {
 			}
 			OutputArea := jsDoc.Call("getElementById", "Address")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in Address")
+				log.Debug("Unable to get output area in Peers")
 				return
 			}
-			var sAddress string
-			for key, value := range id.Addresses {
-				sAddress = sAddress + fmt.Sprintf("%d)%s\n",(key+1),value)
+			OutputArea.Set("innerHTML", "")
+
+			for _, value := range id.Addresses {
+				OutputArea := jsDoc.Call("createElement", "div")
+				if !OutputArea.Truthy() {
+					log.Debug("Unable to get output area in Address")
+					return
+				}
+				OutputArea.Set("innerHTML",value)
+				jsDoc.Call("getElementById", "Address").Call("appendChild", OutputArea)
+				OutputArea = jsDoc.Call("createElement", "br")
+				if !OutputArea.Truthy() {
+					log.Debug("Unable to get output area in Peers")
+					return
+				}
+				jsDoc.Call("getElementById", "Address").Call("appendChild", OutputArea)
 			}
-			log.Debug(sAddress)
-			OutputArea.Set("innerHTML", sAddress)
 
 			OutputArea = jsDoc.Call("getElementById", "PeerID")
 			if !OutputArea.Truthy() {
@@ -486,6 +530,7 @@ func GetPeers() js.Func {
 				log.Debug(err)
 				return
 			}
+
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Debug("Unable to get document object in Peers")
@@ -496,12 +541,24 @@ func GetPeers() js.Func {
 				log.Debug("Unable to get output area in Peers")
 				return
 			}
-			var sPeers string
-			for key, value := range swarmPeers {
-				sPeers = sPeers + fmt.Sprintf("%d)%s\n",(key+1),value)
+			OutputArea.Set("innerHTML", "")
+
+			for _, value := range swarmPeers {
+				OutputArea := jsDoc.Call("createElement", "div")
+				if !OutputArea.Truthy() {
+					log.Debug("Unable to get output area in Peers")
+					return
+				}
+
+				OutputArea.Set("innerHTML", value)
+				jsDoc.Call("getElementById", "Peers").Call("appendChild", OutputArea)
+				OutputArea = jsDoc.Call("createElement", "br")
+				if !OutputArea.Truthy() {
+					log.Debug("Unable to get output area in Peers")
+					return
+				}
+				jsDoc.Call("getElementById", "Peers").Call("appendChild", OutputArea)
 			}
-			log.Debug(sPeers)
-			OutputArea.Set("innerHTML", sPeers)
 		}()
 		return nil
 	})
@@ -639,8 +696,77 @@ func GetProfile() js.Func {
 	return jsonFunc
 }
 
+func GetVersion() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": "hive-cli.exe%$#version%$#-j",
+			}
+
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error(err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error(err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			respBuf, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Error(err.Error())
+				return
+			}
+			data := make(map[string]string)
+			json.Unmarshal(respBuf, &data)
+			log.Debug("This is data")
+			log.Debug(data)
+
+			var out Out
+			err = json.Unmarshal([]byte(data["val"]), &out)
+			if err != nil {
+				log.Debug(err)
+				return
+			}
+			log.Debug("This is out")
+			log.Debug(out)
+			val, err := json.MarshalIndent(out.Data, "", " ")
+			if err != nil {
+				log.Debug(err)
+				log.Debug("Error encountered in Marshalling Version")
+				return
+			}
+			var version Version
+			err = json.Unmarshal(val, &version)
+			if err != nil {
+				log.Debug(err)
+				return
+			}
+			log.Debug("This is AppVersion")
+			log.Debug(version.AppVersion)
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Debug("Unable to get document object in Version")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "Version")
+			if !OutputArea.Truthy() {
+				log.Debug("Unable to get output area in Version")
+				return
+			}
+			OutputArea.Set("innerHTML", version.AppVersion)
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
+
 func main() {
 	logger.SetLogLevel("*", "Debug")
+	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())
