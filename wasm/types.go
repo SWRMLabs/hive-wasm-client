@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"time"
 	store "github.com/StreamSpace/ss-store"
+	"time"
 )
 
 type Event struct {
@@ -43,18 +43,18 @@ type Profile struct {
 }
 
 type Bandwidth struct {
-	Incoming 	float64 	`json:"RateIn,omitempty"`
-	Outgoing 	float64 	`json:"RateOut,omitempty"`
-	Time 	 	int64	`json:"Time,omitempty"`
+	Incoming float64 `json:"RateIn,omitempty"`
+	Outgoing float64 `json:"RateOut,omitempty"`
+	Time     int64   `json:"Time,omitempty"`
 }
 
 type Version struct {
-	AppVersion 		string `json:"appversion,omitempty"`
-	CurrentCommit 	string `json:"currentcommit,omitempty"`
-	Debug 			string   `json:"debug,omitempty"`
-	Environment 	string `json:"environment,omitempty"`
-	Epoch 			string `json:"epoch,omitempty"`
-	CycleDuration 	string `json:"cycleduration,omitempty"`
+	AppVersion    string `json:"appversion,omitempty"`
+	CurrentCommit string `json:"currentcommit,omitempty"`
+	Debug         string `json:"debug,omitempty"`
+	Environment   string `json:"environment,omitempty"`
+	Epoch         string `json:"epoch,omitempty"`
+	CycleDuration string `json:"cycleduration,omitempty"`
 }
 
 type AuthResponse struct {
@@ -126,9 +126,9 @@ func (do *DeviceOwner) Unmarshal(val []byte) error {
 }
 
 type Settlement struct {
-	Cycle int64   `json:"bcn"`
-	Date  time.Time  `json:"settlementDate"`
-	Rate  float64 `json:"dataRatePerByte"`
+	Cycle int64     `json:"bcn"`
+	Date  time.Time `json:"settlementDate"`
+	Rate  float64   `json:"dataRatePerByte"`
 }
 
 func (s *Settlement) GetNamespace() string {
