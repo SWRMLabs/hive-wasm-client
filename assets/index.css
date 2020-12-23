@@ -365,11 +365,9 @@
 	top: 27px;
 }
 .InfoBox_Class{
-	white-space: wrap;
-	word-wrap: break-word;
-	height:2px;
-	width: 200px;
-	overflow-y: auto;
+	overflow-y: scroll;
+	position: relative;
+	height: 318px;
 }
 .Rectangle_2_bz_Class {
 	fill: url(#Rectangle_2_bz);
