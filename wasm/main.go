@@ -35,31 +35,41 @@ func Events() js.Func {
 			}
 
 			reader := bufio.NewReader(resp.Body)
+	for {
+			var eventsDataString string
 
-			for {
-				line, _, err := reader.ReadLine()
-				if err != nil || line == nil {
-					Events()
-				} else {
-					log.Debug(string(line))
+			line, isPrefix, err := reader.ReadLine()
+			if err != nil {
+				log.Debugf("Error in reading data string: %s", err)
+				continue
+			}
+			eventsDataString = string(line)
+
+			for isPrefix {
+				line, isPrefix, err = reader.ReadLine()
+				if err != nil {
+					log.Debugf("Error in reading prefixed data string: %s", err)
+					continue
+				}
+				eventsDataString += string(line)
+			}
+					log.Debug(eventsDataString)
 					var event Event
-					err = json.Unmarshal(line, &event)
+					err = json.Unmarshal([]byte(eventsDataString), &event)
 					if err != nil {
-						log.Debug(err)
+						log.Error("Error in Unmarshalling eventsDataString:",err)
 						return
 					}
 					log.Debug(event)
 					var out Out
 					err = json.Unmarshal([]byte(event.Result.Val), &out)
 					if err != nil {
-						log.Debug(err)
+						log.Error("Error in Unmarshalling Out:",err)
 						return
 					}
-
 					val, err := json.MarshalIndent(out.Data, "", " ")
 					if err != nil {
-						log.Debug(err)
-						log.Debug("Error encountered in Marshalling")
+						log.Error("Error encountered in Marshalling:",err)
 						return
 					}
 
@@ -72,11 +82,9 @@ func Events() js.Func {
 								var status Status
 								err = json.Unmarshal(val, &status)
 								if err != nil {
-									log.Debug(err)
+									log.Error("Error in Unmarshalling Status:",err)
 									return
 								}
-								log.Debug(status)
-
 								jsDoc := js.Global().Get("document")
 								if !jsDoc.Truthy() {
 									log.Debug("Unable to get document object in status")
@@ -140,8 +148,6 @@ func Events() js.Func {
 								for key := 0; key < serverStatus.NumField(); key++ {
 									name := serverStatus.Type().Field(key).Name
 									value := serverStatus.Field(key).Interface()
-									log.Debug(name)
-									log.Debug(value)
 									OutputArea := jsDoc.Call("getElementById", name)
 									if !OutputArea.Truthy() {
 										log.Debug("Unable to get output text area in server status")
@@ -155,12 +161,9 @@ func Events() js.Func {
 								for key := 0; key < values.NumField(); key++ {
 									name := values.Type().Field(key).Name
 									value := values.Field(key).Interface()
-
 									if (name == "TaskManagerStatus") || (name == "TotalUptimePercentage") || (name == "SessionStartTime") || (name == "ServerDetails") {
 										continue
 									}
-
-									log.Debug(values.Type().Field(key).Name)
 									OutputArea := jsDoc.Call("getElementById", name)
 									if !OutputArea.Truthy() {
 										log.Debug("Unable to get output text area in status keys")
@@ -187,18 +190,15 @@ func Events() js.Func {
 									OutputArea.Set("innerHTML", sValue)
 
 								}
-
 								OutputArea = jsDoc.Call("getElementById", "LastConnected")
 								if !OutputArea.Truthy() {
-									log.Debug("Unable to get output text area in Time")
+									log.Debug("Unable to get output text area in Last Connected")
 									return
 								}
-								timeStamp := time.Unix(1608705500,0)
+								timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp,0)
 
 								sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-								log.Debug(sTimeStamp)
 								OutputArea.Set("innerHTML",sTimeStamp)
-
 
 								OutputArea = jsDoc.Call("getElementById", "Time")
 								if !OutputArea.Truthy() {
@@ -260,54 +260,45 @@ func Events() js.Func {
 								var settlement Settlement
 								err = json.Unmarshal(val, &settlement)
 								if err != nil {
-									log.Debug(err)
+									log.Error("Error Unmarshalling settlement:",err)
 									return
 								}
-								log.Debug("Settlement:", settlement)
-
 								jsDoc := js.Global().Get("document")
 								if !jsDoc.Truthy() {
 									log.Debug("Unable to get document object in settlement")
 									return
 								}
-
 								OutputArea := jsDoc.Call("getElementById", "NextDistribution")
 								if !OutputArea.Truthy() {
 									log.Debug("Unable to get output text area in settlement")
 									return
 								}
-								date := (settlement.Date).Format("01-01-2006 3:45 AM")
-								sDate := fmt.Sprintf("%s", date)
-								OutputArea.Set("innerHTML", sDate)
+								date := (settlement.Date).Format("02-01-2006")
+								time := (settlement.Date).Format(time.Kitchen)
+								sDateTime := fmt.Sprintf("%s %s", date, time)
+								OutputArea.Set("innerHTML", sDateTime)
 							}
-
 						case "BalanceCycle":
 							{
 								log.Debug("BCN Hit")
 								var bcnBalance BCNBalance
 								err = json.Unmarshal(val, &bcnBalance)
 								if err != nil {
-									log.Debug(err)
+									log.Error("Error in Unmarshalling BCN Balance:",err)
 									return
 								}
-								log.Debug(bcnBalance)
-
 								jsDoc := js.Global().Get("document")
 								if !jsDoc.Truthy() {
 									log.Debug("Unable to get document object in balance cycle")
 									return
 								}
-
 								OutputArea := jsDoc.Call("getElementById", "Pending")
 								if !OutputArea.Truthy() {
-									log.Debug("Unable to get output text area in balance cycle keys")
+									log.Debug("Unable to get output text area in Pending")
 									return
 								}
-
 								sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
-								log.Debug("This is Pending:", sValue)
 								OutputArea.Set("innerHTML", sValue)
-
 							}
 
 						case "Peers":
@@ -324,11 +315,8 @@ func Events() js.Func {
 									log.Debug("Unable to get output text area in peers")
 									return
 								}
-
 								sValue := fmt.Sprintf("%s", val)
-								log.Debug("Peers:%s", sValue)
 								OutputArea.Set("innerHTML", sValue)
-								GetPeers()
 
 							}
 
@@ -336,14 +324,11 @@ func Events() js.Func {
 							{
 								log.Debug("Settings Hit")
 								var settings Settings
-
 								err = json.Unmarshal(val, &settings)
 								if err != nil {
-									log.Debug(err)
+									log.Error("Error in Unmarshalling Settings: ",err)
 									return
 								}
-								log.Debug(settings)
-
 								jsDoc := js.Global().Get("document")
 								if !jsDoc.Truthy() {
 									log.Debug("Unable to get document object in settings")
@@ -355,9 +340,7 @@ func Events() js.Func {
 								for key := 0; key < values.NumField(); key++ {
 									name := values.Type().Field(key).Name
 									value := values.Field(key).Interface()
-									log.Debug(name)
 									if (name == "MaxStorage") || (name == "UsedStorage") {
-										log.Debug(value)
 										OutputArea := jsDoc.Call("getElementById", name)
 										if !OutputArea.Truthy() {
 											log.Debug("Unable to get output text area in settings keys")
@@ -385,9 +368,8 @@ func Events() js.Func {
 						log.Debug("Not Handled Yet")
 					}
 
-					// time.Sleep(1 * time.Second)
 				}
-			}
+				// time.Sleep(1 * time.Second)
 		}()
 		return nil
 	})
@@ -418,27 +400,27 @@ func GetID() js.Func {
 				return
 			}
 			data := make(map[string]string)
-			json.Unmarshal(respBuf, &data)
-			log.Debug("This is data")
-			log.Debug(data)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in Unmarshalling respBuf in GetID", err)
+				return
+			}
 
 			var out Out
 			err = json.Unmarshal([]byte(data["val"]), &out)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in Unmarshalling data in GetID",err)
 				return
 			}
-			log.Debug("This is out")
-			log.Debug(out)
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
-				log.Debugf("Error encountered in Marshalling ID: %s", err)
+				log.Error("Error in Marshalling out in GetID: ", err)
 				return
 			}
 			var id ID
 			err = json.Unmarshal(val, &id)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in Unmarshalling ID in GetID: ", err)
 				return
 			}
 			jsDoc := js.Global().Get("document")
@@ -448,7 +430,7 @@ func GetID() js.Func {
 			}
 			OutputArea := jsDoc.Call("getElementById", "Address")
 			if !OutputArea.Truthy() {
-				log.Debug("Unable to get output area in Peers")
+				log.Debug("Unable to get output area in Address")
 				return
 			}
 			OutputArea.Set("innerHTML", "")
@@ -463,7 +445,7 @@ func GetID() js.Func {
 				jsDoc.Call("getElementById", "Address").Call("appendChild", OutputArea)
 				OutputArea = jsDoc.Call("createElement", "br")
 				if !OutputArea.Truthy() {
-					log.Debug("Unable to get output area in Peers")
+					log.Debug("Unable to get output area in Address")
 					return
 				}
 				jsDoc.Call("getElementById", "Address").Call("appendChild", OutputArea)
@@ -474,8 +456,6 @@ func GetID() js.Func {
 				log.Debug("Unable to get output area in PeerID")
 				return
 			}
-			log.Debug("This is Peer ID")
-			log.Debug(id.PeerID)
 			OutputArea.Set("innerHTML", id.PeerID)
 		}()
 		return nil
@@ -496,41 +476,38 @@ func GetPeers() js.Func {
 			}
 			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in getting response in GetPeers: ", err.Error())
 				return
 			}
 			defer resp.Body.Close()
 			respBuf, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in Reading Body in GetPeers: ",err.Error())
 				return
 			}
 			data := make(map[string]string)
-			json.Unmarshal(respBuf, &data)
-			log.Debug("This is data")
-			log.Debug(data)
-
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in Unmarshalling respBuf in GetPeers: ", err.Error())
+				return
+			}
 			var out Out
 			err = json.Unmarshal([]byte(data["val"]), &out)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in Unmarshalling data in GetPeers: ",err)
 				return
 			}
-			log.Debug("This is out")
-			log.Debug(out)
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
-				log.Debug(err)
-				log.Debug("Error encountered in Marshalling Peers")
+				log.Error("Error encountered in Marshalling in GetPeers: ", err.Error())
 				return
 			}
 			var swarmPeers []string
 			err = json.Unmarshal(val, &swarmPeers)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in Unmarshalling SwarmPeers: ", err.Error())
 				return
 			}
-
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Debug("Unable to get document object in Peers")
@@ -549,7 +526,6 @@ func GetPeers() js.Func {
 					log.Debug("Unable to get output area in Peers")
 					return
 				}
-
 				OutputArea.Set("innerHTML", value)
 				jsDoc.Call("getElementById", "Peers").Call("appendChild", OutputArea)
 				OutputArea = jsDoc.Call("createElement", "br")
@@ -574,34 +550,33 @@ func GetStorageLocation() js.Func {
 
 			buf, err := json.Marshal(payload)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in Marshalling Payload in GetStorageLocation: ",err.Error())
 				return
 			}
 			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in getting response in GetStorageLocation: ",err.Error())
 				return
 			}
 			defer resp.Body.Close()
 			respBuf, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in Reading Body in GetStorageLocation: ",err.Error())
 				return
 			}
 			data := make(map[string]string)
-			json.Unmarshal(respBuf, &data)
-			log.Debug("This is data")
-			log.Debug(data)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in Unmarshalling respBuf in GetStorageLocation: ", err.Error())
+				return
+			}
 
 			var out Out
 			err = json.Unmarshal([]byte(data["val"]), &out)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in Unmarshalling data in GetStorageLocation: ", err.Error())
 				return
 			}
-			log.Debug("This is out")
-			log.Debug(out)
-
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Debug("Unable to get document object in StoragePath")
@@ -612,7 +587,6 @@ func GetStorageLocation() js.Func {
 				log.Debug("Unable to get output area in StoragePath")
 				return
 			}
-			log.Debug(out.Data)
 			OutputArea.Set("innerHTML", out.Data)
 		}()
 		return nil
@@ -626,51 +600,46 @@ func GetProfile() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#profile%$#-j",
 			}
-
 			buf, err := json.Marshal(payload)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in Marshalling Payload in GetProfile: ", err.Error())
 				return
 			}
 			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in getting response in GetProfile: ",err.Error())
 				return
 			}
 			defer resp.Body.Close()
 			respBuf, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in reading respBuf in GetProfile: ",err.Error())
 				return
 			}
 			data := make(map[string]string)
-			json.Unmarshal(respBuf, &data)
-			log.Debug("This is data")
-			log.Debug(data)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in unmarshalling respBuf in GetProfile: ",err.Error())
+				return
+			}
 
 			var out Out
 			err = json.Unmarshal([]byte(data["val"]), &out)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in unmarshalling data in GetProfile: ",err.Error())
 				return
 			}
-			log.Debug("This is out")
-			log.Debug(out)
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
-				log.Debug(err)
-				log.Debug("Error encountered in Marshalling Profile")
+				log.Error("Error in marshalling out in GetProfile: ",err.Error())
 				return
 			}
 			var profile Profile
 			err = json.Unmarshal(val, &profile)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in unmarshalling val in GetProfile: ",err.Error())
 				return
 			}
-			log.Debug("This is profile")
-			log.Debug(profile)
-
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Debug("Unable to get document object in Profile")
@@ -696,6 +665,79 @@ func GetProfile() js.Func {
 	return jsonFunc
 }
 
+func GetBandwidth() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": "hive-cli.exe%$#stat%$#bandwidth%$#-j",
+			}
+
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in marshalling Payload in GetBandwidth: ",err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in GetBandwidth: ",err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			respBuf, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Error("Error in reading Body in GetBandwidth: ",err.Error())
+				return
+			}
+			data := make(map[string]string)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in unmarshalling respBuf in GetBandwidth: ",err.Error())
+				return
+			}
+
+			var out Out
+			err = json.Unmarshal([]byte(data["val"]), &out)
+			if err != nil {
+				log.Error("Error in unmarshalling data in GetBandwidth: ",err.Error())
+				return
+			}
+			val, err := json.MarshalIndent(out.Data, "", " ")
+			if err != nil {
+				log.Error("Error in marshalling out in GetBandwidth: ",err.Error())
+				return
+			}
+			var bandwidth Bandwidth
+			err = json.Unmarshal(val, &bandwidth)
+			if err != nil {
+				log.Error("Error in unmarshalling val in GetBandwidth: ",err.Error())
+				return
+			}
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Debug("Unable to get document object in Bandwidth")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "Incoming")
+			if !OutputArea.Truthy() {
+				log.Debug("Unable to get output area in incoming")
+				return
+			}
+			sIncoming := fmt.Sprintf("%.3f %s", (bandwidth.Incoming)/1000, "MB")
+			OutputArea.Set("innerHTML", sIncoming)
+
+			OutputArea = jsDoc.Call("getElementById", "Outgoing")
+			if !OutputArea.Truthy() {
+				log.Debug("Unable to get output area in outgoing")
+				return
+			}
+			sOutgoing := fmt.Sprintf("%.3f %s", (bandwidth.Outgoing)/1000, "MB")
+			OutputArea.Set("innerHTML", sOutgoing)
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
 func GetVersion() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -705,47 +747,46 @@ func GetVersion() js.Func {
 
 			buf, err := json.Marshal(payload)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in marshalling payload in GetVersion: ",err.Error())
 				return
 			}
 			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in getting response in GetVersion: ",err.Error())
 				return
 			}
 			defer resp.Body.Close()
 			respBuf, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.Error(err.Error())
+				log.Error("Error in reading respBuf in GetVersion: ",err.Error())
 				return
 			}
 			data := make(map[string]string)
-			json.Unmarshal(respBuf, &data)
-			log.Debug("This is data")
-			log.Debug(data)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in unmarshalling respbuf in GetVersion: ",err.Error())
+				return
+			}
 
 			var out Out
 			err = json.Unmarshal([]byte(data["val"]), &out)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in unmarshalling data in GetVersion: ",err.Error())
 				return
 			}
-			log.Debug("This is out")
-			log.Debug(out)
+
 			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
-				log.Debug(err)
-				log.Debug("Error encountered in Marshalling Version")
+				log.Error("Error in marshalling out in GetVersion: ",err.Error())
 				return
 			}
 			var version Version
 			err = json.Unmarshal(val, &version)
 			if err != nil {
-				log.Debug(err)
+				log.Error("Error in unmarshalling val in GetVersion: ",err.Error())
 				return
 			}
-			log.Debug("This is AppVersion")
-			log.Debug(version.AppVersion)
+
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Debug("Unable to get document object in Version")
@@ -768,6 +809,7 @@ func main() {
 	logger.SetLogLevel("*", "Debug")
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
+	js.Global().Set("GetBandwidth", GetBandwidth())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())
 	js.Global().Set("GetPeers", GetPeers())

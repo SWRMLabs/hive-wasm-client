@@ -42,6 +42,12 @@ type Profile struct {
 	IsEmailVerified bool   `json:"isEmailVerified",omitempty"`
 }
 
+type Bandwidth struct {
+	Incoming 	float64 	`json:"RateIn,omitempty"`
+	Outgoing 	float64 	`json:"RateOut,omitempty"`
+	Time 	 	int64	`json:"Time,omitempty"`
+}
+
 type Version struct {
 	AppVersion 		string `json:"appversion,omitempty"`
 	CurrentCommit 	string `json:"currentcommit,omitempty"`

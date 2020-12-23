@@ -1286,7 +1286,7 @@
 	font-size: 25px;
 	color: rgba(133,133,133,1);
 }
-.INCOMING_Class {
+.IncomingLabel_Class {
 	left: 195px;
 	top: 710px;
 	position: absolute;
@@ -1300,7 +1300,7 @@
 	font-size: 18px;
 	color: rgba(133,133,133,1);
 }
-.OUTGOING_Class {
+.OutgoingLabel_Class {
 	left: 404px;
 	top: 710px;
 	position: absolute;
@@ -2008,7 +2008,7 @@ div::-webkit-scrollbar-thumb{
 	font-size: 33px;
 	color: rgba(255,255,255,1);
 }
-.ID30000_Mbps_Class {
+.Incoming_Class {
 	left: 168px;
 	top: 662px;
 	position: absolute;
@@ -2022,7 +2022,7 @@ div::-webkit-scrollbar-thumb{
 	font-size: 26px;
 	color: rgba(255,255,255,1);
 }
-.ID10000_Mbps_Class {
+.Outgoing_Class {
 	left: 380px;
 	top: 662px;
 	position: absolute;
