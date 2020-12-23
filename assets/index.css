@@ -2237,8 +2237,8 @@ div::-webkit-scrollbar-thumb{
 	height: 112px;
 	transform: translate(0.232px, -0.123px) matrix(1,0,0,1,29.2684,8.6234) rotate(90deg);
 	transform-origin: center;
-	left: 0px;
-	top: 0px;
+	left: 5px;
+	top: 5px;
 }
 .Polygon_4_Class {
 	opacity: 0.23;
@@ -2257,8 +2257,8 @@ div::-webkit-scrollbar-thumb{
 	height: 112px;
 	transform: translate(0.232px, -0.123px) matrix(1,0,0,1,78.2684,65.6234) rotate(90deg);
 	transform-origin: center;
-	left: 0px;
-	top: 0px;
+	left: 5px;
+	top: 5px;
 }
 .Polygon_5_Class {
 	opacity: 0.23;
@@ -2277,8 +2277,8 @@ div::-webkit-scrollbar-thumb{
 	height: 113px;
 	transform: translate(0.232px, -0.123px) matrix(1,0,0,1,-8.2316,84.1234) rotate(90deg);
 	transform-origin: center;
-	left: 0px;
-	top: 0px;
+	left: 5px;
+	top: 5px;
 }
 .Rectangle_7_Class {
 	fill: rgba(138,138,138,1);
