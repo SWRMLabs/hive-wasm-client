@@ -14,11 +14,19 @@
 		GetVersion();
 		GetProfile();
 		GetBandwidth();
+		GetEarning();
 		GetStorageLocation();
 		GetPeers();
 		GetID();
 		Events();
 	});
+	 // function GetPeerId() {
+     //        try {
+     //            GetEarning();
+     //        } catch (err) {
+     //            console.error('Caught exception', err)
+     //        }
+     //    }
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
 </head>
@@ -363,9 +371,6 @@
 	<div id="StatusName" class="StatusName_Class">
 		<span>Name</span>
 	</div>
-	<div class="ALL_DEVICES_Class">
-		<span>ALL DEVICES</span>
-	</div>
 	<div id="StatusStatus" class="StatusStatus_Class">
 		<span>Status</span>
 	</div>
@@ -490,11 +495,11 @@
 				</rect>
 			</svg>
 		</div>
-		<div class="Earned_this_Week_Class">
-			<span>Earned this Week</span>
+		<div id="EarnedCycleLabel" class="EarnedCycleLabel_Class">
+			Earned this Cycle
 		</div>
-		<div class="-0002347_SWRM_e_Class">
-			<span>-0.002347 SWRM</span>
+		<div id="EarnedCycle" class="EarnedCycle_Class">
+
 		</div>
 	</div>
 	<div class="Group_40_Class">
@@ -508,11 +513,11 @@
 				</rect>
 			</svg>
 		</div>
-		<div class="Downloaded_e_Class">
-			<span>Downloaded</span>
+		<div id = "DownloadedCycleLabel" class="DownloadedCycleLabel_Class">
+			Downloaded
 		</div>
-		<div class="ID437_MB_Class">
-			<span>4.37 MB</span>
+		<div id = "DownloadedCycle" class="DownloadedCycle_Class">
+
 		</div>
 	</div>
 	<div class="Group_41_Class">
@@ -526,11 +531,11 @@
 				</rect>
 			</svg>
 		</div>
-		<div class="Served_Class">
-			<span>Served</span>
+		<div id="ServedLabel" class="ServedLabel_Class">
+			Served
 		</div>
-		<div class="ID0_B_Class">
-			<span>0 B</span>
+		<div id="ServedCycle" class="ServedCycle_Class">
+
 		</div>
 	</div>
 	<div id="MaxStorage" class="MaxStorage_Class">
@@ -547,7 +552,7 @@
 			<span>Served</span>
 		</div>
 	</div>
-	<div id="PeersData" class="PeersData_Class">
+	<div id="PeersData" class="PeersData_Class" onchange="GetPeers()">
 
 	</div>
 	<div id="Incoming" class="Incoming_Class">
@@ -764,7 +769,7 @@
 			</ellipse>
 		</svg>
 	</div>
-	<div class="Group_37_Class">
+	 <div class="Group_37_Class">
 		<svg class="Rectangle_10">
 			<rect class="Rectangle_10_Class" rx="40.5" ry="40.5" x="0" y="0" width="544" height="81">
 			</rect>
@@ -773,15 +778,12 @@
 			<rect class="Rectangle_11_Class" rx="40.5" ry="40.5" x="0" y="0" width="544" height="81">
 			</rect>
 		</svg>
+		<div id="DropDownDiv" class="DropdownDiv_Class">
+			<select id="DevicesDropDown"  class="DevicesDropDown_Class" onchange="GetEarning()">
+			</select>
+		</div>
 	</div>
-	<svg class="Polygon_7" viewBox="0 0 19 16">
-		<path class="Polygon_7_Class" d="M 9.499999046325684 0 L 19 16 L 0 16 Z">
-		</path>
-	</svg>
-	<svg class="Polygon_6" viewBox="0 0 19 16">
-		<path class="Polygon_6_Class" d="M 9.499999046325684 0 L 19 16 L 0 16 Z">
-		</path>
-	</svg>
+
 	<a href = "Settings.html" id="SettingsToggle" class="SettingsToggle_Class">
 		<svg class="Path_31" viewBox="133.609 133.609 29.642 29.642">
 			<path class="Path_31_Class" d="M 148.4297790527344 133.6089935302734 C 140.2578582763672 133.6089935302734 133.6090087890625 140.2578125 133.6090087890625 148.4297790527344 C 133.6090087890625 156.6017456054688 140.2578125 163.2505493164063 148.4297790527344 163.2505493164063 C 156.6017608642578 163.2505493164063 163.2505645751953 156.6017456054688 163.2505645751953 148.4297790527344 C 163.2505645751953 140.2578125 156.6017608642578 133.6089935302734 148.4297790527344 133.6089935302734 Z M 148.4297790527344 159.5453338623047 C 142.3008422851563 159.5453338623047 137.3142395019531 154.5587158203125 137.3142395019531 148.4297790527344 C 137.3142395019531 142.3008117675781 142.3008422851563 137.3142242431641 148.4297790527344 137.3142242431641 C 154.5587463378906 137.3142242431641 159.5453491210938 142.3008117675781 159.5453491210938 148.4297790527344 C 159.5453491210938 154.5587158203125 154.5587463378906 159.5453338623047 148.4297790527344 159.5453338623047 Z M 148.4297790527344 159.5453338623047">

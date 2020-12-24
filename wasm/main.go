@@ -72,7 +72,7 @@ func Events() js.Func {
 					return
 				}
 
-				if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") || (event.Result.Topic == "Settlement") {
+				if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") || (event.Result.Topic == "Settlement") || (event.Result.Topic == "Earning") {
 					switch event.Result.Topic {
 					case "Status":
 						{
@@ -319,6 +319,56 @@ func Events() js.Func {
 							OutputArea.Set("innerHTML", sValue)
 
 						}
+
+					case "Earning":
+						{
+							log.Debug("Earning Hit")
+							var netEarnings NetEarnings
+							err = json.Unmarshal(val, &netEarnings)
+							if err != nil {
+								log.Error("Error in Unmarshalling Net Earnings: ", err.Error())
+								return
+							}
+							log.Debugf("%+v",netEarnings)
+
+							jsDoc := js.Global().Get("document")
+							if !jsDoc.Truthy() {
+								log.Error("Unable to get document object in Earning")
+								return
+							}
+							OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
+							if !OutputArea.Truthy() {
+								log.Error("Unable to get create div in task manager additional status")
+								return
+							}
+							OutputArea.Set("innerHTML", "")
+							OutputArea = jsDoc.Call("createElement", "option")
+							if !OutputArea.Truthy() {
+								log.Error("Unable to get create div in task manager additional status")
+								return
+							}
+							OutputArea.Set("innerHTML", "ALL DEVICES")
+							OutputArea.Set("value", "ALL DEVICES")
+							jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
+
+							for _, value := range(netEarnings.Devices) {
+
+								OutputArea := jsDoc.Call("createElement", "option")
+								if !OutputArea.Truthy() {
+									log.Error("Unable to get create div in task manager additional status")
+									return
+								}
+								sOption := fmt.Sprintf("%s-%s",value.PeerId, value.Name)
+								OutputArea.Set("innerHTML", sOption)
+								OutputArea.Set("value", value.PeerId)
+								jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
+							}
+
+							log.Debugf("This is Device Total: %+v ", netEarnings.DeviceTotal)
+
+						}
+
+
 					case "Settings":
 						{
 							log.Debug("Settings Hit")
@@ -735,6 +785,124 @@ func GetBandwidth() js.Func {
 	return jsonFunc
 }
 
+func GetEarning() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": "hive-cli.exe%$#earning%$#-g%$#-j",
+			}
+
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in marshalling Payload in GetEarning: ", err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in GetEarning: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			respBuf, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Error("Error in reading Body in GetEarning: ", err.Error())
+				return
+			}
+			data := make(map[string]string)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in unmarshalling respBuf in GetEarning: ", err.Error())
+				return
+			}
+
+			var out Out
+			err = json.Unmarshal([]byte(data["val"]), &out)
+			if err != nil {
+				log.Error("Error in unmarshalling data in GetEarning: ", err.Error())
+				return
+			}
+			val, err := json.MarshalIndent(out.Data, "", " ")
+			if err != nil {
+				log.Error("Error in marshalling out in GetBandwidth: ", err.Error())
+				return
+			}
+			var netEarnings NetEarnings
+			err = json.Unmarshal(val, &netEarnings)
+			if err != nil {
+				log.Error("Error in Unmarshalling Net Earnings in GetEaring: ", err.Error())
+				return
+			}
+
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Error("Unable to get document object in Bandwidth")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in GetEarning")
+				return
+			}
+			value := fmt.Sprintf("%s", OutputArea.Get("value"))
+			if value == "ALL DEVICES" {
+
+				earned := fmt.Sprintf("%.5f %s",netEarnings.DeviceTotal.Earned, "SWRM")
+				download := fmt.Sprintf("%.0f %s",(netEarnings.DeviceTotal.Download)/1000, "MB")
+				served := fmt.Sprintf("%.2f %s",(netEarnings.DeviceTotal.Served)/1000, "MB")
+
+				OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in EarnedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", earned)
+
+				OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in DownloadedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", download)
+
+				OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in ServedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", served)
+
+			} else if value != "" {
+				earned := fmt.Sprintf("%.5f %s",netEarnings.Data[value][0].Earned, "SWRM")
+				download := fmt.Sprintf("%.2f %s",(netEarnings.Data[value][0].Download)/1000, "MB")
+				served := fmt.Sprintf("%.2f %s",(netEarnings.Data[value][0].Served)/1000, "MB")
+
+				OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in EarnedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", earned)
+
+				OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in DownloadedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", download)
+
+				OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in ServedCycle")
+					return
+				}
+				OutputArea.Set("innerHTML", served)
+			}
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
 func GetVersion() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -805,6 +973,7 @@ func main() {
 	logger.SetLogLevel("*", "Debug")
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
+	js.Global().Set("GetEarning", GetEarning())
 	js.Global().Set("GetBandwidth", GetBandwidth())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())

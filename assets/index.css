@@ -1035,13 +1035,29 @@
 	font-size: 22px;
 	color: rgba(244,105,50,1);
 }
-.ALL_DEVICES_Class {
-	opacity: 0.76;
-	left: 1263px;
-	top: 1450px;
+.DropdownDiv_Class{
+	/* height: 50px;
 	position: absolute;
+	border-radius: 20.5px;
+	border: 1.5px #676666;
+	left: 1300px;
+	top: 1450px;
+    stroke: rgba(103,102,102,1);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+}
+
+.DevicesDropDown_Class {
+	padding: 5px;
+	outline: none;
+	opacity: 0.76;
+	/* left: 1000px;
+	top: 1450px; */
+	position: relative;
 	overflow: visible;
-	width: 139px;
+	top: -10.5px;
+	left: 12px;
+	width: 510px;
+	height: 105px;
 	white-space: nowrap;
 	text-align: center;
 	font-family: Segoe UI;
@@ -1049,6 +1065,8 @@
 	font-weight: bold;
 	font-size: 24px;
 	color: rgba(244,105,50,1);
+
+	background: none;
 }
 .StatusStatus_Class {
 	opacity: 0.76;
@@ -1769,7 +1787,7 @@ div::-webkit-scrollbar-thumb{
 	left: 0px;
 	top: 0px;
 }
-.Earned_this_Week_Class {
+.EarnedCycleLabel_Class {
 	left: 165px;
 	top: 90px;
 	position: absolute;
@@ -1783,7 +1801,7 @@ div::-webkit-scrollbar-thumb{
 	font-size: 24px;
 	color: rgba(244,105,50,1);
 }
-.-0002347_SWRM_e_Class {
+.EarnedCycle_Class {
 	left: 133px;
 	top: 31px;
 	position: absolute;
@@ -1825,7 +1843,7 @@ div::-webkit-scrollbar-thumb{
 	left: 0px;
 	top: 0px;
 }
-.Downloaded_e_Class {
+.DownloadedCycleLabel_Class {
 	left: 58px;
 	top: 89px;
 	position: absolute;
@@ -1839,7 +1857,7 @@ div::-webkit-scrollbar-thumb{
 	font-size: 24px;
 	color: rgba(244,105,50,1);
 }
-.ID437_MB_Class {
+.DownloadedCycle_Class {
 	left: 60px;
 	top: 27px;
 	position: absolute;
@@ -1881,7 +1899,7 @@ div::-webkit-scrollbar-thumb{
 	left: 0px;
 	top: 0px;
 }
-.Served_Class {
+.ServedLabel_Class {
 	left: 95px;
 	top: 90px;
 	position: absolute;
@@ -1895,8 +1913,8 @@ div::-webkit-scrollbar-thumb{
 	font-size: 23px;
 	color: rgba(244,105,50,1);
 }
-.ID0_B_Class {
-	left: 105px;
+.ServedCycle_Class {
+	left: 65px;
 	top: 26px;
 	position: absolute;
 	overflow: visible;
