@@ -18,15 +18,12 @@
 		GetStorageLocation();
 		GetPeers();
 		GetID();
+		GetUptime();
 		Events();
+
 	});
-	 // function GetPeerId() {
-     //        try {
-     //            GetEarning();
-     //        } catch (err) {
-     //            console.error('Caught exception', err)
-     //        }
-     //    }
+	setInterval(function(){ GetBandwidth() }, 3000);
+	setInterval(function(){ GetUptime() }, 1000);
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
 </head>
@@ -77,6 +74,9 @@
 			<rect class="Rectangle_2_ba_Class" rx="0" ry="0" x="0" y="0" width="1038" height="444">
 			</rect>
 		</svg>
+		<div id = "GraphBox" class="GraphBox_Class">
+
+		</div>
 	</div>
 	<div id="TaskBox" class="TaskBox_Class">
 
@@ -253,7 +253,7 @@
 	<div id="StatusLabel" class="StatusLabel_Class">
 		<span>Status:</span>
 	</div>
-	<div class="Repeat_Grid_1_Class">
+	<!-- <div class="Repeat_Grid_1_Class">
 		<div class=" Repeat_Grid_1_0_Class">
 			<div class="-00005_Class">
 				<span>-0.0005</span>
@@ -299,7 +299,7 @@
 				<span>-0.0045</span>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<div class="VersionLabel_Class">
 		<span>Version:</span>
 	</div>
@@ -421,9 +421,9 @@
 		<span>Server Status</span>
 	</div>
 	<div class="EARNINGS_BY_WEEK_Class">
-		<span>EARNINGS BY WEEK</span>
+		EARNINGS BY CYCLE
 	</div>
-	<div class="Repeat_Grid_3_Class">
+	<!-- <div class="Repeat_Grid_3_Class">
 		<div class=" Repeat_Grid_3_0_Class">
 			<div class="ID02_Dec_2020_Class">
 				<span>02 Dec 2020</span>
@@ -459,7 +459,7 @@
 				<span>08 Dec 2020</span>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<div id = "Peers" class="Peers_Class">
 
 	</div>
@@ -635,7 +635,7 @@
 		</rect>
 	</svg> -->
 	</svg>
-	<div class="Repeat_Grid_2_Class">
+	<!-- <div class="Repeat_Grid_2_Class">
 		<div class=" Repeat_Grid_2_0_Class">
 			<svg class="Path_26" viewBox="318 1579.213 887.585 1">
 				<path class="Path_26_Class" d="M 318 1579.213256835938 L 1205.585205078125 1579.213256835938">
@@ -647,8 +647,8 @@
 				<path class="Path_26_gh_Class" d="M 318 1579.213256835938 L 1205.585205078125 1579.213256835938">
 				</path>
 			</svg>
-		</div>
-		<div class=" Repeat_Grid_2_2_Class">
+		</div> -->
+		<!-- <div class=" Repeat_Grid_2_2_Class">
 			<svg class="Path_26_gj" viewBox="318 1579.213 887.585 1">
 				<path class="Path_26_gj_Class" d="M 318 1579.213256835938 L 1205.585205078125 1579.213256835938">
 				</path>
@@ -690,16 +690,16 @@
 				</path>
 			</svg>
 		</div>
-	</div>
-	<svg class="Path_28" viewBox="492 1955.135 774.549 211.366">
+	</div> -->
+	<!-- <svg class="Path_28" viewBox="492 1955.135 774.549 211.366">
 		<path class="Path_28_Class" d="M 492 1990.043701171875 L 621.3739624023438 2131.772216796875 L 750.1095581054688 2166.5009765625 L 878.8451538085938 2061.1171875 L 1008.179565429688 2095.845947265625 L 1136.915161132813 1955.134887695313 L 1266.548950195313 2166.5009765625">
 		</path>
-	</svg>
-	<svg class="Path_27" viewBox="492 1955.135 774.549 211.366">
+	</svg> -->
+	<!-- <svg class="Path_27" viewBox="492 1955.135 774.549 211.366">
 		<path class="Path_27_Class" d="M 492 1990.043701171875 L 621.3739624023438 2131.772216796875 L 750.1095581054688 2166.5009765625 L 878.8451538085938 2061.1171875 L 1008.179565429688 2095.845947265625 L 1136.915161132813 1955.134887695313 L 1266.548950195313 2166.5009765625">
 		</path>
-	</svg>
-	<div class="Group_30_Class">
+	</svg> -->
+	<!-- <div class="Group_30_Class">
 		<svg class="Ellipse_8">
 			<ellipse class="Ellipse_8_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -708,8 +708,8 @@
 			<ellipse class="Ellipse_9_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_31_Class">
+	</div> -->
+	<!-- <div class="Group_31_Class">
 		<svg class="Ellipse_8_g">
 			<ellipse class="Ellipse_8_g_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -718,8 +718,8 @@
 			<ellipse class="Ellipse_9_g_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_32_Class">
+	</div> -->
+	<!-- <div class="Group_32_Class">
 		<svg class="Ellipse_8_ha">
 			<ellipse class="Ellipse_8_ha_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -728,8 +728,8 @@
 			<ellipse class="Ellipse_9_ha_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_33_Class">
+	</div> -->
+	<!-- <div class="Group_33_Class">
 		<svg class="Ellipse_8_hb">
 			<ellipse class="Ellipse_8_hb_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -738,8 +738,8 @@
 			<ellipse class="Ellipse_9_hb_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_34_Class">
+	</div> -->
+	<!-- <div class="Group_34_Class">
 		<svg class="Ellipse_8_hc">
 			<ellipse class="Ellipse_8_hc_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -748,8 +748,8 @@
 			<ellipse class="Ellipse_9_hc_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_35_Class">
+	</div> -->
+	<!-- <div class="Group_35_Class">
 		<svg class="Ellipse_8_he">
 			<ellipse class="Ellipse_8_he_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -758,8 +758,8 @@
 			<ellipse class="Ellipse_9_hf_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
-	<div class="Group_36_Class">
+	</div> -->
+	<!-- <div class="Group_36_Class">
 		<svg class="Ellipse_8_hh">
 			<ellipse class="Ellipse_8_hh_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
@@ -768,7 +768,7 @@
 			<ellipse class="Ellipse_9_hi_Class" rx="7.5" ry="7.5" cx="7.5" cy="7.5">
 			</ellipse>
 		</svg>
-	</div>
+	</div> -->
 	 <div class="Group_37_Class">
 		<svg class="Rectangle_10">
 			<rect class="Rectangle_10_Class" rx="40.5" ry="40.5" x="0" y="0" width="544" height="81">

@@ -14,6 +14,10 @@ import (
 	"strings"
 	"syscall/js"
 	"time"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"sort"
+	"os"
 )
 
 var log = logger.Logger("events")
@@ -39,6 +43,11 @@ func Events() js.Func {
 				var eventsDataString string
 
 				line, isPrefix, err := reader.ReadLine()
+				log.Debugf("This is line: %s",string(line))
+				if string(line) == "" {
+					log.Debug("Empty Reponse at reader.ReadLine")
+					continue
+				}
 				if err != nil {
 					log.Debugf("Error in reading data string: %s", err.Error())
 					continue
@@ -61,9 +70,10 @@ func Events() js.Func {
 					return
 				}
 				var out Out
+				log.Debugf("This is event: %s", string(event.Result.Topic))
 				err = json.Unmarshal([]byte(event.Result.Val), &out)
 				if err != nil {
-					log.Error("Error in Unmarshalling Out in %s : ", event.Result.Val, err.Error())
+					log.Error("Error in Unmarshalling Out in : ", event.Result.Val, err.Error())
 					return
 				}
 				val, err := json.MarshalIndent(out.Data, "", " ")
@@ -198,32 +208,6 @@ func Events() js.Func {
 
 							sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
 							OutputArea.Set("innerHTML", sTimeStamp)
-
-							OutputArea = jsDoc.Call("getElementById", "Time")
-							if !OutputArea.Truthy() {
-								log.Error("Unable to get output text area in Time")
-								return
-							}
-							time := status.TotalUptimePercentage.SecondsFromInception
-
-							days := (time) / (24 * 3600)
-							time = time % (24 * 3600)
-							hours := time / 3600
-							time = time % 3600
-							minutes := time / 60
-							time = time % 60
-							seconds := time
-							sValue := fmt.Sprintf("%ddays %dhours %dmins %dsecs", days, hours, minutes, seconds)
-							OutputArea.Set("innerHTML", sValue)
-
-							OutputArea = jsDoc.Call("getElementById", "percentageNumber")
-							if !OutputArea.Truthy() {
-								log.Error("Unable to get output text area in percentagenumber")
-								return
-							}
-							sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
-							sValue = fmt.Sprintf("%s %s", sFloat, "%")
-							OutputArea.Set("innerHTML", sValue)
 						}
 
 					case "Balance":
@@ -342,6 +326,16 @@ func Events() js.Func {
 								return
 							}
 							OutputArea.Set("innerHTML", "")
+							OutputArea = jsDoc.Call("createElement", "option")
+							if !OutputArea.Truthy() {
+								log.Error("Unable to get create div in task manager additional status")
+								return
+							}
+							OutputArea.Set("innerHTML", "Select Device")
+							OutputArea.Set("selected", "selected")
+							OutputArea.Set("disabled", "disabled")
+							jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
+
 							OutputArea = jsDoc.Call("createElement", "option")
 							if !OutputArea.Truthy() {
 								log.Error("Unable to get create div in task manager additional status")
@@ -896,7 +890,93 @@ func GetEarning() js.Func {
 					return
 				}
 				OutputArea.Set("innerHTML", served)
+
 			}
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
+func GetUptime() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": "hive-cli.exe%$#status%$#-j",
+			}
+
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in marshalling payload in GetUptime: ", err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in GetUptime: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			respBuf, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Error("Error in reading respBuf in GetUptime: ", err.Error())
+				return
+			}
+			data := make(map[string]string)
+			err = json.Unmarshal(respBuf, &data)
+			if err != nil {
+				log.Error("Error in unmarshalling respbuf in GetUptime: ", err.Error())
+				return
+			}
+
+			var out Out
+			err = json.Unmarshal([]byte(data["val"]), &out)
+			if err != nil {
+				log.Error("Error in unmarshalling data in GetUptime: ", err.Error())
+				return
+			}
+
+			val, err := json.MarshalIndent(out.Data, "", " ")
+			if err != nil {
+				log.Error("Error in marshalling out in GetUptime: ", err.Error())
+				return
+			}
+			var status Status
+			err = json.Unmarshal(val, &status)
+			if err != nil {
+				log.Error("Error in unmarshalling val in GetUptime: ", err.Error())
+				return
+			}
+
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Error("Unable to get document object in GetUptime")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "Time")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output text area in Time")
+				return
+			}
+			time := status.TotalUptimePercentage.SecondsFromInception
+
+			days := (time) / (24 * 3600)
+			time = time % (24 * 3600)
+			hours := time / 3600
+			time = time % 3600
+			minutes := time / 60
+			time = time % 60
+			seconds := time
+			sValue := fmt.Sprintf("%ddays %dhours %dmins %dsecs", days, hours, minutes, seconds)
+			OutputArea.Set("innerHTML", sValue)
+
+			OutputArea = jsDoc.Call("getElementById", "percentageNumber")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output text area in percentagenumber")
+				return
+			}
+			sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
+			sValue = fmt.Sprintf("%s %s", sFloat, "%")
+			OutputArea.Set("innerHTML", sValue)
 		}()
 		return nil
 	})
@@ -974,6 +1054,7 @@ func main() {
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
 	js.Global().Set("GetEarning", GetEarning())
+	js.Global().Set("GetUptime", GetUptime())
 	js.Global().Set("GetBandwidth", GetBandwidth())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())

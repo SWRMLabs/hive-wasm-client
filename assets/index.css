@@ -1035,23 +1035,10 @@
 	font-size: 22px;
 	color: rgba(244,105,50,1);
 }
-.DropdownDiv_Class{
-	/* height: 50px;
-	position: absolute;
-	border-radius: 20.5px;
-	border: 1.5px #676666;
-	left: 1300px;
-	top: 1450px;
-    stroke: rgba(103,102,102,1);
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
-}
-
 .DevicesDropDown_Class {
 	padding: 5px;
 	outline: none;
 	opacity: 0.76;
-	/* left: 1000px;
-	top: 1450px; */
 	position: relative;
 	overflow: visible;
 	top: -10.5px;
@@ -1065,8 +1052,19 @@
 	font-weight: bold;
 	font-size: 24px;
 	color: rgba(244,105,50,1);
-
 	background: none;
+}
+.GraphBox_Class{
+	left: 30px;
+	top: 60px;
+	width: 978px;
+	height: 364px;
+	position: relative;
+	font-size: 24px;
+	color:orange;
+}
+option{
+	background-color: rgba(67, 67, 67, 1);
 }
 .StatusStatus_Class {
 	opacity: 0.76;
