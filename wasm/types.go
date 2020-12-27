@@ -306,6 +306,11 @@ type NetEarnings struct {
 	DeviceTotal   Earning
 }
 
+type GraphDetails struct {
+	BillingCyclesReverse []string  `json:"billingCyclesReverse"`
+	Earnings 			 []float64 `json:"Earnings"`
+}
+
 func (n *NetEarnings) GetNamespace() string {
 	return "NetEarnings"
 }

@@ -14,7 +14,7 @@
 		GetVersion();
 		GetProfile();
 		GetBandwidth();
-		GetEarning();
+		// GetEarning();
 		GetStorageLocation();
 		GetPeers();
 		GetID();
@@ -22,10 +22,67 @@
 		Events();
 
 	});
+
+	async function CreateGraph(PeerId) {
+            try {
+                const data = await GetEarning();
+				console.log("Data received in CreateGraph");
+                jsonOP = JSON.parse(data);
+				netEarnings = jsonOP.data;
+				console.log(netEarnings)
+				////////////////////////////////////////////////////////
+				BillingCycles = netEarnings['billingCycles'].reverse();
+				console.log(BillingCycles)
+				var Earnings = []
+				for (i = BillingCycles.length-1; i > -1; i--) {
+					Earnings.push({label : BillingCycles[BillingCycles.length- i - 1],
+								  y : netEarnings['earnings'][PeerId][i]['earned']});
+				}
+				console.log(Earnings)
+				CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
+				var chart = new CanvasJS.Chart("GraphBox", {
+				axisX:{
+					labelFontColor: "#f46831",
+					labelFontWeight: "bold",
+					labelFontFamily: "Segoe UI",
+					labelFontStyle: "normal",
+					labelTextAlign: "left"
+					// labelFontSize: "7px"
+				},
+				axisY:{
+					labelFontColor: "rgba(133,133,133,1)",
+					labelFontWeight: "bold",
+					labelFontFamily: "Segoe UI"
+				},
+				zoomEnabled: true,
+	      		panEnabled: true,
+				backgroundColor: "transparent",
+				colorSet: "orange",
+				data: [
+				{
+					type: "line",
+					dataPoints: Earnings
+				}
+				]
+			});
+			chart.render();
+
+            } catch (err) {
+                console.error('Caught exception', err)
+            }
+        }
+
+
 	setInterval(function(){ GetBandwidth() }, 3000);
 	setInterval(function(){ GetUptime() }, 1000);
+
+
+
+
+
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
 <body>
 <div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class">
@@ -76,7 +133,7 @@
 		</svg>
 		<div id = "GraphBox" class="GraphBox_Class">
 
-		</div>
+	</div>
 	</div>
 	<div id="TaskBox" class="TaskBox_Class">
 
@@ -779,7 +836,7 @@
 			</rect>
 		</svg>
 		<div id="DropDownDiv" class="DropdownDiv_Class">
-			<select id="DevicesDropDown"  class="DevicesDropDown_Class" onchange="GetEarning()">
+			<select id="DevicesDropDown"  class="DevicesDropDown_Class" onchange="CreateGraph(this.value)">
 			</select>
 		</div>
 	</div>

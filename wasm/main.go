@@ -14,10 +14,6 @@ import (
 	"strings"
 	"syscall/js"
 	"time"
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
-	"sort"
-	"os"
 )
 
 var log = logger.Logger("events")
@@ -43,7 +39,7 @@ func Events() js.Func {
 				var eventsDataString string
 
 				line, isPrefix, err := reader.ReadLine()
-				log.Debugf("This is line: %s",string(line))
+				log.Debugf("This is line: %s", string(line))
 				if string(line) == "" {
 					log.Debug("Empty Reponse at reader.ReadLine")
 					continue
@@ -313,7 +309,7 @@ func Events() js.Func {
 								log.Error("Error in Unmarshalling Net Earnings: ", err.Error())
 								return
 							}
-							log.Debugf("%+v",netEarnings)
+							log.Debugf("%+v", netEarnings)
 
 							jsDoc := js.Global().Get("document")
 							if !jsDoc.Truthy() {
@@ -345,14 +341,14 @@ func Events() js.Func {
 							OutputArea.Set("value", "ALL DEVICES")
 							jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 
-							for _, value := range(netEarnings.Devices) {
+							for _, value := range netEarnings.Devices {
 
 								OutputArea := jsDoc.Call("createElement", "option")
 								if !OutputArea.Truthy() {
 									log.Error("Unable to get create div in task manager additional status")
 									return
 								}
-								sOption := fmt.Sprintf("%s-%s",value.PeerId, value.Name)
+								sOption := fmt.Sprintf("%s-%s", value.PeerId, value.Name)
 								OutputArea.Set("innerHTML", sOption)
 								OutputArea.Set("value", value.PeerId)
 								jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
@@ -361,7 +357,6 @@ func Events() js.Func {
 							log.Debugf("This is Device Total: %+v ", netEarnings.DeviceTotal)
 
 						}
-
 
 					case "Settings":
 						{
@@ -779,124 +774,256 @@ func GetBandwidth() js.Func {
 	return jsonFunc
 }
 
-func GetEarning() js.Func {
+// func GetEarning() js.Func {
+// 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+// 			resolve := args[0]
+// 			go func() {
+// 				payload := map[string]interface{}{
+// 					"val": "hive-cli.exe%$#earning%$#-g%$#-j",
+// 				}
+//
+// 				buf, err := json.Marshal(payload)
+// 				if err != nil {
+// 					log.Error("Error in marshalling Payload in GetEarning: ", err.Error())
+// 					return
+// 				}
+// 				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+// 				if err != nil {
+// 					log.Error("Error in getting response in GetEarning: ", err.Error())
+// 					return
+// 				}
+// 				defer resp.Body.Close()
+// 				respBuf, err := ioutil.ReadAll(resp.Body)
+// 				if err != nil {
+// 					log.Error("Error in reading Body in GetEarning: ", err.Error())
+// 					return
+// 				}
+// 				data := make(map[string]string)
+// 				err = json.Unmarshal(respBuf, &data)
+// 				if err != nil {
+// 					log.Error("Error in unmarshalling respBuf in GetEarning: ", err.Error())
+// 					return
+// 				}
+//
+// 				var out Out
+// 				err = json.Unmarshal([]byte(data["val"]), &out)
+// 				if err != nil {
+// 					log.Error("Error in unmarshalling data in GetEarning: ", err.Error())
+// 					return
+// 				}
+// 				val, err := json.MarshalIndent(out.Data, "", " ")
+// 				if err != nil {
+// 					log.Error("Error in marshalling out in GetBandwidth: ", err.Error())
+// 					return
+// 				}
+// 				var netEarnings NetEarnings
+// 				err = json.Unmarshal(val, &netEarnings)
+// 				if err != nil {
+// 					log.Error("Error in Unmarshalling Net Earnings in GetEaring: ", err.Error())
+// 					return
+// 				}
+//
+// 				jsDoc := js.Global().Get("document")
+// 				if !jsDoc.Truthy() {
+// 					log.Error("Unable to get document object in Bandwidth")
+// 					return
+// 				}
+// 				OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
+// 				if !OutputArea.Truthy() {
+// 					log.Error("Unable to get output area in GetEarning")
+// 					return
+// 				}
+// 				value := fmt.Sprintf("%s", OutputArea.Get("value"))
+// 				if value == "ALL DEVICES" {
+//
+// 					earned := fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
+// 					download := fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1000, "MB")
+// 					served := fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1000, "MB")
+//
+// 					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in EarnedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", earned)
+//
+// 					OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in DownloadedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", download)
+//
+// 					OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in ServedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", served)
+//
+// 				} else if value != "" {
+// 					earned := fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
+// 					download := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1000, "MB")
+// 					served := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1000, "MB")
+//
+// 					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in EarnedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", earned)
+//
+// 					OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in DownloadedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", download)
+//
+// 					OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+// 					if !OutputArea.Truthy() {
+// 						log.Error("Unable to get output area in ServedCycle")
+// 						return
+// 					}
+// 					OutputArea.Set("innerHTML", served)
+//
+// 				}
+// 			}()
+// 			promiseConstructor := js.Global().Get("Promise")
+// 			return promiseConstructor.New(jsFunc)
+// 			return nil
+// 	})
+// 	return jsonFunc
+// }
+
+func GetEarning() js.Func{
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go func() {
-			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#earning%$#-g%$#-j",
-			}
+		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in marshalling Payload in GetEarning: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in GetEarning: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			respBuf, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Error("Error in reading Body in GetEarning: ", err.Error())
-				return
-			}
-			data := make(map[string]string)
-			err = json.Unmarshal(respBuf, &data)
-			if err != nil {
-				log.Error("Error in unmarshalling respBuf in GetEarning: ", err.Error())
-				return
-			}
+			resolve := args[0]
 
-			var out Out
-			err = json.Unmarshal([]byte(data["val"]), &out)
-			if err != nil {
-				log.Error("Error in unmarshalling data in GetEarning: ", err.Error())
-				return
-			}
-			val, err := json.MarshalIndent(out.Data, "", " ")
-			if err != nil {
-				log.Error("Error in marshalling out in GetBandwidth: ", err.Error())
-				return
-			}
-			var netEarnings NetEarnings
-			err = json.Unmarshal(val, &netEarnings)
-			if err != nil {
-				log.Error("Error in Unmarshalling Net Earnings in GetEaring: ", err.Error())
-				return
-			}
-
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in Bandwidth")
-				return
-			}
-			OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in GetEarning")
-				return
-			}
-			value := fmt.Sprintf("%s", OutputArea.Get("value"))
-			if value == "ALL DEVICES" {
-
-				earned := fmt.Sprintf("%.5f %s",netEarnings.DeviceTotal.Earned, "SWRM")
-				download := fmt.Sprintf("%.0f %s",(netEarnings.DeviceTotal.Download)/1000, "MB")
-				served := fmt.Sprintf("%.2f %s",(netEarnings.DeviceTotal.Served)/1000, "MB")
-
-				OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in EarnedCycle")
+			go func() {
+				payload := map[string]interface{}{
+					"val": "hive-cli.exe%$#earning%$#-g%$#-j",
+				}
+				buf, err := json.Marshal(payload)
+				if err != nil {
+					log.Error("Error in marshalling Payload in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", earned)
-
-				OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in DownloadedCycle")
+				resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+				if err != nil {
+					log.Error("Error in getting response in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", download)
-
-				OutputArea = jsDoc.Call("getElementById", "ServedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in ServedCycle")
+				defer resp.Body.Close()
+				respBuf, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Error("Error in reading Body in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", served)
-
-			} else if value != "" {
-				earned := fmt.Sprintf("%.5f %s",netEarnings.Data[value][0].Earned, "SWRM")
-				download := fmt.Sprintf("%.2f %s",(netEarnings.Data[value][0].Download)/1000, "MB")
-				served := fmt.Sprintf("%.2f %s",(netEarnings.Data[value][0].Served)/1000, "MB")
-
-				OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in EarnedCycle")
+				data := make(map[string]string)
+				err = json.Unmarshal(respBuf, &data)
+				if err != nil {
+					log.Error("Error in unmarshalling respBuf in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", earned)
 
-				OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in DownloadedCycle")
+				var out Out
+				err = json.Unmarshal([]byte(data["val"]), &out)
+				if err != nil {
+					log.Error("Error in unmarshalling data in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", download)
-
-				OutputArea = jsDoc.Call("getElementById", "ServedCycle")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in ServedCycle")
+				val, err := json.MarshalIndent(out.Data, "", " ")
+				if err != nil {
+					log.Error("Error in marshalling out in GetEarning: ", err.Error())
 					return
 				}
-				OutputArea.Set("innerHTML", served)
+				var netEarnings NetEarnings
+				err = json.Unmarshal(val, &netEarnings)
+				if err != nil {
+					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
+					return
+				}
 
-			}
-		}()
+				jsDoc := js.Global().Get("document")
+				if !jsDoc.Truthy() {
+					log.Error("Unable to get document object in GetEarning")
+					return
+				}
+				OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
+				if !OutputArea.Truthy() {
+					log.Error("Unable to get output area in GetEarning")
+					return
+				}
+				value := fmt.Sprintf("%s", OutputArea.Get("value"))
+				if value == "ALL DEVICES" {
+					earned := fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
+					download := fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1000, "MB")
+					served := fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1000, "MB")
+
+					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in EarnedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", earned)
+
+					OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in DownloadedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", download)
+
+					OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in ServedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", served)
+
+				} else if value != "" {
+
+					earned := fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
+					download := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1000, "MB")
+					served := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1000, "MB")
+
+					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in EarnedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", earned)
+
+					OutputArea = jsDoc.Call("getElementById", "DownloadedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in DownloadedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", download)
+
+					OutputArea = jsDoc.Call("getElementById", "ServedCycle")
+					if !OutputArea.Truthy() {
+						log.Error("Unable to get output area in ServedCycle")
+						return
+					}
+					OutputArea.Set("innerHTML", served)
+
+					log.Debug("Sending details to CreateGraph from GetEarning")
+					resolve.Invoke(data["val"])
+				}
+			}()
+			return nil
+		})
+		promiseConstructor := js.Global().Get("Promise")
+		return promiseConstructor.New(handler)
 		return nil
 	})
 	return jsonFunc
 }
+
 
 func GetUptime() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -1053,12 +1180,12 @@ func main() {
 	logger.SetLogLevel("*", "Debug")
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
-	js.Global().Set("GetEarning", GetEarning())
 	js.Global().Set("GetUptime", GetUptime())
 	js.Global().Set("GetBandwidth", GetBandwidth())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())
 	js.Global().Set("GetPeers", GetPeers())
+	js.Global().Set("GetEarning", GetEarning())
 	js.Global().Set("Events", Events())
 	<-make(chan bool)
 }
