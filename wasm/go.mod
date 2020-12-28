@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/StreamSpace/ss-store v0.0.2
+	github.com/dustin/go-humanize v1.0.0
 	github.com/go-echarts/go-echarts/v2 v2.2.3
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/ipfs/go-log/v2 v2.1.1

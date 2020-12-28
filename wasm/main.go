@@ -331,7 +331,6 @@ func Events() js.Func {
 							OutputArea.Set("selected", "selected")
 							OutputArea.Set("disabled", "disabled")
 							jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
-
 							OutputArea = jsDoc.Call("createElement", "option")
 							if !OutputArea.Truthy() {
 								log.Error("Unable to get create div in task manager additional status")
@@ -758,7 +757,7 @@ func GetBandwidth() js.Func {
 				log.Error("Unable to get output area in incoming")
 				return
 			}
-			sIncoming := fmt.Sprintf("%.3f %s", (bandwidth.Incoming)/1000, "MB")
+			sIncoming := fmt.Sprintf("%.3f %s", (bandwidth.Incoming)/1048576, "MB")
 			OutputArea.Set("innerHTML", sIncoming)
 
 			OutputArea = jsDoc.Call("getElementById", "Outgoing")
@@ -766,7 +765,7 @@ func GetBandwidth() js.Func {
 				log.Error("Unable to get output area in outgoing")
 				return
 			}
-			sOutgoing := fmt.Sprintf("%.3f %s", (bandwidth.Outgoing)/1000, "MB")
+			sOutgoing := fmt.Sprintf("%.3f %s", (bandwidth.Outgoing)/1048576, "MB")
 			OutputArea.Set("innerHTML", sOutgoing)
 		}()
 		return nil
@@ -960,8 +959,8 @@ func GetEarning() js.Func{
 				value := fmt.Sprintf("%s", OutputArea.Get("value"))
 				if value == "ALL DEVICES" {
 					earned := fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
-					download := fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1000, "MB")
-					served := fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1000, "MB")
+					download := fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1048576, "MB")
+					served := fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1048576, "MB")
 
 					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
 					if !OutputArea.Truthy() {
@@ -987,8 +986,8 @@ func GetEarning() js.Func{
 				} else if value != "" {
 
 					earned := fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
-					download := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1000, "MB")
-					served := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1000, "MB")
+					download := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1048576, "MB")
+					served := fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1048576, "MB")
 
 					OutputArea := jsDoc.Call("getElementById", "EarnedCycle")
 					if !OutputArea.Truthy() {
@@ -1010,10 +1009,9 @@ func GetEarning() js.Func{
 						return
 					}
 					OutputArea.Set("innerHTML", served)
-
-					log.Debug("Sending details to CreateGraph from GetEarning")
-					resolve.Invoke(data["val"])
 				}
+				log.Debug("Sending details to CreateGraph from GetEarning")
+				resolve.Invoke(data["val"])
 			}()
 			return nil
 		})

@@ -302,7 +302,7 @@ type NetEarnings struct {
 	BillingCycles []string             `json:"billingCycles"`
 	Devices       []Device             `json:"devices"`
 	Data          map[string][]Earning `json:"earnings"`
-	CycleStats    [6]*CycleStat
+	CycleStats    [6] CycleStat
 	DeviceTotal   Earning
 }
 
