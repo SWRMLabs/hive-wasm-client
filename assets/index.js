@@ -7,33 +7,6 @@
  * Code subject to change.
  **/
 
-// function PlotEarning(){
-//     var chart = new CanvasJS.Chart("GraphBox", {
-// 		data: [
-// 		{
-// 			// Change type to "doughnut", "line", "splineArea", etc.
-// 			type: "line",
-// 			dataPoints: [
-// 				{ label: "apple",  y: 10  },
-// 				{ label: "orange", y: 15  },
-// 				{ label: "banana", y: 25  },
-// 				{ label: "mango",  y: 30  },
-// 				{ label: "grape",  y: 28  }
-// 			]
-// 		}
-// 		]
-// 	});
-// 	chart.render();
-// }
-
-
-function GoRight(){
-    document.getElementById("Address").scrollTop += 102;
-}
-function GoLeft(){
-    document.getElementById("Address").scrollTop -= 102;
-}
-
 if (window.console==null) { window["console"] = { log : function() {} } }; // some browsers do not set console
 
 var Application = function() {
