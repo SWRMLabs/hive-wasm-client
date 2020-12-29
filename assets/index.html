@@ -14,13 +14,12 @@
 		SetEarningDropDown();
 		GetVersion();
 		GetProfile();
-		GetBandwidth();
-		GetStorageLocation();
 		GetPeers();
+		GetStorageLocation();
 		GetID();
+		GetBandwidth();
 		GetUptime();
 		Events();
-
 	});
 
 	async function CreateGraph(PeerId) {
@@ -114,16 +113,15 @@
             }
         }
 
-
 	setInterval(function(){ GetBandwidth() }, 3000);
 	setInterval(function(){ GetUptime() }, 1000);
-	setInterval(function(){ GetPeers() }, 300000)
+	setInterval(function(){ GetPeers() }, 300000);
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
 <body>
-<div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class">
+<div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class" onload="Events()">
 	<div class="Group_74_Class">
 		<div class="Group_38_Class">
 			<svg class="Rectangle_2_p">

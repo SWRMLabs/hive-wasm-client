@@ -28,12 +28,15 @@ func Events() js.Func {
 	jsonfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		go func() {
+			log.Debug("Events Called")
 			resp, err := http.Post(EVENTS, "application/json", nil)
-			if err != nil {
+			if err != nil{
 				log.Error(err.Error())
 				return
 			}
+			defer resp.Body.Close()
 
+			log.Debug(resp)
 			reader := bufio.NewReader(resp.Body)
 			for {
 				var eventsDataString string
@@ -42,7 +45,7 @@ func Events() js.Func {
 				log.Debugf("This is line: %s", string(line))
 				if string(line) == "" {
 					log.Debug("Empty Reponse at reader.ReadLine")
-					continue
+					return
 				}
 				if err != nil {
 					log.Debugf("Error in reading data string: %s", err.Error())
