@@ -1944,7 +1944,7 @@ div::-webkit-scrollbar-thumb{
 	font-size: 33px;
 	color: rgba(23,23,23,1);
 }
-.ID78507MB_Class {
+.CycleDownloaded_Class {
 	opacity: 0.85;
 	left: 172px;
 	top: 1300px;
@@ -2946,7 +2946,12 @@ div::-webkit-scrollbar-thumb{
 	top: 0px;
 	transform: matrix(1,0,0,1,0,0);
 }
-.ID356B_Class {
+.RefreshPage_Class{
+    left: 500px;
+    top: 100px;
+    position: relative;
+}
+.CycleServed_Class {
 	left: 376px;
 	top: 1300px;
 	position: absolute;

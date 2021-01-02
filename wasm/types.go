@@ -244,6 +244,38 @@ type ServerStatus struct {
 	Proxy string `json:"Proxy"`
 }
 
+type Config struct {
+	APIPort string `json:"APIPort, omitempty"`
+	AutoGC string `json:"AutoGC, omitempty"`
+	Bootstraps []string `json:"Bootstraps, omitempty"`
+	DNS4 string `json:"DNS4, omitempty"`
+	DataStore string `json:"DataStore, omitempty"`
+	DesktopApplicationAutoStart bool `json:"DesktopApplicationAutoStart, omitempty"`
+	DesktopApplicationNotification bool `json:"DesktopApplicationNotification, omitempty"`
+	DeviceName string `json:"DeviceName, omitempty"`
+	EnableDynamicDNS bool `json:"EnableDynamicDNS, omitempty"`
+	EnableFileShare bool `json:"EnableFileShare, omitempty"`
+	EnableHop bool `json:"EnableHop, omitempty"`
+	GCPeriod string `json:"GCPeriod, omitempty"`
+	GatewayPort string `json:"GatewayPort, omitempty"`
+	IP4 string `json:"IP4, omitempty"`
+	IP6 string `json:"IP6, omitempty"`
+	identity Identity `json:"Identity, omitempty"`
+	MaxPeers int `json:"MaxPeers, omitempty"`
+	ProxyPort string `json:"ProxyPort, omitempty"`
+	ReproviderInterval string `json:"ReproviderInterval, omitempty"`
+	Storage int `json:"Storage, omitempty"`
+	StorageGCWatermark int `json:"StorageGCWatermark, omitempty"`
+	Store string `json:"Store, omitempty"`
+	SwarmPort string `json:"SwarmPort, omitempty"`
+	WebsocketPort string `json:"WebsocketPort, omitempty"`
+}
+
+type Identity struct {
+	PeerId string `json:"PeerId, omitempty"`
+	PrivKey string `json:"PrivKey, omitempty"`
+}
+
 type Status struct {
 	LoggedIn              bool
 	DaemonRunning         bool

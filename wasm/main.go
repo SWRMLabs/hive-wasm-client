@@ -14,6 +14,7 @@ import (
 	"strings"
 	"syscall/js"
 	"time"
+	"os"
 )
 
 var log = logger.Logger("events")
@@ -295,6 +296,23 @@ func Events() js.Func {
 							}
 							sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
 							OutputArea.Set("innerHTML", sValue)
+
+							OutputArea = jsDoc.Call("getElementById", "CycleDownloaded")
+							if !OutputArea.Truthy() {
+								log.Error("Unable to get output text area in CycleDownloaded")
+								return
+							}
+							sDownloaded := fmt.Sprintf("%d %s",(bcnBalance.BytesDownloaded)/1048576, "MB")
+							OutputArea.Set("innerHTML", sDownloaded)
+
+							OutputArea = jsDoc.Call("getElementById", "CycleServed")
+							if !OutputArea.Truthy() {
+								log.Error("Unable to get output text area in CycleServed")
+								return
+							}
+							sServed := fmt.Sprintf("%d %s",(bcnBalance.BytesServed)/1048576, "MB")
+							OutputArea.Set("innerHTML", sServed)
+
 						}
 
 					case "Peers":
@@ -371,6 +389,8 @@ func Events() js.Func {
 	})
 	return jsonfunc
 }
+
+
 
 func GetID() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -451,6 +471,38 @@ func GetID() js.Func {
 				return
 			}
 			OutputArea.Set("innerHTML", id.PeerID)
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
+func StartEvents() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Stopping os....")
+			os.Exit(0)
+			// log.Debug("Starting Events....")
+			// payload := map[string]interface{}{
+			// 	"val": "hive-cli.exe%$#config%$#modify%$#storage%$#15",
+			// }
+			// buf, err := json.Marshal(payload)
+			// if err != nil {
+			// 	log.Error("Error in marshalling payload in StartEvents: ", err.Error())
+			// 	return
+			// }
+			// resp, err := http.Post(EVENTS, "application/json", bytes.NewReader(buf))
+			// if err != nil {
+			// 	log.Error("Error in getting response in StartEvents: ", err.Error())
+			// 	return
+			// }
+			// defer resp.Body.Close()
+			// respBuf, err := ioutil.ReadAll(resp.Body)
+			// if err != nil {
+			// 	log.Error("Error in reading body in StartEvents: ", err.Error())
+			// 	return
+			// }
+			// log.Debug(respBuf)
 		}()
 		return nil
 	})
@@ -1112,6 +1164,9 @@ func GetVersion() js.Func {
 
 func main() {
 	logger.SetLogLevel("*", "Debug")
+	js.Global().Set("GetSettings", GetSettings())
+	js.Global().Set("GetStatus", GetStatus())
+	js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("SetEarningDropDown", SetEarningDropDown())
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
@@ -1122,5 +1177,6 @@ func main() {
 	js.Global().Set("GetPeers", GetPeers())
 	js.Global().Set("GetEarning", GetEarning())
 	js.Global().Set("Events", Events())
+	js.Global().Set("StartEvents", StartEvents())
 	<-make(chan bool)
 }
