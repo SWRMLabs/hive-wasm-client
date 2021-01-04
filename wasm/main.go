@@ -14,7 +14,6 @@ import (
 	"strings"
 	"syscall/js"
 	"time"
-	"os"
 )
 
 var log = logger.Logger("events")
@@ -480,23 +479,21 @@ func GetID() js.Func {
 func StartEvents() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
-			log.Debug("Stopping os....")
-			os.Exit(0)
-			// log.Debug("Starting Events....")
-			// payload := map[string]interface{}{
-			// 	"val": "hive-cli.exe%$#config%$#modify%$#storage%$#15",
-			// }
-			// buf, err := json.Marshal(payload)
-			// if err != nil {
-			// 	log.Error("Error in marshalling payload in StartEvents: ", err.Error())
-			// 	return
-			// }
-			// resp, err := http.Post(EVENTS, "application/json", bytes.NewReader(buf))
-			// if err != nil {
-			// 	log.Error("Error in getting response in StartEvents: ", err.Error())
-			// 	return
-			// }
-			// defer resp.Body.Close()
+			log.Debug("Starting Events....")
+			payload := map[string]interface{}{
+				"val": "hive-cli.exe%$#settings%$#-j",
+			}
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in marshalling payload in StartEvents: ", err.Error())
+				return
+			}
+			resp, err := http.Post(EVENTS, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in StartEvents: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
 			// respBuf, err := ioutil.ReadAll(resp.Body)
 			// if err != nil {
 			// 	log.Error("Error in reading body in StartEvents: ", err.Error())
@@ -1164,6 +1161,8 @@ func GetVersion() js.Func {
 
 func main() {
 	logger.SetLogLevel("*", "Debug")
+	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
+	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())
 	js.Global().Set("GetStatus", GetStatus())
 	js.Global().Set("GetConfig", GetConfig())

@@ -246,7 +246,7 @@ type ServerStatus struct {
 
 type Config struct {
 	APIPort string `json:"APIPort, omitempty"`
-	AutoGC string `json:"AutoGC, omitempty"`
+	AutoGC bool `json:"AutoGC, omitempty"`
 	Bootstraps []string `json:"Bootstraps, omitempty"`
 	DNS4 string `json:"DNS4, omitempty"`
 	DataStore string `json:"DataStore, omitempty"`

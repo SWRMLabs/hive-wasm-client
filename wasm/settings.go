@@ -223,31 +223,161 @@ func GetConfig() js.Func {
 				log.Error("Error in Unmarshalling data in GetConfig: ", err.Error())
 				return
 			}
+            val, err := json.MarshalIndent(out.Data, "", " ")
+			if err != nil {
+				log.Error("Error in Marshalling in GetConfig: ", err.Error())
+				return
+			}
 			log.Debug(data["val"])
-			log.Debug(out.Data)
-            // val, err := json.MarshalIndent(out.Data, "", " ")
-			// if err != nil {
-			// 	log.Error("Error in Marshalling in GetConfig: ", err.Error())
-			// 	return
-			// }
+			var config Config
+			err = json.Unmarshal(val, &config)
+			if err != nil {
+				log.Error("Error in unmarshalling val in GetConfig: ", err.Error())
+				return
+			}
+			log.Debug(config)
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Error("Unable to get document object in GetConfig")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "SwrmPortNumber")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in SwrmPortNumber")
+				return
+			}
+			OutputArea.Set("placeholder", config.SwarmPort)
 
-			// var status Status
-			// err = json.Unmarshal(val, &status)
-			// if err != nil {
-			// 	log.Error("Error in unmarshalling val in GetStatus: ", err.Error())
-			// 	return
-			// }
-			// jsDoc := js.Global().Get("document")
-			// if !jsDoc.Truthy() {
-			// 	log.Error("Unable to get document object in GetStatus")
-			// 	return
-			// }
-			// OutputArea := jsDoc.Call("getElementById", "LoggedIn")
-			// if !OutputArea.Truthy() {
-			// 	log.Error("Unable to get output area in LoggedIn")
-			// 	return
-			// }
-			//
+			OutputArea = jsDoc.Call("getElementById", "WebSocketPortNumber")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in WebSocketPortNumber")
+				return
+			}
+			OutputArea.Set("placeholder", config.WebsocketPort)
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
+func SetSwrmPortNumber() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Updating SwarmPort Number")
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Error("Unable to get document object in SetSwrmPortNumber")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "SwrmPortNumber")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in SetSwrmPortNumber")
+				return
+			}
+			value := OutputArea.Get("value")
+			log.Debug(value)
+			sep := "%$#"
+			sValue := "hive-cli.exe" + sep + "config" + sep + "modify" + sep +"SwarmPort" + sep + fmt.Sprintf("%s",value)
+			log.Debug(sValue)
+			payload := map[string]interface{}{
+				"val": sValue,
+			}
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in Marshalling Payload in SetSwrmPortNumber: ", err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in SetSwrmPortNumber: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			log.Debug("This is response from SetSwrmPortNumber: ",resp)
+
+			payload = map[string]interface{}{
+				"val": "hive-cli.exe%$#settings%$#-j",
+			}
+
+			buf, err = json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in Marshalling Payload in SetSwrmPortNumber: ", err.Error())
+				return
+			}
+			resp, err = http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in SetSwrmPortNumber: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			log.Debug("This is response from SetSwrmPortNumber: ",resp)
+
+			if err == nil {
+				log.Debug("SwrmPort Updated Successfully")
+			}
+
+		}()
+		return nil
+	})
+	return jsonFunc
+}
+
+func SetWebsocketPortNumber() js.Func {
+	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Updating WebSocketPort Number")
+			jsDoc := js.Global().Get("document")
+			if !jsDoc.Truthy() {
+				log.Error("Unable to get document object in WebsocketPortNumber")
+				return
+			}
+			OutputArea := jsDoc.Call("getElementById", "WebSocketPortNumber")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in WebSocketPortNumber")
+				return
+			}
+			value := OutputArea.Get("value")
+			log.Debug(value)
+			sep := "%$#"
+			sValue := "hive-cli.exe" + sep + "config" + sep + "modify" + sep +"WebsocketPort" + sep + fmt.Sprintf("%s",value)
+			log.Debug(sValue)
+			payload := map[string]interface{}{
+				"val": sValue,
+			}
+			buf, err := json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in Marshalling Payload in WebSocketPortNumber: ", err.Error())
+				return
+			}
+			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in WebSocketPortNumber: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			log.Debug("This is response from WebSocketPortNumber: ",resp)
+
+			payload = map[string]interface{}{
+				"val": "hive-cli.exe%$#settings%$#-j",
+			}
+
+			buf, err = json.Marshal(payload)
+			if err != nil {
+				log.Error("Error in Marshalling Payload in WebSocketPortNumber: ", err.Error())
+				return
+			}
+			resp, err = http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+			if err != nil {
+				log.Error("Error in getting response in WebSocketPortNumber: ", err.Error())
+				return
+			}
+			defer resp.Body.Close()
+			log.Debug("This is response from WebSocketPortNumber: ",resp)
+
+			if err == nil {
+				log.Debug("WebSocketPort Updated Successfully")
+			}
+
 		}()
 		return nil
 	})
