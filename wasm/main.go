@@ -125,15 +125,10 @@ func Events() js.Func {
 							for key := 0; key < serverStatus.NumField(); key++ {
 								name := serverStatus.Type().Field(key).Name
 								value := serverStatus.Field(key).Interface()
-								OutputArea := jsDoc.Call("getElementById", name)
-								if !OutputArea.Truthy() {
-									log.Error("Unable to get output text area in server status")
-									return
-								}
 								if value == ""{
 									value = "Not Running"
 								}
-								OutputArea.Set("innerHTML", value)
+								SetDisplay(name, "innerHTML", fmt.Sprintf("%s", value))
 							}
 
 							values := reflect.ValueOf(&status).Elem()
@@ -277,6 +272,7 @@ func Events() js.Func {
 										sValue = fmt.Sprintf("%.2f %s", value, "%")
 									}
 									OutputArea.Set("innerHTML", sValue)
+
 								}
 							}
 						}
