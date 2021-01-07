@@ -11,18 +11,22 @@
 	const go = new Go();
 	WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
 		go.run(result.instance);
-		SetEarningDropDown();
-		GetVersion();
-		GetProfile();
-		GetStorageLocation();
-		GetPeers();
-		GetID();
-		Events();
+		StartWebUI();
 	});
 	</script>
 	<script>
+	function StartWebUI(){
+		setTimeout(function() {SetEarningDropDown()}, 1000);
+		setTimeout(function() {GetVersion()}, 2000);
+		setTimeout(function() {GetProfile()}, 3000);
+		setTimeout(function() {GetStorageLocation()}, 4000);
+		setTimeout(function() {GetPeers()}, 5000);
+		setTimeout(function() {GetID()}, 6000);
+		setTimeout(function() {Events()}, 7000);
+	}
 	setInterval(function(){ GetBandwidth() }, 5000);
 	setInterval(function(){ GetUptime() }, 1000);
+
 	async function CreateGraph(PeerId) {
             try {
                 const data = await GetEarning();

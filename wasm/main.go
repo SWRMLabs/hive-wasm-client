@@ -143,7 +143,7 @@ func Events() js.Func {
 								if value == true {
 									switch name {
 									case "LoggedIn":
-										sValue = "LoggedIn &#x1f7e2;"
+										sValue = "LoggedIn"
 
 									case "DaemonRunning":
 										sValue = "ONLINE"
@@ -151,7 +151,7 @@ func Events() js.Func {
 								} else if value == false {
 									switch name {
 									case "LoggedIn":
-										sValue = "LoggedOut &#10060;"
+										sValue = "LoggedOut"
 
 									case "DaemonRunning":
 										sValue = "OFFLINE"
