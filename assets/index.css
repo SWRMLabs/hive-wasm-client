@@ -1,6 +1,9 @@
 html {
   scroll-behavior: smooth;
 }
+body {
+    margin: 0;
+}
 .mediaViewInfo {
 	--web-view-name: Hive-CLI WEBUI;
 	--web-view-id: Hive-CLI_WEBUI;
@@ -21,13 +24,14 @@ html {
 .Hive-CLI_WEBUI_Class {
 	left: 0;
 	position: absolute;
-	width: 1920px;
-	height: 1938px;
+    width: 120em;
+    height: 125em;
+    overflow-y: scroll;
 	background-color: rgba(67,67,67,1);
 	overflow: hidden;
 	--web-view-name: Hive-CLI WEBUI;
 	--web-view-id: Hive-CLI_WEBUI;
-	--web-scale-on-resize: true;
+	--web-scale-on-resize: false;
 	--web-center-horizontally: true;
 	--web-navigate-on-keypress: true;
 	--web-enable-deep-linking: true;
@@ -394,7 +398,7 @@ html {
 	filter: drop-shadow(0px 3px 10px rgba(0, 0, 0, 0.22));
 	position: absolute;
 	overflow: visible;
-	width: 1920px;
+	width: 100%;
 	height: 132px;
 	left: 0px;
 	top: 0px;
@@ -742,7 +746,7 @@ html {
 	color: rgba(153,153,153,1);
 }
 .VersionLabel_Class {
-	left: 1526px;
+	left: 1515px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -1181,7 +1185,7 @@ option{
 	color: rgba(244,105,50,1);
 }
 .Version_Class {
-	left: 1633px;
+	left: 1622px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -1698,7 +1702,7 @@ div::-webkit-scrollbar-thumb{
 }
 .Time_Class {
 	opacity: 0.45;
-	left: 589px;
+	left: 630px;
 	top: 700px;
 	position: absolute;
 	overflow: visible;
@@ -2908,7 +2912,7 @@ div::-webkit-scrollbar-thumb{
 	top: 21px;
 	overflow: visible;
 	outline: none;
-	background-color: rgba(38,38,38,1);
+	background-color: none;
 }
 .Path_31_Class {
 	fill: rgba(243,104,49,1);

@@ -1,17 +1,14 @@
 package main
 
 import (
-	// "bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	// logger "github.com/ipfs/go-log/v2"
 	"io/ioutil"
 	"net/http"
-	// "reflect"
 	"syscall/js"
 	"time"
-	// "os"
+	// "net"
 )
 
 func GetSettings() js.Func {
@@ -269,15 +266,50 @@ func SetSwrmPortNumber() js.Func {
 				log.Error("Unable to get document object in SetSwrmPortNumber")
 				return
 			}
-			OutputArea := jsDoc.Call("getElementById", "SwrmPortNumber")
+			OutputArea := jsDoc.Call("getElementById", "SwrmPortStatus")
+			if !OutputArea.Truthy() {
+				log.Error("Unable to get output area in SwrmPortStatus")
+				return
+			}
+			OutputArea.Set("innerHTML", "")
+
+			OutputArea = jsDoc.Call("getElementById", "SwrmPortNumber")
 			if !OutputArea.Truthy() {
 				log.Error("Unable to get output area in SetSwrmPortNumber")
 				return
 			}
-			value := OutputArea.Get("value")
-			log.Debug(value)
-			sep := "%$#"
-			sValue := "hive-cli.exe" + sep + "config" + sep + "modify" + sep +"SwarmPort" + sep + fmt.Sprintf("%s",value)
+
+			port := fmt.Sprintf("%s", OutputArea.Get("value"))
+			// host := "127.0.0.1"
+			// log.Debugf("Checking Availability of Port: %s", port)
+			//
+			// ln, err := net.Listen("tcp", "127.0.0.1:" + port)
+			// if err != nil {
+			// 	log.Debug("server")
+			// 	log.Error(err.Error())
+			// }
+			// defer ln.Close()
+			//
+			//
+			// log.Debugf("Listening on %s", net.JoinHostPort(host, port))
+			// conn, err := net.DialTCP("tcp", nil, net.JoinHostPort(host, port))
+			// if err != nil {
+			// 	log.Debug("client")
+			// 	log.Error(err.Error())
+			// 	OutputArea := jsDoc.Call("getElementById", "SwrmPortStatus")
+			// 	if !OutputArea.Truthy() {
+			// 		log.Error("Unable to get output area in SwrmPortStatus")
+			// 		return
+			// 	}
+			// 	OutputArea.Set("innerHTML", "This Port is unavailable. Please Select a different Port.")
+			// 	OutputArea.Set("style", "color:rgba(255,15,15,1)")
+			// 	return
+			// 	}
+			// 	conn.Close()
+			// 	ln.Close()
+			// log.Debugf("Port:%s is available", port)
+
+			sValue := "hive-cli.exe%$#config%$#modify%$#SwarmPort%$#" + port
 			log.Debug(sValue)
 			payload := map[string]interface{}{
 				"val": sValue,
@@ -314,6 +346,7 @@ func SetSwrmPortNumber() js.Func {
 
 			if err == nil {
 				log.Debug("SwrmPort Updated Successfully")
+				OutputArea.Set("placeholder", port)
 			}
 
 		}()
@@ -331,6 +364,7 @@ func SetWebsocketPortNumber() js.Func {
 				log.Error("Unable to get document object in WebsocketPortNumber")
 				return
 			}
+
 			OutputArea := jsDoc.Call("getElementById", "WebSocketPortNumber")
 			if !OutputArea.Truthy() {
 				log.Error("Unable to get output area in WebSocketPortNumber")
@@ -339,7 +373,7 @@ func SetWebsocketPortNumber() js.Func {
 			value := OutputArea.Get("value")
 			log.Debug(value)
 			sep := "%$#"
-			sValue := "hive-cli.exe" + sep + "config" + sep + "modify" + sep +"WebsocketPort" + sep + fmt.Sprintf("%s",value)
+			sValue := "hive-cli.exe%$#config%$#modify%$#WebsocketPort" + sep + fmt.Sprintf("%s",value)
 			log.Debug(sValue)
 			payload := map[string]interface{}{
 				"val": sValue,
@@ -376,8 +410,8 @@ func SetWebsocketPortNumber() js.Func {
 
 			if err == nil {
 				log.Debug("WebSocketPort Updated Successfully")
+				OutputArea.Set("placeholder", value)
 			}
-
 		}()
 		return nil
 	})

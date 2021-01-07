@@ -11,34 +11,18 @@
 	const go = new Go();
 	WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
 		go.run(result.instance);
-		// startWebUI();
 		SetEarningDropDown();
 		GetVersion();
 		GetProfile();
-		// GetBandwidth();
 		GetStorageLocation();
-		// GetPeers();
+		GetPeers();
 		GetID();
-		// GetUptime();
 		Events();
 	});
 	</script>
-
 	<script>
-	// function startWebUI(){
-	// 	console.log("Starting WEB UI....")
-	// 	setTimeout(function() {SetEarningDropDown()}, 1000);
-	// 	setTimeout(function() {GetVersion()}, 2000);
-	// 	setTimeout(function() {GetProfile()}, 3000);
-	// 	setTimeout(function() {GetStorageLocation()}, 4000);
-	// 	setTimeout(function() {GetID()}, 5000);
-	// 	// setTimeout(function() {Events()}, 10000);
-	// 	Events();
-	// }
-	setInterval(function(){ GetBandwidth() }, 3000);
+	setInterval(function(){ GetBandwidth() }, 5000);
 	setInterval(function(){ GetUptime() }, 1000);
-	setInterval(function(){ GetPeers() }, 5000);
-
 	async function CreateGraph(PeerId) {
             try {
                 const data = await GetEarning();
@@ -134,7 +118,7 @@
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
 <body>
-<div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class">
+<div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class mediaViewInfo">
 	<div class="Group_74_Class">
 		<div class="Group_38_Class">
 			<svg class="Rectangle_2_p">
@@ -297,7 +281,7 @@
 
 	</div>
 	<svg class="NavBar">
-		<rect class="NavBar_Class" rx="0" ry="0" x="0" y="0" width="1920" height="102">
+		<rect class="NavBar_Class" rx="0" ry="0" x="0" y="0" width="100%" height="102">
 		</rect>
 	</svg>
 	<div class="Frame_169_Class">

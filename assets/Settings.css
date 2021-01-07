@@ -30,13 +30,50 @@
 	fill: rgba(38,38,38,1);
 }
 .Rectangle_3 {
-	filter: drop-shadow(0px 3px 10px rgba(0, 0, 0, 0.22));
+	/* filter: drop-shadow(0px 3px 10px rgba(0, 0, 0, 0.22)); */
 	position: absolute;
 	overflow: visible;
-	width: 1950px;
+	width: 100%;
 	height: 132px;
 	left: 0px;
 	top: 0px;
+}
+
+.RestartBanner_Class{
+	display: none;
+	left: 0px;
+	top: 100px;
+	width: 100%;
+	height: 50px;
+	position: relative;
+	text-align: center;
+	font-size: 30px;
+	font-style: normal;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: white;
+	/* background-color: #339cff; */
+	background-color: rgba(244,105,50,1);
+}
+.Restart_Class{
+margin-left: 20px;
+}
+.BannerCloseButton_Class{
+	position: relative;
+	background: none;
+	font-size: 30px;
+	color: white;
+	outline: none;
+	left: 500px;
+	padding: 5px;
+}
+.BannerCloseButton_Class:hover{
+	opacity: 0.8;
+}
+.PortStatus_Class{
+	position: relative;
+	top: 60px;
+	left: 35px;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .Frame_169_Class {
 	position: absolute;
@@ -617,6 +654,9 @@
 ::placeholder{
 	color:rgba(219,219,219,1);
 }
+input:focus::placeholder {
+  color: transparent;
+}
 .SetSwrmPortNumberButton_Class{
 	position: relative;
 	left: 50px;
@@ -735,6 +775,24 @@
 	color: white;
 	border-radius: 3px;
 	background-color: rgba(244, 105, 50, 1);
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid grey;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 .Group_55_b_Class {
 	position: absolute;
