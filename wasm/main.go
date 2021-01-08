@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/hako/durafmt"
 	logger "github.com/ipfs/go-log/v2"
 	"io/ioutil"
 	"net/http"
@@ -14,7 +15,6 @@ import (
 	"strings"
 	"syscall/js"
 	"time"
-	"github.com/hako/durafmt"
 )
 
 var log = logger.Logger("events")
@@ -33,21 +33,18 @@ func Events() js.Func {
 		go func() {
 			log.Debug("Events Called")
 			resp, err := http.Post(EVENTS, "application/json", nil)
-			if err != nil{
+			if err != nil {
 				log.Error(err.Error())
 				return
 			}
 			defer resp.Body.Close()
-
-			log.Debug(resp)
 			reader := bufio.NewReader(resp.Body)
 			for {
 				var eventsDataString string
-
 				line, isPrefix, err := reader.ReadLine()
 				log.Debugf("This is line: %s", string(line))
 				if string(line) == "" {
-					log.Debug("Empty Reponse at reader.ReadLine")
+					log.Debug("Empty Response at reader.ReadLine")
 					return
 				}
 				if err != nil {
@@ -55,7 +52,6 @@ func Events() js.Func {
 					continue
 				}
 				eventsDataString = string(line)
-
 				for isPrefix {
 					line, isPrefix, err = reader.ReadLine()
 					if err != nil {
@@ -64,7 +60,7 @@ func Events() js.Func {
 					}
 					eventsDataString += string(line)
 				}
-				log.Debug(eventsDataString)
+				log.Debugf("This is the Events Data String: %+v", eventsDataString)
 				var event Event
 				err = json.Unmarshal([]byte(eventsDataString), &event)
 				if err != nil {
@@ -72,18 +68,17 @@ func Events() js.Func {
 					return
 				}
 				var out Out
-				log.Debugf("This is event: %s", string(event.Result.Topic))
+				log.Debugf("This is event: %s", event.Result.Topic)
 				err = json.Unmarshal([]byte(event.Result.Val), &out)
 				if err != nil {
 					log.Error("Error in Unmarshalling Out in : ", event.Result.Val, err.Error())
 					return
 				}
-				val, err := json.MarshalIndent(out.Data, "", " ")
+				val, err := json.Marshal(out.Data)
 				if err != nil {
 					log.Error("Error encountered in Marshalling: ", err.Error())
 					return
 				}
-
 				if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") || (event.Result.Topic == "Settlement") {
 					switch event.Result.Topic {
 					case "Status":
@@ -104,7 +99,6 @@ func Events() js.Func {
 							SetDisplay("taskmanagerstatusname", "innerHTML", "")
 							SetDisplay("taskmanagerstatusstatus", "innerHTML", "")
 							SetDisplay("taskmanagerstatusAS", "innerHTML", "")
-
 							for _, task := range status.TaskManagerStatus {
 								sName := task.Name
 								if sName == "Idle" {
@@ -114,7 +108,7 @@ func Events() js.Func {
 								sStatus := task.Status
 								CreateElement("taskmanagerstatusstatus", "div", "innerHTML", sStatus)
 								sAdditionalStatus := task.AdditionalStatus
-								if sAdditionalStatus == ""{
+								if sAdditionalStatus == "" {
 									sAdditionalStatus = fmt.Sprintf("&#8212;")
 								}
 								CreateElement("taskmanagerstatusAS", "div", "innerHTML", sAdditionalStatus)
@@ -125,14 +119,12 @@ func Events() js.Func {
 							for key := 0; key < serverStatus.NumField(); key++ {
 								name := serverStatus.Type().Field(key).Name
 								value := serverStatus.Field(key).Interface()
-								if value == ""{
+								if value == "" {
 									value = "Not Running"
 								}
 								SetDisplay(name, "innerHTML", fmt.Sprintf("%s", value))
 							}
-
 							values := reflect.ValueOf(&status).Elem()
-
 							for key := 0; key < values.NumField(); key++ {
 								name := values.Type().Field(key).Name
 								value := values.Field(key).Interface()
@@ -144,7 +136,6 @@ func Events() js.Func {
 									switch name {
 									case "LoggedIn":
 										sValue = "LoggedIn"
-
 									case "DaemonRunning":
 										sValue = "ONLINE"
 									}
@@ -152,22 +143,18 @@ func Events() js.Func {
 									switch name {
 									case "LoggedIn":
 										sValue = "LoggedOut"
-
 									case "DaemonRunning":
 										sValue = "OFFLINE"
 									}
 								}
 								SetDisplay(name, "innerHTML", sValue)
 							}
-
 							timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
 							sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
 							SetDisplay("LastConnected", "innerHTML", sTimeStamp)
-
 							sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 							sValue := fmt.Sprintf("%s %s", sFloat, "%")
 							SetDisplay("percentageNumber", "innerHTML", sValue)
-
 							StartTime = status.SessionStartTime
 						}
 
@@ -202,9 +189,9 @@ func Events() js.Func {
 								log.Error("Error while loading Location in Settlement: ", err.Error())
 								return
 							}
-							now := (settlement.Date).In(timeZone)
-							date := (now).Format("02-01-2006")
-							time := (now).Format(time.Kitchen)
+							CurrentZone := (settlement.Date).In(timeZone)
+							date := (CurrentZone).Format("02-01-2006")
+							time := (CurrentZone).Format(time.Kitchen)
 							sDateTime := fmt.Sprintf("%s %s", date, time)
 							SetDisplay("NextDistribution", "innerHTML", sDateTime)
 						}
@@ -222,10 +209,10 @@ func Events() js.Func {
 							sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
 							SetDisplay("Pending", "innerHTML", sValue)
 
-							sDownloaded := fmt.Sprintf("%d %s",(bcnBalance.BytesDownloaded)/1048576, "MB")
+							sDownloaded := fmt.Sprintf("%d %s", (bcnBalance.BytesDownloaded)/1048576, "MB")
 							SetDisplay("CycleDownloaded", "innerHTML", sDownloaded)
 
-							sServed := fmt.Sprintf("%d %s",(bcnBalance.BytesServed)/1048576, "MB")
+							sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
 							SetDisplay("CycleServed", "innerHTML", sServed)
 						}
 
@@ -252,9 +239,7 @@ func Events() js.Func {
 								log.Error("Unable to get document object in settings")
 								return
 							}
-
 							values := reflect.ValueOf(&settings).Elem()
-
 							for key := 0; key < values.NumField(); key++ {
 								name := values.Type().Field(key).Name
 								value := values.Field(key).Interface()
@@ -272,7 +257,6 @@ func Events() js.Func {
 										sValue = fmt.Sprintf("%.2f %s", value, "%")
 									}
 									OutputArea.Set("innerHTML", sValue)
-
 								}
 							}
 						}
@@ -284,7 +268,6 @@ func Events() js.Func {
 				} else {
 					log.Debug("Not Handled Yet")
 				}
-
 			}
 		}()
 		return nil
@@ -315,15 +298,13 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
-
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {
 		log.Error("Error in unmarshalling data in : ", funcName, err.Error())
 		return nil
 	}
-
-	val, err := json.MarshalIndent(out.Data, "", " ")
+	val, err := json.Marshal(out.Data)
 	if err != nil {
 		log.Error("Error in marshalling out in : ", funcName, err.Error())
 		return nil
@@ -331,8 +312,7 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 	return val
 }
 
-
-func SetDisplay(Id string, Attr string, value string){
+func SetDisplay(Id string, Attr string, value string) {
 	jsDoc := js.Global().Get("document")
 	if !jsDoc.Truthy() {
 		log.Error("Unable to get document object in: ", Id)
@@ -358,7 +338,7 @@ func CreateElement(Id string, element string, Attr string, value string) {
 		return
 	}
 	if value != "" {
-	OutputArea.Set(Attr, value)
+		OutputArea.Set(Attr, value)
 	}
 	jsDoc.Call("getElementById", Id).Call("appendChild", OutputArea)
 }
@@ -370,21 +350,17 @@ func GetID() js.Func {
 				"val": "hive-cli.exe%$#id%$#-j",
 			}
 			val := GetData(payload, "GetID")
-
 			var id ID
 			err := json.Unmarshal(val, &id)
 			if err != nil {
 				log.Error("Error in Unmarshalling ID in GetID: ", err.Error())
 				return
 			}
-
 			SetDisplay("Address", "innerHTML", "")
-
 			for _, value := range id.Addresses {
 				CreateElement("Address", "div", "innerHTML", value)
 				CreateElement("Address", "br", "innerHTML", "")
 			}
-
 			SetDisplay("PeerID", "innerHTML", id.PeerID)
 		}()
 		return nil
@@ -399,7 +375,6 @@ func GetPeers() js.Func {
 				"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
 			}
 			val := GetData(payload, "GetPeers")
-
 			var swarmPeers []string
 			err := json.Unmarshal(val, &swarmPeers)
 			if err != nil {
@@ -407,7 +382,6 @@ func GetPeers() js.Func {
 				return
 			}
 			SetDisplay("Peers", "innerHTML", "")
-
 			for _, value := range swarmPeers {
 				CreateElement("Peers", "div", "innerHTML", value)
 				CreateElement("Peers", "br", "innerHTML", "")
@@ -425,7 +399,6 @@ func SetEarningDropDown() js.Func {
 				"val": "hive-cli.exe%$#earning%$#-g%$#-j",
 			}
 			val := GetData(payload, "SetEarningDropDown")
-
 			log.Debug("Earning Hit")
 			var netEarnings NetEarnings
 			err := json.Unmarshal(val, &netEarnings)
@@ -434,7 +407,6 @@ func SetEarningDropDown() js.Func {
 				return
 			}
 			log.Debugf("%+v", netEarnings)
-
 			jsDoc := js.Global().Get("document")
 			if !jsDoc.Truthy() {
 				log.Error("Unable to get document object in SetEarningDropDown")
@@ -453,7 +425,6 @@ func SetEarningDropDown() js.Func {
 			OutputArea.Set("innerHTML", "Select Device")
 			OutputArea.Set("selected", "selected")
 			OutputArea.Set("disabled", "disabled")
-
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			OutputArea = jsDoc.Call("createElement", "option")
 			if !OutputArea.Truthy() {
@@ -463,9 +434,7 @@ func SetEarningDropDown() js.Func {
 			OutputArea.Set("innerHTML", "ALL DEVICES")
 			OutputArea.Set("value", "ALL DEVICES")
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
-
 			for _, value := range netEarnings.Devices {
-
 				OutputArea := jsDoc.Call("createElement", "option")
 				if !OutputArea.Truthy() {
 					log.Error("Unable to get create option in DevicesDropDown")
@@ -476,7 +445,6 @@ func SetEarningDropDown() js.Func {
 				OutputArea.Set("value", value.PeerId)
 				jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			}
-
 			log.Debugf("This is Device Total: %+v ", netEarnings.DeviceTotal)
 		}()
 		return nil
@@ -490,7 +458,6 @@ func GetStorageLocation() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#config%$#get-storage-location%$#-j",
 			}
-
 			buf, err := json.Marshal(payload)
 			if err != nil {
 				log.Error("Error in Marshalling Payload in GetStorageLocation: ", err.Error())
@@ -534,14 +501,12 @@ func GetProfile() js.Func {
 				"val": "hive-cli.exe%$#profile%$#-j",
 			}
 			val := GetData(payload, "GetProfile")
-
 			var profile Profile
 			err := json.Unmarshal(val, &profile)
 			if err != nil {
 				log.Error("Error in unmarshalling val in GetProfile: ", err.Error())
 				return
 			}
-
 			SetDisplay("Email", "innerHTML", profile.Email)
 			SetDisplay("Role", "innerHTML", profile.Role)
 		}()
@@ -556,9 +521,7 @@ func GetBandwidth() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#stat%$#bandwidth%$#-j",
 			}
-
 			val := GetData(payload, "GetBandwidth")
-
 			var bandwidth Bandwidth
 			err := json.Unmarshal(val, &bandwidth)
 			if err != nil {
@@ -576,13 +539,10 @@ func GetBandwidth() js.Func {
 	return jsonFunc
 }
 
-
-func GetEarning() js.Func{
+func GetEarning() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
 			resolve := args[0]
-
 			go func() {
 				payload := map[string]interface{}{
 					"val": "hive-cli.exe%$#earning%$#-g%$#-j",
@@ -609,14 +569,13 @@ func GetEarning() js.Func{
 					log.Error("Error in unmarshalling respBuf in GetEarning: ", err.Error())
 					return
 				}
-
 				var out Out
 				err = json.Unmarshal([]byte(data["val"]), &out)
 				if err != nil {
 					log.Error("Error in unmarshalling data in GetEarning: ", err.Error())
 					return
 				}
-				val, err := json.MarshalIndent(out.Data, "", " ")
+				val, err := json.Marshal(out.Data)
 				if err != nil {
 					log.Error("Error in marshalling out in GetEarning: ", err.Error())
 					return
@@ -627,7 +586,6 @@ func GetEarning() js.Func{
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-
 				jsDoc := js.Global().Get("document")
 				if !jsDoc.Truthy() {
 					log.Error("Unable to get document object in GetEarning")
@@ -652,7 +610,6 @@ func GetEarning() js.Func{
 				SetDisplay("EarnedCycle", "innerHTML", earned)
 				SetDisplay("DownloadedCycle", "innerHTML", download)
 				SetDisplay("ServedCycle", "innerHTML", served)
-
 				log.Debug("Sending details to CreateGraph from GetEarning")
 				resolve.Invoke(data["val"])
 			}()
@@ -668,15 +625,16 @@ func GetEarning() js.Func{
 func GetUptime() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
-			Start := time.Unix(StartTime, 0)
-			elapsed := time.Since(Start)
-			SetDisplay("Time", "innerHTML", fmt.Sprintf("%s", durafmt.Parse(elapsed).LimitFirstN(1)))
+			if StartTime != 0 {
+				Start := time.Unix(StartTime, 0)
+				elapsed := time.Since(Start)
+				SetDisplay("Time", "innerHTML", fmt.Sprintf("%s", durafmt.Parse(elapsed).LimitFirstN(1)))
+			}
 		}()
 		return nil
 	})
 	return jsonFunc
 }
-
 
 func GetVersion() js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -685,7 +643,6 @@ func GetVersion() js.Func {
 				"val": "hive-cli.exe%$#version%$#-j",
 			}
 			val := GetData(payload, "GetVersion")
-
 			var version Version
 			err := json.Unmarshal(val, &version)
 			if err != nil {
@@ -701,11 +658,11 @@ func GetVersion() js.Func {
 
 func main() {
 	logger.SetLogLevel("*", "Debug")
-	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
-	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
-	js.Global().Set("GetSettings", GetSettings())
-	js.Global().Set("GetStatus", GetStatus())
-	js.Global().Set("GetConfig", GetConfig())
+	// js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
+	// js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
+	// js.Global().Set("GetSettings", GetSettings())
+	// js.Global().Set("GetStatus", GetStatus())
+	// js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("SetEarningDropDown", SetEarningDropDown())
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())

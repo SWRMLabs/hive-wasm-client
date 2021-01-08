@@ -17,7 +17,7 @@ func GetSettings() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#settings%$#-g%$#-j",
 			}
-            log.Debug("Settings Hit")
+			log.Debug("Settings Hit")
 			buf, err := json.Marshal(payload)
 			if err != nil {
 				log.Error("Error in Marshalling Payload in GetSettings: ", err.Error())
@@ -47,7 +47,7 @@ func GetSettings() js.Func {
 				log.Error("Error in Unmarshalling data in GetSettings: ", err.Error())
 				return
 			}
-            val, err := json.MarshalIndent(out.Data, "", " ")
+			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
 				log.Error("Error in Marshalling in GetSettings: ", err.Error())
 				return
@@ -57,7 +57,7 @@ func GetSettings() js.Func {
 				log.Error("Unable to get document object in GetSettings")
 				return
 			}
-            var settings Settings
+			var settings Settings
 			err = json.Unmarshal(val, &settings)
 			if err != nil {
 				log.Error("Error in unmarshalling val in GetSettings: ", err.Error())
@@ -87,7 +87,7 @@ func GetSettings() js.Func {
 				log.Error("Unable to get output area in UsedSpace")
 				return
 			}
-			sUsedSpace := fmt.Sprintf("%.2f %s", usedSpace * 1024, "MB")
+			sUsedSpace := fmt.Sprintf("%.2f %s", usedSpace*1024, "MB")
 			OutputArea.Set("innerHTML", sUsedSpace)
 
 			OutputArea = jsDoc.Call("getElementById", "FreeSpace")
@@ -96,7 +96,7 @@ func GetSettings() js.Func {
 				return
 			}
 			freeSpace := (settings.MaxStorage - usedSpace)
-			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace * 1024, "MB")
+			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
 			OutputArea.Set("innerHTML", sFreeSpace)
 		}()
 		return nil
@@ -110,7 +110,7 @@ func GetStatus() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#status%$#-j",
 			}
-            log.Debug("GetStatus Hit")
+			log.Debug("GetStatus Hit")
 			buf, err := json.Marshal(payload)
 			if err != nil {
 				log.Error("Error in Marshalling Payload in GetStatus: ", err.Error())
@@ -140,7 +140,7 @@ func GetStatus() js.Func {
 				log.Error("Error in Unmarshalling data in GetStatus: ", err.Error())
 				return
 			}
-            val, err := json.MarshalIndent(out.Data, "", " ")
+			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
 				log.Error("Error in Marshalling in GetStatus: ", err.Error())
 				return
@@ -163,10 +163,10 @@ func GetStatus() js.Func {
 			}
 			var sValue string
 			if status.LoggedIn == true {
-					sValue = "LoggedIn &#x1f7e2;"
-				} else if status.LoggedIn == false {
-					sValue = "LoggedOut &#10060;"
-				}
+				sValue = "LoggedIn &#x1f7e2;"
+			} else if status.LoggedIn == false {
+				sValue = "LoggedOut &#10060;"
+			}
 			OutputArea.Set("innerHTML", sValue)
 
 			OutputArea = jsDoc.Call("getElementById", "LastConnected")
@@ -190,7 +190,7 @@ func GetConfig() js.Func {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#config%$#show%$#-j",
 			}
-            log.Debug("GetConfig Hit")
+			log.Debug("GetConfig Hit")
 			buf, err := json.Marshal(payload)
 			if err != nil {
 				log.Error("Error in Marshalling Payload in GetConfig: ", err.Error())
@@ -220,7 +220,7 @@ func GetConfig() js.Func {
 				log.Error("Error in Unmarshalling data in GetConfig: ", err.Error())
 				return
 			}
-            val, err := json.MarshalIndent(out.Data, "", " ")
+			val, err := json.MarshalIndent(out.Data, "", " ")
 			if err != nil {
 				log.Error("Error in Marshalling in GetConfig: ", err.Error())
 				return
@@ -325,7 +325,7 @@ func SetSwrmPortNumber() js.Func {
 				return
 			}
 			defer resp.Body.Close()
-			log.Debug("This is response from SetSwrmPortNumber: ",resp)
+			log.Debug("This is response from SetSwrmPortNumber: ", resp)
 
 			payload = map[string]interface{}{
 				"val": "hive-cli.exe%$#settings%$#-j",
@@ -342,7 +342,7 @@ func SetSwrmPortNumber() js.Func {
 				return
 			}
 			defer resp.Body.Close()
-			log.Debug("This is response from SetSwrmPortNumber: ",resp)
+			log.Debug("This is response from SetSwrmPortNumber: ", resp)
 
 			if err == nil {
 				log.Debug("SwrmPort Updated Successfully")
@@ -373,7 +373,7 @@ func SetWebsocketPortNumber() js.Func {
 			value := OutputArea.Get("value")
 			log.Debug(value)
 			sep := "%$#"
-			sValue := "hive-cli.exe%$#config%$#modify%$#WebsocketPort" + sep + fmt.Sprintf("%s",value)
+			sValue := "hive-cli.exe%$#config%$#modify%$#WebsocketPort" + sep + fmt.Sprintf("%s", value)
 			log.Debug(sValue)
 			payload := map[string]interface{}{
 				"val": sValue,
@@ -389,7 +389,7 @@ func SetWebsocketPortNumber() js.Func {
 				return
 			}
 			defer resp.Body.Close()
-			log.Debug("This is response from WebSocketPortNumber: ",resp)
+			log.Debug("This is response from WebSocketPortNumber: ", resp)
 
 			payload = map[string]interface{}{
 				"val": "hive-cli.exe%$#settings%$#-j",
@@ -406,7 +406,7 @@ func SetWebsocketPortNumber() js.Func {
 				return
 			}
 			defer resp.Body.Close()
-			log.Debug("This is response from WebSocketPortNumber: ",resp)
+			log.Debug("This is response from WebSocketPortNumber: ", resp)
 
 			if err == nil {
 				log.Debug("WebSocketPort Updated Successfully")

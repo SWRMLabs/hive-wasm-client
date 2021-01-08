@@ -245,34 +245,34 @@ type ServerStatus struct {
 }
 
 type Config struct {
-	APIPort string `json:"APIPort, omitempty"`
-	AutoGC bool `json:"AutoGC, omitempty"`
-	Bootstraps []string `json:"Bootstraps, omitempty"`
-	DNS4 string `json:"DNS4, omitempty"`
-	DataStore string `json:"DataStore, omitempty"`
-	DesktopApplicationAutoStart bool `json:"DesktopApplicationAutoStart, omitempty"`
-	DesktopApplicationNotification bool `json:"DesktopApplicationNotification, omitempty"`
-	DeviceName string `json:"DeviceName, omitempty"`
-	EnableDynamicDNS bool `json:"EnableDynamicDNS, omitempty"`
-	EnableFileShare bool `json:"EnableFileShare, omitempty"`
-	EnableHop bool `json:"EnableHop, omitempty"`
-	GCPeriod string `json:"GCPeriod, omitempty"`
-	GatewayPort string `json:"GatewayPort, omitempty"`
-	IP4 string `json:"IP4, omitempty"`
-	IP6 string `json:"IP6, omitempty"`
-	identity Identity `json:"Identity, omitempty"`
-	MaxPeers int `json:"MaxPeers, omitempty"`
-	ProxyPort string `json:"ProxyPort, omitempty"`
-	ReproviderInterval string `json:"ReproviderInterval, omitempty"`
-	Storage int `json:"Storage, omitempty"`
-	StorageGCWatermark int `json:"StorageGCWatermark, omitempty"`
-	Store string `json:"Store, omitempty"`
-	SwarmPort string `json:"SwarmPort, omitempty"`
-	WebsocketPort string `json:"WebsocketPort, omitempty"`
+	APIPort                        string   `json:"APIPort, omitempty"`
+	AutoGC                         bool     `json:"AutoGC, omitempty"`
+	Bootstraps                     []string `json:"Bootstraps, omitempty"`
+	DNS4                           string   `json:"DNS4, omitempty"`
+	DataStore                      string   `json:"DataStore, omitempty"`
+	DesktopApplicationAutoStart    bool     `json:"DesktopApplicationAutoStart, omitempty"`
+	DesktopApplicationNotification bool     `json:"DesktopApplicationNotification, omitempty"`
+	DeviceName                     string   `json:"DeviceName, omitempty"`
+	EnableDynamicDNS               bool     `json:"EnableDynamicDNS, omitempty"`
+	EnableFileShare                bool     `json:"EnableFileShare, omitempty"`
+	EnableHop                      bool     `json:"EnableHop, omitempty"`
+	GCPeriod                       string   `json:"GCPeriod, omitempty"`
+	GatewayPort                    string   `json:"GatewayPort, omitempty"`
+	IP4                            string   `json:"IP4, omitempty"`
+	IP6                            string   `json:"IP6, omitempty"`
+	identity                       Identity `json:"Identity, omitempty"`
+	MaxPeers                       int      `json:"MaxPeers, omitempty"`
+	ProxyPort                      string   `json:"ProxyPort, omitempty"`
+	ReproviderInterval             string   `json:"ReproviderInterval, omitempty"`
+	Storage                        int      `json:"Storage, omitempty"`
+	StorageGCWatermark             int      `json:"StorageGCWatermark, omitempty"`
+	Store                          string   `json:"Store, omitempty"`
+	SwarmPort                      string   `json:"SwarmPort, omitempty"`
+	WebsocketPort                  string   `json:"WebsocketPort, omitempty"`
 }
 
 type Identity struct {
-	PeerId string `json:"PeerId, omitempty"`
+	PeerId  string `json:"PeerId, omitempty"`
 	PrivKey string `json:"PrivKey, omitempty"`
 }
 
@@ -334,13 +334,13 @@ type NetEarnings struct {
 	BillingCycles []string             `json:"billingCycles"`
 	Devices       []Device             `json:"devices"`
 	Data          map[string][]Earning `json:"earnings"`
-	CycleStats    [6] CycleStat
+	CycleStats    [6]CycleStat
 	DeviceTotal   Earning
 }
 
 type GraphDetails struct {
 	BillingCyclesReverse []string  `json:"billingCyclesReverse"`
-	Earnings 			 []float64 `json:"Earnings"`
+	Earnings             []float64 `json:"Earnings"`
 }
 
 func (n *NetEarnings) GetNamespace() string {

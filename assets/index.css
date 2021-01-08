@@ -23,10 +23,9 @@ body {
 }
 .Hive-CLI_WEBUI_Class {
 	left: 0;
-	position: absolute;
+	position: relative;
     width: 120em;
     height: 125em;
-    overflow-y: scroll;
 	background-color: rgba(67,67,67,1);
 	overflow: hidden;
 	--web-view-name: Hive-CLI WEBUI;
@@ -512,7 +511,7 @@ body {
 	color: rgba(244,105,50,1);
 }
 .LastConnectedLabel_Class {
-	left: 1170px;
+	left: 1130px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -746,7 +745,7 @@ body {
 	color: rgba(153,153,153,1);
 }
 .VersionLabel_Class {
-	left: 1515px;
+	left: 1500px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -760,7 +759,7 @@ body {
 	color: rgba(133,133,133,1);
 }
 .LastConnected_Class {
-	left: 1365px;
+	left: 1325px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -1185,7 +1184,7 @@ option{
 	color: rgba(244,105,50,1);
 }
 .Version_Class {
-	left: 1622px;
+	left: 1607px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -1267,7 +1266,7 @@ option{
 	color: rgba(255,255,255,1);
 }
 .EmailLabel_Class {
-	left: 1460px;
+	left: 1500px;
 	top: 127px;
 	position: absolute;
 	overflow: visible;
@@ -1631,7 +1630,7 @@ div::-webkit-scrollbar-thumb{
 	color: rgba(133,133,133,1);
 }
 .Email_Class {
-	left: 1545px;
+	left: 1580px;
 	top: 127px;
 	position: absolute;
 	overflow: visible;
@@ -1702,7 +1701,7 @@ div::-webkit-scrollbar-thumb{
 }
 .Time_Class {
 	opacity: 0.45;
-	left: 670px;
+	left: 675px;
 	top: 700px;
 	position: absolute;
 	overflow: visible;
@@ -1936,7 +1935,7 @@ div::-webkit-scrollbar-thumb{
 }
 .MaxStorage_Class {
 	opacity: 0.85;
-	left: 1020px;
+	left: 1030px;
 	top: 648px;
 	position: absolute;
 	overflow: visible;
@@ -1965,7 +1964,7 @@ div::-webkit-scrollbar-thumb{
 	color: rgba(255,255,255,1);
 }
 .UsedStorage_Class {
-	left: 1056px;
+	left: 1045px;
 	top: 800px;
 	position: absolute;
 	overflow: visible;
