@@ -306,17 +306,25 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 }
 
 func SetDisplay(Id string, Attr string, value string) {
-	jsDoc := js.Global().Get("document")
-	if !jsDoc.Truthy() {
-		log.Error("Unable to get document object in: ", Id)
-		return
+	for i := 0; i < 5; i++ {
+		jsDoc := js.Global().Get("document")
+		if !jsDoc.Truthy() {
+			log.Error("Unable to get document object in: ", Id)
+			return
+		}
+		OutputArea := jsDoc.Call("getElementById", Id)
+		if !OutputArea.Truthy() {
+			log.Error("Unable to get output area in: ", Id)
+			log.Debugf("Trying to find OutputArea again in:%s ", Id)
+			time.Sleep(1 * time.Second)
+			continue
+		} else {
+			log.Debugf("OutputArea found in:%s ", Id)
+			OutputArea.Set(Attr, value)
+			break
+		}
 	}
-	OutputArea := jsDoc.Call("getElementById", Id)
-	if !OutputArea.Truthy() {
-		log.Error("Unable to get output area in: ", Id)
-		return
-	}
-	OutputArea.Set(Attr, value)
+
 }
 
 func CreateElement(Id string, element string, Attr string, value string) {
