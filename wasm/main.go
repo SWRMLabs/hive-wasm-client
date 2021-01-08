@@ -625,7 +625,7 @@ func GetUptime() js.Func {
 				Start := time.Unix(StartTime, 0)
 				elapsed := time.Since(Start)
 				elapsed = elapsed.Round(time.Second)
-				SetDisplay("Time", "innerHTML", fmt.Sprintf("%s", durafmt.Parse(elapsed).LimitFirstN(2)))
+				SetDisplay("Time", "innerHTML", fmt.Sprintf("%s", durafmt.Parse(elapsed)))
 			}
 		}()
 		return nil
