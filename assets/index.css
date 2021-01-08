@@ -1701,13 +1701,12 @@ div::-webkit-scrollbar-thumb{
 }
 .Time_Class {
 	opacity: 0.45;
-	left: 675px;
+	left: 575px;
 	top: 700px;
 	position: absolute;
 	overflow: visible;
-	width: 200px;
-    white-space: wrap;
-	word-wrap: break-word;
+	width: 393px;
+    white-space: nowrap;
 	text-align: center;
 	font-family: Segoe UI;
 	font-style: normal;

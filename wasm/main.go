@@ -157,7 +157,6 @@ func Events() js.Func {
 							SetDisplay("percentageNumber", "innerHTML", sValue)
 							StartTime = status.SessionStartTime
 						}
-
 					case "Balance":
 						{
 							log.Debug("Balance Hit")
@@ -172,7 +171,6 @@ func Events() js.Func {
 							log.Debugf("This is Main Balance: %s", sValue)
 							SetDisplay("confirmedBalance", "innerHTML", sValue)
 						}
-
 					case "Settlement":
 						{
 							log.Debug("Settlement Hit")
@@ -215,7 +213,6 @@ func Events() js.Func {
 							sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
 							SetDisplay("CycleServed", "innerHTML", sServed)
 						}
-
 					case "Peers":
 						{
 							log.Debug("Peers Hit")
@@ -223,7 +220,6 @@ func Events() js.Func {
 							log.Debugf("This is Number of Peers: %s", val)
 							SetDisplay("PeersData", "innerHTML", sValue)
 						}
-
 					case "Settings":
 						{
 							log.Debug("Settings Hit")
@@ -628,7 +624,8 @@ func GetUptime() js.Func {
 			if StartTime != 0 {
 				Start := time.Unix(StartTime, 0)
 				elapsed := time.Since(Start)
-				SetDisplay("Time", "innerHTML", fmt.Sprintf("%s", durafmt.Parse(elapsed).LimitFirstN(1)))
+				elapsed = elapsed.Round(time.Second)
+				SetDisplay("Time", "innerHTML", strings.Title(fmt.Sprintf("%s", durafmt.Parse(elapsed).LimitFirstN(2))))
 			}
 		}()
 		return nil
