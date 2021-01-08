@@ -28,7 +28,7 @@ var StartTime int64
 
 func Events() js.Func {
 
-	jsonfunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 
 		go func() {
 			log.Debug("Events Called")
@@ -79,7 +79,6 @@ func Events() js.Func {
 					log.Error("Error encountered in Marshalling: ", err.Error())
 					return
 				}
-				if (event.Result.Topic == "Status") || (event.Result.Topic == "Balance") || (event.Result.Topic == "BalanceCycle") || (event.Result.Topic == "Peers") || (event.Result.Topic == "Settings") || (event.Result.Topic == "Settlement") {
 					switch event.Result.Topic {
 					case "Status":
 						{
@@ -219,6 +218,7 @@ func Events() js.Func {
 							sValue := fmt.Sprintf("%s", val)
 							log.Debugf("This is Number of Peers: %s", val)
 							SetDisplay("PeersData", "innerHTML", sValue)
+							GetPeers()
 						}
 					case "Settings":
 						{
@@ -261,14 +261,10 @@ func Events() js.Func {
 							log.Debug("Default Hit")
 						}
 					}
-				} else {
-					log.Debug("Not Handled Yet")
-				}
 			}
 		}()
 		return nil
 	})
-	return jsonfunc
 }
 
 func GetData(payload map[string]interface{}, funcName string) []uint8 {
@@ -340,7 +336,7 @@ func CreateElement(Id string, element string, Attr string, value string) {
 }
 
 func GetID() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#id%$#-j",
@@ -361,12 +357,8 @@ func GetID() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
-
-func GetPeers() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go func() {
+func GetPeers() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
 			}
@@ -382,14 +374,10 @@ func GetPeers() js.Func {
 				CreateElement("Peers", "div", "innerHTML", value)
 				CreateElement("Peers", "br", "innerHTML", "")
 			}
-		}()
-		return nil
-	})
-	return jsonFunc
 }
 
 func SetEarningDropDown() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#earning%$#-g%$#-j",
@@ -445,11 +433,10 @@ func SetEarningDropDown() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetStorageLocation() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#config%$#get-storage-location%$#-j",
@@ -487,11 +474,10 @@ func GetStorageLocation() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetProfile() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#profile%$#-j",
@@ -508,11 +494,10 @@ func GetProfile() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetBandwidth() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#stat%$#bandwidth%$#-j",
@@ -532,11 +517,10 @@ func GetBandwidth() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetEarning() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			resolve := args[0]
 			go func() {
@@ -615,11 +599,10 @@ func GetEarning() js.Func {
 		return promiseConstructor.New(handler)
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetUptime() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			if StartTime != 0 {
 				Start := time.Unix(StartTime, 0)
@@ -630,11 +613,10 @@ func GetUptime() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetVersion() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
 				"val": "hive-cli.exe%$#version%$#-j",
@@ -650,7 +632,6 @@ func GetVersion() js.Func {
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func main() {
@@ -667,7 +648,6 @@ func main() {
 	js.Global().Set("GetBandwidth", GetBandwidth())
 	js.Global().Set("GetStorageLocation", GetStorageLocation())
 	js.Global().Set("GetID", GetID())
-	js.Global().Set("GetPeers", GetPeers())
 	js.Global().Set("GetEarning", GetEarning())
 	js.Global().Set("Events", Events())
 	<-make(chan bool)
