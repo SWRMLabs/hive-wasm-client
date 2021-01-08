@@ -22,6 +22,7 @@ var log = logger.Logger("events")
 const (
 	EVENTS  = "http://localhost:4343/v3/events"
 	GATEWAY = "http://localhost:4343/v3/execute"
+	splicer = "%$#"
 )
 
 var StartTime int64
@@ -339,7 +340,7 @@ func GetID() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#id%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "id", "-j"}, splicer),
 			}
 			val := GetData(payload, "GetID")
 			var id ID
@@ -360,7 +361,7 @@ func GetID() js.Func {
 }
 func GetPeers() {
 	payload := map[string]interface{}{
-		"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
+		"val": strings.Join([]string{"hive-cli.exe", "swarm", "peers", "-j"}, splicer),
 	}
 	val := GetData(payload, "GetPeers")
 	var swarmPeers []string
@@ -380,7 +381,7 @@ func SetEarningDropDown() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#earning%$#-g%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "earning", "-g", "-j"}, splicer),
 			}
 			val := GetData(payload, "SetEarningDropDown")
 			log.Debug("Earning Hit")
@@ -439,7 +440,7 @@ func GetStorageLocation() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#config%$#get-storage-location%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "config", "get-storage-location", "-j"}, splicer),
 			}
 			buf, err := json.Marshal(payload)
 			if err != nil {
@@ -480,7 +481,7 @@ func GetProfile() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#profile%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "profile", "-j"}, splicer),
 			}
 			val := GetData(payload, "GetProfile")
 			var profile Profile
@@ -500,7 +501,7 @@ func GetBandwidth() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#stat%$#bandwidth%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "stat", "bandwidth", "-j"}, splicer),
 			}
 			val := GetData(payload, "GetBandwidth")
 			var bandwidth Bandwidth
@@ -525,7 +526,7 @@ func GetEarning() js.Func {
 			resolve := args[0]
 			go func() {
 				payload := map[string]interface{}{
-					"val": "hive-cli.exe%$#earning%$#-g%$#-j",
+					"val": strings.Join([]string{"hive-cli.exe", "earning", "-g", "-j"}, splicer),
 				}
 				buf, err := json.Marshal(payload)
 				if err != nil {
@@ -619,7 +620,7 @@ func GetVersion() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#version%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "version", "-j"}, splicer),
 			}
 			val := GetData(payload, "GetVersion")
 			var version Version
