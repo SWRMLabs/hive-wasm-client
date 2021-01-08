@@ -79,188 +79,188 @@ func Events() js.Func {
 					log.Error("Error encountered in Marshalling: ", err.Error())
 					return
 				}
-					switch event.Result.Topic {
-					case "Status":
-						{
-							log.Debug("Status Hit")
-							var status Status
-							err = json.Unmarshal(val, &status)
-							if err != nil {
-								log.Error("Error in Unmarshalling Status:", err.Error())
-								return
-							}
-							log.Debug("This is Status: ", status)
-							jsDoc := js.Global().Get("document")
-							if !jsDoc.Truthy() {
-								log.Error("Unable to get document object in status")
-								return
-							}
-							SetDisplay("taskmanagerstatusname", "innerHTML", "")
-							SetDisplay("taskmanagerstatusstatus", "innerHTML", "")
-							SetDisplay("taskmanagerstatusAS", "innerHTML", "")
-							for _, task := range status.TaskManagerStatus {
-								sName := task.Name
-								if sName == "Idle" {
-									continue
-								}
-								CreateElement("taskmanagerstatusname", "div", "innerHTML", sName)
-								sStatus := task.Status
-								CreateElement("taskmanagerstatusstatus", "div", "innerHTML", sStatus)
-								sAdditionalStatus := task.AdditionalStatus
-								if sAdditionalStatus == "" {
-									sAdditionalStatus = fmt.Sprintf("&#8212;")
-								}
-								CreateElement("taskmanagerstatusAS", "div", "innerHTML", sAdditionalStatus)
-							}
-
-							serverStatus := reflect.ValueOf(&status.ServerDetails).Elem()
-
-							for key := 0; key < serverStatus.NumField(); key++ {
-								name := serverStatus.Type().Field(key).Name
-								value := serverStatus.Field(key).Interface()
-								if value == "" {
-									value = "Not Running"
-								}
-								SetDisplay(name, "innerHTML", fmt.Sprintf("%s", value))
-							}
-							values := reflect.ValueOf(&status).Elem()
-							for key := 0; key < values.NumField(); key++ {
-								name := values.Type().Field(key).Name
-								value := values.Field(key).Interface()
-								if (name == "TaskManagerStatus") || (name == "TotalUptimePercentage") || (name == "SessionStartTime") || (name == "ServerDetails") {
-									continue
-								}
-								var sValue string
-								if value == true {
-									switch name {
-									case "LoggedIn":
-										sValue = "LoggedIn"
-									case "DaemonRunning":
-										sValue = "ONLINE"
-									}
-								} else if value == false {
-									switch name {
-									case "LoggedIn":
-										sValue = "LoggedOut"
-									case "DaemonRunning":
-										sValue = "OFFLINE"
-									}
-								}
-								SetDisplay(name, "innerHTML", sValue)
-							}
-							timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
-							sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-							SetDisplay("LastConnected", "innerHTML", sTimeStamp)
-							sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
-							sValue := fmt.Sprintf("%s %s", sFloat, "%")
-							SetDisplay("percentageNumber", "innerHTML", sValue)
-							StartTime = status.SessionStartTime
+				switch event.Result.Topic {
+				case "Status":
+					{
+						log.Debug("Status Hit")
+						var status Status
+						err = json.Unmarshal(val, &status)
+						if err != nil {
+							log.Error("Error in Unmarshalling Status:", err.Error())
+							return
 						}
-					case "Balance":
-						{
-							log.Debug("Balance Hit")
-							sFloat := fmt.Sprintf("%s", val)
-							for i, value := range sFloat {
-								if strings.ContainsAny(string(value), ".") && (i+5) <= len(sFloat) {
-									sFloat = sFloat[0:i+1] + sFloat[i+1:i+5]
-									break
+						log.Debug("This is Status: ", status)
+						jsDoc := js.Global().Get("document")
+						if !jsDoc.Truthy() {
+							log.Error("Unable to get document object in status")
+							return
+						}
+						SetDisplay("taskmanagerstatusname", "innerHTML", "")
+						SetDisplay("taskmanagerstatusstatus", "innerHTML", "")
+						SetDisplay("taskmanagerstatusAS", "innerHTML", "")
+						for _, task := range status.TaskManagerStatus {
+							sName := task.Name
+							if sName == "Idle" {
+								continue
+							}
+							CreateElement("taskmanagerstatusname", "div", "innerHTML", sName)
+							sStatus := task.Status
+							CreateElement("taskmanagerstatusstatus", "div", "innerHTML", sStatus)
+							sAdditionalStatus := task.AdditionalStatus
+							if sAdditionalStatus == "" {
+								sAdditionalStatus = fmt.Sprintf("&#8212;")
+							}
+							CreateElement("taskmanagerstatusAS", "div", "innerHTML", sAdditionalStatus)
+						}
+
+						serverStatus := reflect.ValueOf(&status.ServerDetails).Elem()
+
+						for key := 0; key < serverStatus.NumField(); key++ {
+							name := serverStatus.Type().Field(key).Name
+							value := serverStatus.Field(key).Interface()
+							if value == "" {
+								value = "Not Running"
+							}
+							SetDisplay(name, "innerHTML", fmt.Sprintf("%s", value))
+						}
+						values := reflect.ValueOf(&status).Elem()
+						for key := 0; key < values.NumField(); key++ {
+							name := values.Type().Field(key).Name
+							value := values.Field(key).Interface()
+							if (name == "TaskManagerStatus") || (name == "TotalUptimePercentage") || (name == "SessionStartTime") || (name == "ServerDetails") {
+								continue
+							}
+							var sValue string
+							if value == true {
+								switch name {
+								case "LoggedIn":
+									sValue = "LoggedIn"
+								case "DaemonRunning":
+									sValue = "ONLINE"
+								}
+							} else if value == false {
+								switch name {
+								case "LoggedIn":
+									sValue = "LoggedOut"
+								case "DaemonRunning":
+									sValue = "OFFLINE"
 								}
 							}
-							sValue := fmt.Sprintf("%s %s", sFloat, "SWRM")
-							log.Debugf("This is Main Balance: %s", sValue)
-							SetDisplay("confirmedBalance", "innerHTML", sValue)
+							SetDisplay(name, "innerHTML", sValue)
 						}
-					case "Settlement":
-						{
-							log.Debug("Settlement Hit")
-							var settlement Settlement
-							err = json.Unmarshal(val, &settlement)
-							if err != nil {
-								log.Error("Error Unmarshalling settlement: ", err.Error())
-								return
-							}
-							log.Debug("This is Settlement: ", settlement)
-
-							timeZone, err := time.LoadLocation("Local")
-							if err != nil {
-								log.Error("Error while loading Location in Settlement: ", err.Error())
-								return
-							}
-							CurrentZone := (settlement.Date).In(timeZone)
-							date := (CurrentZone).Format("02-01-2006")
-							time := (CurrentZone).Format(time.Kitchen)
-							sDateTime := fmt.Sprintf("%s %s", date, time)
-							SetDisplay("NextDistribution", "innerHTML", sDateTime)
-						}
-					case "BalanceCycle":
-						{
-							log.Debug("BCN Hit")
-							var bcnBalance BCNBalance
-							err = json.Unmarshal(val, &bcnBalance)
-							if err != nil {
-								log.Error("Error in Unmarshalling BCN Balance:", err.Error())
-								return
-							}
-							log.Debug("This is Balance Cycle: ", bcnBalance)
-
-							sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
-							SetDisplay("Pending", "innerHTML", sValue)
-
-							sDownloaded := fmt.Sprintf("%d %s", (bcnBalance.BytesDownloaded)/1048576, "MB")
-							SetDisplay("CycleDownloaded", "innerHTML", sDownloaded)
-
-							sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
-							SetDisplay("CycleServed", "innerHTML", sServed)
-						}
-					case "Peers":
-						{
-							log.Debug("Peers Hit")
-							sValue := fmt.Sprintf("%s", val)
-							log.Debugf("This is Number of Peers: %s", val)
-							SetDisplay("PeersData", "innerHTML", sValue)
-							GetPeers()
-						}
-					case "Settings":
-						{
-							log.Debug("Settings Hit")
-							var settings Settings
-							err = json.Unmarshal(val, &settings)
-							if err != nil {
-								log.Error("Error in Unmarshalling Settings: ", err.Error())
-								return
-							}
-							log.Debug("This is Settings: ", settings)
-							jsDoc := js.Global().Get("document")
-							if !jsDoc.Truthy() {
-								log.Error("Unable to get document object in settings")
-								return
-							}
-							values := reflect.ValueOf(&settings).Elem()
-							for key := 0; key < values.NumField(); key++ {
-								name := values.Type().Field(key).Name
-								value := values.Field(key).Interface()
-								if (name == "MaxStorage") || (name == "UsedStorage") {
-									OutputArea := jsDoc.Call("getElementById", name)
-									if !OutputArea.Truthy() {
-										log.Error("Unable to get output text area in settings keys")
-										return
-									}
-									sValue := value
-									if name == "MaxStorage" {
-										sValue = fmt.Sprintf("%.2f %s", value, "GB")
-									}
-									if name == "UsedStorage" {
-										sValue = fmt.Sprintf("%.2f %s", value, "%")
-									}
-									OutputArea.Set("innerHTML", sValue)
-								}
+						timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
+						sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
+						SetDisplay("LastConnected", "innerHTML", sTimeStamp)
+						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
+						sValue := fmt.Sprintf("%s %s", sFloat, "%")
+						SetDisplay("percentageNumber", "innerHTML", sValue)
+						StartTime = status.SessionStartTime
+					}
+				case "Balance":
+					{
+						log.Debug("Balance Hit")
+						sFloat := fmt.Sprintf("%s", val)
+						for i, value := range sFloat {
+							if strings.ContainsAny(string(value), ".") && (i+5) <= len(sFloat) {
+								sFloat = sFloat[0:i+1] + sFloat[i+1:i+5]
+								break
 							}
 						}
-					default:
-						{
-							log.Debug("Default Hit")
+						sValue := fmt.Sprintf("%s %s", sFloat, "SWRM")
+						log.Debugf("This is Main Balance: %s", sValue)
+						SetDisplay("confirmedBalance", "innerHTML", sValue)
+					}
+				case "Settlement":
+					{
+						log.Debug("Settlement Hit")
+						var settlement Settlement
+						err = json.Unmarshal(val, &settlement)
+						if err != nil {
+							log.Error("Error Unmarshalling settlement: ", err.Error())
+							return
+						}
+						log.Debug("This is Settlement: ", settlement)
+
+						timeZone, err := time.LoadLocation("Local")
+						if err != nil {
+							log.Error("Error while loading Location in Settlement: ", err.Error())
+							return
+						}
+						CurrentZone := (settlement.Date).In(timeZone)
+						date := (CurrentZone).Format("02-01-2006")
+						time := (CurrentZone).Format(time.Kitchen)
+						sDateTime := fmt.Sprintf("%s %s", date, time)
+						SetDisplay("NextDistribution", "innerHTML", sDateTime)
+					}
+				case "BalanceCycle":
+					{
+						log.Debug("BCN Hit")
+						var bcnBalance BCNBalance
+						err = json.Unmarshal(val, &bcnBalance)
+						if err != nil {
+							log.Error("Error in Unmarshalling BCN Balance:", err.Error())
+							return
+						}
+						log.Debug("This is Balance Cycle: ", bcnBalance)
+
+						sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
+						SetDisplay("Pending", "innerHTML", sValue)
+
+						sDownloaded := fmt.Sprintf("%d %s", (bcnBalance.BytesDownloaded)/1048576, "MB")
+						SetDisplay("CycleDownloaded", "innerHTML", sDownloaded)
+
+						sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
+						SetDisplay("CycleServed", "innerHTML", sServed)
+					}
+				case "Peers":
+					{
+						log.Debug("Peers Hit")
+						sValue := fmt.Sprintf("%s", val)
+						log.Debugf("This is Number of Peers: %s", val)
+						SetDisplay("PeersData", "innerHTML", sValue)
+						GetPeers()
+					}
+				case "Settings":
+					{
+						log.Debug("Settings Hit")
+						var settings Settings
+						err = json.Unmarshal(val, &settings)
+						if err != nil {
+							log.Error("Error in Unmarshalling Settings: ", err.Error())
+							return
+						}
+						log.Debug("This is Settings: ", settings)
+						jsDoc := js.Global().Get("document")
+						if !jsDoc.Truthy() {
+							log.Error("Unable to get document object in settings")
+							return
+						}
+						values := reflect.ValueOf(&settings).Elem()
+						for key := 0; key < values.NumField(); key++ {
+							name := values.Type().Field(key).Name
+							value := values.Field(key).Interface()
+							if (name == "MaxStorage") || (name == "UsedStorage") {
+								OutputArea := jsDoc.Call("getElementById", name)
+								if !OutputArea.Truthy() {
+									log.Error("Unable to get output text area in settings keys")
+									return
+								}
+								sValue := value
+								if name == "MaxStorage" {
+									sValue = fmt.Sprintf("%.2f %s", value, "GB")
+								}
+								if name == "UsedStorage" {
+									sValue = fmt.Sprintf("%.2f %s", value, "%")
+								}
+								OutputArea.Set("innerHTML", sValue)
+							}
 						}
 					}
+				default:
+					{
+						log.Debug("Default Hit")
+					}
+				}
 			}
 		}()
 		return nil
@@ -359,21 +359,21 @@ func GetID() js.Func {
 	})
 }
 func GetPeers() {
-			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
-			}
-			val := GetData(payload, "GetPeers")
-			var swarmPeers []string
-			err := json.Unmarshal(val, &swarmPeers)
-			if err != nil {
-				log.Error("Error in Unmarshalling SwarmPeers: ", err.Error())
-				return
-			}
-			SetDisplay("Peers", "innerHTML", "")
-			for _, value := range swarmPeers {
-				CreateElement("Peers", "div", "innerHTML", value)
-				CreateElement("Peers", "br", "innerHTML", "")
-			}
+	payload := map[string]interface{}{
+		"val": "hive-cli.exe%$#swarm%$#peers%$#-j",
+	}
+	val := GetData(payload, "GetPeers")
+	var swarmPeers []string
+	err := json.Unmarshal(val, &swarmPeers)
+	if err != nil {
+		log.Error("Error in Unmarshalling SwarmPeers: ", err.Error())
+		return
+	}
+	SetDisplay("Peers", "innerHTML", "")
+	for _, value := range swarmPeers {
+		CreateElement("Peers", "div", "innerHTML", value)
+		CreateElement("Peers", "br", "innerHTML", "")
+	}
 }
 
 func SetEarningDropDown() js.Func {
