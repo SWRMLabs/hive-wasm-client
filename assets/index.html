@@ -30,40 +30,31 @@
 	async function CreateGraph(PeerId) {
             try {
                 const data = await GetEarning();
-
                 jsonOP = JSON.parse(data);
 				netEarnings = jsonOP.data;
-
 				////////////////////////////////////////////////////////
 				if (PeerId === "ALL DEVICES"){
-
 					Earnings = [];
 					for (var i = 0;  i < netEarnings['devices'].length; i++){
 						Id = netEarnings['devices'][i]['peerId'];
 						earnings = 0;
 						for (var j = 0;j < netEarnings['earnings'][Id].length; j++){
 							earned = netEarnings['earnings'][Id][j]['earned']
-
 							earnings = earnings + earned;
 						}
-
 						Earnings.push({y : earnings, label : Id});
 						}
-
-
 						CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 						var chart = new CanvasJS.Chart("GraphBox", {
 						axisX:{
 							labelFontColor: "#f46831",
 							labelFontFamily: "Segoe UI",
 							labelFontStyle: "normal",
-
 						},
 						axisY:{
 							labelFontColor: "rgba(133,133,133,1)",
 							labelFontFamily: "Segoe UI"
 						},
-
 						animationEnabled: true,
 						zoomEnabled: true,
 			      		panEnabled: true,
@@ -77,16 +68,13 @@
 						]
 					});
 					chart.render();
-
 					} else if (PeerId != "") {
 					BillingCycles = netEarnings['billingCycles'].reverse();
-
 					var Earnings = []
 					for (i = BillingCycles.length-1; i > -1; i--) {
 						Earnings.push({label : BillingCycles[BillingCycles.length- i - 1],
 									  y : netEarnings['earnings'][PeerId][i]['earned']});
 					}
-
 					CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 					var chart = new CanvasJS.Chart("GraphBox", {
 					axisX:{
