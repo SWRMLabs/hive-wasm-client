@@ -30,26 +30,26 @@
 	async function CreateGraph(PeerId) {
             try {
                 const data = await GetEarning();
-				console.log("Data received in CreateGraph");
+
                 jsonOP = JSON.parse(data);
 				netEarnings = jsonOP.data;
-				console.log(netEarnings)
+
 				////////////////////////////////////////////////////////
 				if (PeerId === "ALL DEVICES"){
-					console.log("All Devices Hit");
+
 					Earnings = [];
 					for (var i = 0;  i < netEarnings['devices'].length; i++){
 						Id = netEarnings['devices'][i]['peerId'];
 						earnings = 0;
 						for (var j = 0;j < netEarnings['earnings'][Id].length; j++){
 							earned = netEarnings['earnings'][Id][j]['earned']
-							console.log(earned);
+
 							earnings = earnings + earned;
 						}
-						console.log(earnings);
+
 						Earnings.push({y : earnings, label : Id});
 						}
-						console.log(Earnings)
+
 
 						CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 						var chart = new CanvasJS.Chart("GraphBox", {
@@ -80,13 +80,13 @@
 
 					} else if (PeerId != "") {
 					BillingCycles = netEarnings['billingCycles'].reverse();
-					console.log(BillingCycles)
+
 					var Earnings = []
 					for (i = BillingCycles.length-1; i > -1; i--) {
 						Earnings.push({label : BillingCycles[BillingCycles.length- i - 1],
 									  y : netEarnings['earnings'][PeerId][i]['earned']});
 					}
-					console.log(Earnings)
+
 					CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 					var chart = new CanvasJS.Chart("GraphBox", {
 					axisX:{
