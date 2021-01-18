@@ -291,12 +291,14 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
+	log.Debug(data["val"])
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {
 		log.Error("Error in unmarshalling data in : ", funcName, err.Error())
 		return nil
 	}
+
 	val, err := json.Marshal(out.Data)
 	if err != nil {
 		log.Error("Error in marshalling out in : ", funcName, err.Error())
@@ -305,6 +307,33 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 	return val
 }
 
+func ModifyConfig(payload map[string]interface{}, funcName string) (string, error){
+	buf, err := json.Marshal(payload)
+	if err != nil {
+		log.Error("Error in marshalling payload in : ", funcName, err.Error())
+		return "",nil
+	}
+	resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
+	if err != nil {
+		log.Error("Error in getting response in : ", funcName, err.Error())
+		return "",nil
+	}
+	defer resp.Body.Close()
+	log.Debugf("This is response from %s  : ", funcName, resp)
+	respBuf, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error("Error in reading respBuf in : ", funcName, err.Error())
+		return "",nil
+	}
+	data := make(map[string]string)
+	err = json.Unmarshal(respBuf, &data)
+	if err != nil {
+		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
+		return "",nil
+	}
+	log.Debug(data["val"])
+	return data["val"], nil
+}
 func SetDisplay(Id string, Attr string, value string) {
 	for i := 0; i < 5; i++ {
 		jsDoc := js.Global().Get("document")
@@ -325,6 +354,48 @@ func SetDisplay(Id string, Attr string, value string) {
 		}
 	}
 
+}
+
+func SetMultipleDisplay(Id string, Attributes map[string]string) {
+	for i := 0; i < 5; i++ {
+		jsDoc := js.Global().Get("document")
+		if !jsDoc.Truthy() {
+			log.Error("Unable to get document object in: ", Id)
+			return
+		}
+		OutputArea := jsDoc.Call("getElementById", Id)
+		if !OutputArea.Truthy() {
+			log.Error("Unable to get output area in: ", Id)
+			log.Debugf("Trying to find OutputArea again in:%s ", Id)
+			time.Sleep(1 * time.Second)
+			continue
+		} else {
+			log.Debugf("OutputArea found in:%s ", Id)
+			for attr, value := range Attributes{
+				OutputArea.Set(attr, value)
+			}
+			break
+		}
+	}
+
+}
+
+func GetValue(Id string, Attr string) string {
+		jsDoc := js.Global().Get("document")
+		if !jsDoc.Truthy() {
+			log.Error("Unable to get document object in: ", Id)
+			return ""
+		}
+		OutputArea := jsDoc.Call("getElementById", Id)
+		if !OutputArea.Truthy() {
+			log.Error("Unable to get output area in: ", Id)
+			log.Debugf("Trying to find OutputArea again in:%s ", Id)
+			time.Sleep(1 * time.Second)
+		} else {
+			log.Debugf("OutputArea found in:%s ", Id)
+			return fmt.Sprintf("%s",OutputArea.Get(Attr))
+		}
+		return ""
 }
 
 func CreateElement(Id string, element string, Attr string, value string) {
@@ -417,7 +488,7 @@ func SetEarningDropDown() js.Func {
 			}
 			OutputArea.Set("innerHTML", "Select Device")
 			OutputArea.Set("selected", "selected")
-			OutputArea.Set("disabled", "disabled")
+			OutputArea.Set("disabled", "true")
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			OutputArea = jsDoc.Call("createElement", "option")
 			if !OutputArea.Truthy() {
@@ -575,17 +646,18 @@ func GetEarning() js.Func {
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-				jsDoc := js.Global().Get("document")
-				if !jsDoc.Truthy() {
-					log.Error("Unable to get document object in GetEarning")
-					return
-				}
-				OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
-				if !OutputArea.Truthy() {
-					log.Error("Unable to get output area in GetEarning")
-					return
-				}
-				value := fmt.Sprintf("%s", OutputArea.Get("value"))
+				// jsDoc := js.Global().Get("document")
+				// if !jsDoc.Truthy() {
+				// 	log.Error("Unable to get document object in GetEarning")
+				// 	return
+				// }
+				// OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
+				// if !OutputArea.Truthy() {
+				// 	log.Error("Unable to get output area in GetEarning")
+				// 	return
+				// }
+				// value := fmt.Sprintf("%s", OutputArea.Get("value"))
+				value := GetValue("DevicesDropDown", "value")
 				var earned, download, served string
 				if value == "ALL DEVICES" {
 					earned = fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
@@ -645,11 +717,12 @@ func GetVersion() js.Func {
 
 func main() {
 	logger.SetLogLevel("*", "Debug")
-	// js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
-	// js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
-	// js.Global().Set("GetSettings", GetSettings())
-	// js.Global().Set("GetStatus", GetStatus())
-	// js.Global().Set("GetConfig", GetConfig())
+	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
+	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
+	js.Global().Set("GetSettings", GetSettings())
+	js.Global().Set("GetStatus", GetStatus())
+	js.Global().Set("GetConfig", GetConfig())
+	js.Global().Set("VerifyPort", VerifyPort())
 	js.Global().Set("SetEarningDropDown", SetEarningDropDown())
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())

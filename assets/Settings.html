@@ -23,6 +23,18 @@
 function CloseBanner(){
 	document.getElementById('RestartBanner').style.display = 'none'
 }
+// function VerifyPort(){
+// 	console.log("Button Clicked")
+// }
+</script>
+<script>
+	rangeDiv = document.querySelector(".Slider_Class")
+	let percent = 0;
+	let timer = setInterval(()=> {
+	sliderDiv.style.width = `${percent}%`
+	percent += 5
+	}, 1000)
+
 </script>
 </head>
 <body>
@@ -156,7 +168,7 @@ function CloseBanner(){
 					</rect>
 				</svg>
 				<div class="SwrmPortNumberBox_Class">
-					<input id="SwrmPortNumber" class="SwrmPortNumber_Class" type="text">
+					<input id="SwrmPortNumber" class="SwrmPortNumber_Class" type="number">
 					<button id="SetSwrmPortNumberButton" class="SetSwrmPortNumberButton_Class" onclick="SetSwrmPortNumber()">Set</button>
 				</div>
 				<div id="SwrmPortStatus" class="PortStatus_Class"></div>
@@ -177,8 +189,8 @@ function CloseBanner(){
 					<rect class="Rectangle_11_b_Class" rx="40.5" ry="40.5" x="0" y="0" width="807" height="81">
 					</rect>
 				</svg>
-				<div class="WebSocketPortNumberBox_Class">
-					<input id="WebSocketPortNumber" class="WebSocketPortNumber_Class" type="text">
+				<div id = "WebSocketPortNumberBox" class="WebSocketPortNumberBox_Class">
+					<input id="WebSocketPortNumber" class="WebSocketPortNumber_Class" type="number">
 					<button id="WebSocketPortNumberButton" class="WebSocketPortNumberButton_Class" onclick="SetWebsocketPortNumber()">Set</button>
 				</div>
 			</div>
@@ -188,22 +200,21 @@ function CloseBanner(){
 		<div id="PortForwardTesterLabel" class="PortForwardTesterLabel_Class">
 			<span>Port Forward Tester</span>
 		</div>
-		<div id="PortForward" class="PortForward_Class">
-			<span>122.172.51.236</span>
-		</div>
 		<div class="Group_55_ca_Class">
 			<div class="Group_54_ca_Class">
 				<svg class="Rectangle_10_ca">
 					<rect class="Rectangle_10_ca_Class" rx="40.5" ry="40.5" x="0" y="0" width="351" height="81">
 					</rect>
 				</svg>
+				<div id="PortForward" class="PortForward_Class">
+				</div>
 				<svg class="Rectangle_11_cb">
 					<rect class="Rectangle_11_cb_Class" rx="40.5" ry="40.5" x="0" y="0" width="351" height="81">
 					</rect>
 				</svg>
 			</div>
 		</div>
-		<div id="VerifyPortForwardStatus" class="VerifyPortForwardStatus_Class">
+		<!-- <div id="VerifyPortForwardStatus" class="VerifyPortForwardStatus_Class">
 			<div class="Group_54_cd_Class">
 				<svg class="Rectangle_10_ce">
 					<rect class="Rectangle_10_ce_Class" rx="40.5" ry="40.5" x="0" y="0" width="187" height="81">
@@ -214,7 +225,7 @@ function CloseBanner(){
 					</rect>
 				</svg>
 			</div>
-		</div>
+		</div> -->
 	</div>
 	<div class="Group_56_Class">
 		<div id="UsedSpaceLabel" class="UsedSpaceLabel_Class">
@@ -242,12 +253,12 @@ function CloseBanner(){
 	</div>
 
 	<svg class="VerifyPortForwardTester">
-		<rect id="VerifyPortForwardTester" class="VerifyPortForwardTester_Class" rx="40.5" ry="40.5" x="0" y="0" width="210" height="81">
-		</rect>
+		<div id = "VerifyBox" class="VerifyBox_Class">
+			<button class="VerifyButton_Class" onclick="VerifyPort()">
+				Verify
+			</button>
+		</div>
 	</svg>
-	<div class="Verify_Class">
-		<span>Verify</span>
-	</div>
 	<div id="StorageSizeLabel" class="StorageSizeLabel_Class">
 		<span>Storage Size</span>
 	</div>
