@@ -7,14 +7,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/hako/durafmt"
-	logger "github.com/ipfs/go-log/v2"
 	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strings"
 	"syscall/js"
 	"time"
+
+	"github.com/hako/durafmt"
+	logger "github.com/ipfs/go-log/v2"
 )
 
 var log = logger.Logger("events")
@@ -251,7 +252,7 @@ func Events() js.Func {
 									sValue = fmt.Sprintf("%.2f %s", value, "GB")
 								}
 								if name == "UsedStorage" {
-									sValue = fmt.Sprintf("%.2f %s", value, "%")
+									sValue = fmt.Sprintf("%.2f %s", value, "GB")
 								}
 								OutputArea.Set("innerHTML", sValue)
 							}
@@ -307,29 +308,29 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 	return val
 }
 
-func ModifyConfig(payload map[string]interface{}, funcName string) (string, error){
+func ModifyConfig(payload map[string]interface{}, funcName string) (string, error) {
 	buf, err := json.Marshal(payload)
 	if err != nil {
 		log.Error("Error in marshalling payload in : ", funcName, err.Error())
-		return "",nil
+		return "", nil
 	}
 	resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
 	if err != nil {
 		log.Error("Error in getting response in : ", funcName, err.Error())
-		return "",nil
+		return "", nil
 	}
 	defer resp.Body.Close()
 	log.Debugf("This is response from %s  : ", funcName, resp)
 	respBuf, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Error("Error in reading respBuf in : ", funcName, err.Error())
-		return "",nil
+		return "", nil
 	}
 	data := make(map[string]string)
 	err = json.Unmarshal(respBuf, &data)
 	if err != nil {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
-		return "",nil
+		return "", nil
 	}
 	log.Debug(data["val"])
 	return data["val"], nil
@@ -371,7 +372,7 @@ func SetMultipleDisplay(Id string, Attributes map[string]string) {
 			continue
 		} else {
 			log.Debugf("OutputArea found in:%s ", Id)
-			for attr, value := range Attributes{
+			for attr, value := range Attributes {
 				OutputArea.Set(attr, value)
 			}
 			break
@@ -381,21 +382,21 @@ func SetMultipleDisplay(Id string, Attributes map[string]string) {
 }
 
 func GetValue(Id string, Attr string) string {
-		jsDoc := js.Global().Get("document")
-		if !jsDoc.Truthy() {
-			log.Error("Unable to get document object in: ", Id)
-			return ""
-		}
-		OutputArea := jsDoc.Call("getElementById", Id)
-		if !OutputArea.Truthy() {
-			log.Error("Unable to get output area in: ", Id)
-			log.Debugf("Trying to find OutputArea again in:%s ", Id)
-			time.Sleep(1 * time.Second)
-		} else {
-			log.Debugf("OutputArea found in:%s ", Id)
-			return fmt.Sprintf("%s",OutputArea.Get(Attr))
-		}
+	jsDoc := js.Global().Get("document")
+	if !jsDoc.Truthy() {
+		log.Error("Unable to get document object in: ", Id)
 		return ""
+	}
+	OutputArea := jsDoc.Call("getElementById", Id)
+	if !OutputArea.Truthy() {
+		log.Error("Unable to get output area in: ", Id)
+		log.Debugf("Trying to find OutputArea again in:%s ", Id)
+		time.Sleep(1 * time.Second)
+	} else {
+		log.Debugf("OutputArea found in:%s ", Id)
+		return fmt.Sprintf("%s", OutputArea.Get(Attr))
+	}
+	return ""
 }
 
 func CreateElement(Id string, element string, Attr string, value string) {
@@ -514,7 +515,6 @@ func SetEarningDropDown() js.Func {
 		return nil
 	})
 }
-
 func GetStorageLocation() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -551,6 +551,7 @@ func GetStorageLocation() js.Func {
 			}
 			value := fmt.Sprintf("%s", out.Data)
 			SetDisplay("StoragePath", "innerHTML", value)
+
 		}()
 		return nil
 	})
@@ -720,6 +721,8 @@ func main() {
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())
+	js.Global().Set("ModifyStorageSize", ModifyStorageSize())
+	js.Global().Set("SetStorageSize", SetStorageSize())
 	js.Global().Set("GetStatus", GetStatus())
 	js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("VerifyPort", VerifyPort())

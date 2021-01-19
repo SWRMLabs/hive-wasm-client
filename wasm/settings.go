@@ -1,11 +1,8 @@
 package main
 
 import (
-	// "bytes"
 	"encoding/json"
 	"fmt"
-
-	// "net/http"
 	"net"
 	"strings"
 	"syscall/js"
@@ -39,6 +36,8 @@ func GetSettings() js.Func {
 			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
 			SetDisplay("FreeSpace", "innerHTML", sFreeSpace)
 			DNSState = settings.IsDNSEligible
+
+			SetDisplay("rangeSlider", "value", fmt.Sprintf("%s", settings.MaxStorage))
 		}()
 		return nil
 	})
@@ -70,6 +69,7 @@ func GetStatus() js.Func {
 			timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
 			sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
 			SetDisplay("LastConnected", "innerHTML", sTimeStamp)
+
 		}()
 		return nil
 	})
@@ -101,6 +101,34 @@ func GetConfig() js.Func {
 			SetMultipleDisplay("WebSocketPortNumber", Attributes)
 			SetMultipleDisplay("WebSocketPortNumberButton", Attributes)
 
+		}()
+		return nil
+	})
+}
+func SetStorageSize() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": strings.Join([]string{"hive-cli.exe", "config", "get-storage-location", "-j"}, splicer),
+			}
+			val, err := ModifyConfig(payload, "SetStorageSize")
+			if err != nil {
+				log.Error("Error in Getting Storage Location ", err.Error())
+			}
+			var out Out
+			err = json.Unmarshal([]byte(val), &out)
+			if err != nil {
+				log.Error("Error in Unmarshalling data in GetStorageLocation: ", err.Error())
+				return
+			}
+			log.Debug(out.Data)
+			// path := fmt.Sprintf("%s", out.Data)
+			// usage := du.NewDiskUsage(path)
+			// log.Debug("Free:", usage.Free())
+			// log.Debug("Available:", usage.Available())
+			// log.Debug("Size:", usage.Size())
+			// log.Debug("Used:", usage.Used())
+			// log.Debug("Usage:", usage.Usage()*100)
 		}()
 		return nil
 	})
@@ -139,6 +167,7 @@ func SetSwrmPortNumber() js.Func {
 			} else if err == nil {
 				log.Debug("SwrmPort Updated Successfully")
 				SetDisplay("SwrmPortNumber", "placeholder", port)
+				SetDisplay("RestartBanner", "display", "block")
 			}
 		}()
 		return nil
@@ -162,6 +191,7 @@ func SetWebsocketPortNumber() js.Func {
 			} else if err == nil {
 				log.Debug("WebsocketPort Updated Successfully")
 				SetDisplay("WebSocketPortNumber", "placeholder", port)
+				SetDisplay("RestartBanner", "display", "block")
 			}
 		}()
 		return nil
@@ -191,14 +221,23 @@ func VerifyPort() js.Func {
 			if strings.Contains(val, "NOT") {
 				log.Debug("Port Forward Not Verified")
 				Attributes["innerHTML"] = "Not Forwarded &#10008;"
-				Attributes["style"] = "color: rgb(237, 27, 46);"
+				Attributes["style"] = "color: red;"
 				SetMultipleDisplay("PortForward", Attributes)
 				return
 			}
 			log.Debug("Port Forward Verified")
 			Attributes["innerHTML"] = "Port Forwarded &#10004;"
-			Attributes["style"] = "color: #016E01;"
+			Attributes["style"] = "color: green;"
 			SetMultipleDisplay("PortForward", Attributes)
+		}()
+		return nil
+	})
+}
+func ModifyStorageSize() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Changing Storage Size....")
+			log.Debug(GetValue("rangeSlider", "value"))
 		}()
 		return nil
 	})

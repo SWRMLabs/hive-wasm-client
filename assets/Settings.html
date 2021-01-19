@@ -23,21 +23,18 @@
 function CloseBanner(){
 	document.getElementById('RestartBanner').style.display = 'none'
 }
-// function VerifyPort(){
-// 	console.log("Button Clicked")
-// }
 </script>
 <script>
-	rangeDiv = document.querySelector(".Slider_Class")
-	let percent = 0;
-	let timer = setInterval(()=> {
-	sliderDiv.style.width = `${percent}%`
-	percent += 5
-	}, 1000)
-
+function SliderColour(){
+	rangeSlider = document.getElementById('rangeSlider');
+	var value = (rangeSlider.value - rangeSlider.getAttribute('min')) / (rangeSlider.getAttribute('max') - rangeSlider.getAttribute('min'));
+	rangeSlider.style.backgroundImage = '-webkit-gradient(linear, left top, right top,' +
+										'color-stop(' + value + ', rgba(244,105,50,1)),' +
+										'color-stop(' + value + ', #c7c7c7)' + ')';
+}
 </script>
 </head>
-<body>
+<body onload="SliderColour()">
 <div id="Settings" class="Settings_Class">
 	<svg class="Rectangle_3">
 		<rect class="Rectangle_3_Class" rx="0" ry="0" x="0" y="0" width="100%" height="102">
@@ -214,18 +211,6 @@ function CloseBanner(){
 				</svg>
 			</div>
 		</div>
-		<!-- <div id="VerifyPortForwardStatus" class="VerifyPortForwardStatus_Class">
-			<div class="Group_54_cd_Class">
-				<svg class="Rectangle_10_ce">
-					<rect class="Rectangle_10_ce_Class" rx="40.5" ry="40.5" x="0" y="0" width="187" height="81">
-					</rect>
-				</svg>
-				<svg class="Rectangle_11_cf">
-					<rect class="Rectangle_11_cf_Class" rx="40.5" ry="40.5" x="0" y="0" width="187" height="81">
-					</rect>
-				</svg>
-			</div>
-		</div> -->
 	</div>
 	<div class="Group_56_Class">
 		<div id="UsedSpaceLabel" class="UsedSpaceLabel_Class">
@@ -263,7 +248,8 @@ function CloseBanner(){
 		<span>Storage Size</span>
 	</div>
 	<div id="StorageSize" class="StorageSize_Class">
-		<input id = "rangeSlider" class="Slider_Class" type="range" min="1" max="100" value="50">
+		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" min="1" max="100">
+		<div id="storageValue" class="StorageValue_Class"></div>
 	</div>
 </div>
 </body>
