@@ -1,3 +1,4 @@
+// GOOS=js GOARCH=wasm go build -o  ../assets/hive.wasm
 package main
 
 import (
@@ -28,15 +29,14 @@ func GetSettings() js.Func {
 			log.Debug(settings)
 			SetDisplay("Name", "innerHTML", settings.Name)
 
-			usedSpace := (settings.UsedStorage * settings.MaxStorage) / 100
-			sUsedSpace := fmt.Sprintf("%.2f %s", usedSpace*1024, "MB")
+			sUsedSpace := fmt.Sprintf("%.2f %s", settings.UsedStorage*1024, "MB")
 			SetDisplay("UsedSpace", "innerHTML", sUsedSpace)
 
-			freeSpace := (settings.MaxStorage - usedSpace)
+			freeSpace := (settings.MaxStorage - settings.UsedStorage)
 			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
 			SetDisplay("FreeSpace", "innerHTML", sFreeSpace)
 			DNSState = settings.IsDNSEligible
-
+			log.Debugf("MaxStorage: %f", settings.MaxStorage)
 			SetDisplay("rangeSlider", "value", fmt.Sprintf("%s", settings.MaxStorage))
 		}()
 		return nil
@@ -90,17 +90,15 @@ func GetConfig() js.Func {
 			}
 			log.Debug(config)
 			SetDisplay("SwrmPortNumber", "placeholder", config.SwarmPort)
-
 			Attributes := make(map[string]string)
-			if DNSState == true {
-				Attributes["disabled"] = "false"
-			} else if DNSState == false {
-				Attributes["disabled"] = "true"
+			if DNSState == false {
+				Attributes["style"] = "display: none;"
+				Attributes["aria-hidden"] = "true"
+				Attributes["visibility"] = "hidden"
+				SetMultipleDisplay("Group_62_ID", Attributes)
+				return
 			}
-			Attributes["placeholder"] = config.WebsocketPort
-			SetMultipleDisplay("WebSocketPortNumber", Attributes)
-			SetMultipleDisplay("WebSocketPortNumberButton", Attributes)
-
+			SetDisplay("WebSocketPortNumber", "placeholder", config.WebsocketPort)
 		}()
 		return nil
 	})
@@ -123,12 +121,7 @@ func SetStorageSize() js.Func {
 			}
 			log.Debug(out.Data)
 			// path := fmt.Sprintf("%s", out.Data)
-			// usage := du.NewDiskUsage(path)
-			// log.Debug("Free:", usage.Free())
-			// log.Debug("Available:", usage.Available())
-			// log.Debug("Size:", usage.Size())
-			// log.Debug("Used:", usage.Used())
-			// log.Debug("Usage:", usage.Usage()*100)
+
 		}()
 		return nil
 	})
@@ -167,7 +160,8 @@ func SetSwrmPortNumber() js.Func {
 			} else if err == nil {
 				log.Debug("SwrmPort Updated Successfully")
 				SetDisplay("SwrmPortNumber", "placeholder", port)
-				SetDisplay("RestartBanner", "display", "block")
+				SetDisplay("RestartBanner", "style", "display: block;")
+
 			}
 		}()
 		return nil
@@ -177,7 +171,7 @@ func SetWebsocketPortNumber() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			log.Debug("Updating SetWebsocketPortNumber Number")
-			SetDisplay("SwrmPortStatus", "innerHTML", "")
+			SetDisplay("WebsocketPortStatus", "innerHTML", "")
 			port := GetValue("WebSocketPortNumber", "value")
 
 			log.Debug("Port Available")
@@ -191,7 +185,7 @@ func SetWebsocketPortNumber() js.Func {
 			} else if err == nil {
 				log.Debug("WebsocketPort Updated Successfully")
 				SetDisplay("WebSocketPortNumber", "placeholder", port)
-				SetDisplay("RestartBanner", "display", "block")
+				SetDisplay("RestartBanner", "style", "display: block;")
 			}
 		}()
 		return nil

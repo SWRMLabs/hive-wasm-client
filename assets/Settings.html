@@ -20,27 +20,46 @@
 	});
 </script>
 <script>
+function CheckBanner() {
+	console.log("checking refresh")
+	if (sessionStorage.RefreshState == "Not Refreshed"){
+		document.getElementById("RestartBanner").style.display = "block";
+	}
+}
+function SetRefresh(){
+	console.log("Set refresh")
+	sessionStorage.setItem("RefreshState", "Not Refreshed")
+}
 function CloseBanner(){
-	document.getElementById('RestartBanner').style.display = 'none'
+	console.log("Closing banner")
+	document.getElementById('RestartBanner').style.display = "none";
 }
 </script>
 <script>
 function SliderColour(){
 	rangeSlider = document.getElementById('rangeSlider');
-	var value = (rangeSlider.value - rangeSlider.getAttribute('min')) / (rangeSlider.getAttribute('max') - rangeSlider.getAttribute('min'));
+	var val = rangeSlider.value;
+	var max = rangeSlider.getAttribute('max');
+	var min =  rangeSlider.getAttribute('min')
+	var value = (val - min) / (max - min);
 	rangeSlider.style.backgroundImage = '-webkit-gradient(linear, left top, right top,' +
 										'color-stop(' + value + ', rgba(244,105,50,1)),' +
 										'color-stop(' + value + ', #c7c7c7)' + ')';
+
+	sliderValue = document.getElementById('sliderValue');
+	sliderValue.innerHTML = val;
+	var newVal = Number(((val - min) * 100) / (max - min));
+	sliderValue.style.left = `calc(${newVal}% + (${- 5 - newVal * 0.15}px))`;
 }
 </script>
 </head>
-<body onload="SliderColour()">
+<body onload="SliderColour(), CheckBanner()">
 <div id="Settings" class="Settings_Class">
 	<svg class="Rectangle_3">
 		<rect class="Rectangle_3_Class" rx="0" ry="0" x="0" y="0" width="100%" height="102">
 		</rect>
 		<div id="RestartBanner" class="RestartBanner_Class">
-			<span id="Restart" class="Restart_Class">Please restart the daemon for changes to take effect</span>
+			<span id="Restart" class="Restart_Class">Please close this tab and restart the daemon for changes to take effect</span>
 			<button id="BannerCloseButton" class="BannerCloseButton_Class" onclick="CloseBanner()">&#10005;</button>
 		</div>
 	</svg>
@@ -166,13 +185,13 @@ function SliderColour(){
 				</svg>
 				<div class="SwrmPortNumberBox_Class">
 					<input id="SwrmPortNumber" class="SwrmPortNumber_Class" type="number">
-					<button id="SetSwrmPortNumberButton" class="SetSwrmPortNumberButton_Class" onclick="SetSwrmPortNumber()">Set</button>
+					<button id="SetSwrmPortNumberButton" class="SetSwrmPortNumberButton_Class" onclick="SetSwrmPortNumber(), SetRefresh()">Set</button>
 				</div>
-				<div id="SwrmPortStatus" class="PortStatus_Class"></div>
+				<div id="SwrmPortStatus" class="SwrmPortStatus_Class"></div>
 			</div>
 		</div>
 	</div>
-	<div class="Group_62_Class">
+	<div id="Group_62_ID" class="Group_62_Class">
 		<div id="WebSocketPortNumberLabel" class="WebSocketPortNumberLabel_Class">
 			<span>Websocket Port Number</span>
 		</div>
@@ -188,7 +207,9 @@ function SliderColour(){
 				</svg>
 				<div id = "WebSocketPortNumberBox" class="WebSocketPortNumberBox_Class">
 					<input id="WebSocketPortNumber" class="WebSocketPortNumber_Class" type="number">
-					<button id="WebSocketPortNumberButton" class="WebSocketPortNumberButton_Class" onclick="SetWebsocketPortNumber()">Set</button>
+					<button id="WebSocketPortNumberButton" class="WebSocketPortNumberButton_Class" onclick="SetWebsocketPortNumber(), SetRefresh()">Set</button>
+				</div>
+				<div id="WebsocketPortStatus" class="WebsocketPortStatus_Class">
 				</div>
 			</div>
 		</div>
@@ -205,6 +226,11 @@ function SliderColour(){
 				</svg>
 				<div id="PortForward" class="PortForward_Class">
 				</div>
+					<div id = "VerifyBox" class="VerifyBox_Class">
+						<button class="VerifyButton_Class" onclick="VerifyPort()">
+							Verify
+						</button>
+					</div>
 				<svg class="Rectangle_11_cb">
 					<rect class="Rectangle_11_cb_Class" rx="40.5" ry="40.5" x="0" y="0" width="351" height="81">
 					</rect>
@@ -229,7 +255,6 @@ function SliderColour(){
 			<span>Free Space</span>
 		</div>
 		<div id="FreeSpace" class="FreeSpace_Class">
-
 		</div>
 		<svg class="Rectangle_12_cn">
 			<rect class="Rectangle_12_cn_Class" rx="0" ry="0" x="0" y="0" width="28" height="28">
@@ -237,20 +262,16 @@ function SliderColour(){
 		</svg>
 	</div>
 
-	<svg class="VerifyPortForwardTester">
-		<div id = "VerifyBox" class="VerifyBox_Class">
-			<button class="VerifyButton_Class" onclick="VerifyPort()">
-				Verify
-			</button>
-		</div>
-	</svg>
+<div class="StorageBox_Class">
 	<div id="StorageSizeLabel" class="StorageSizeLabel_Class">
 		<span>Storage Size</span>
 	</div>
 	<div id="StorageSize" class="StorageSize_Class">
-		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" min="1" max="100">
-		<div id="storageValue" class="StorageValue_Class"></div>
+		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" min="1" max="100" step="0.1" precision="0.1">
+		<div id="sliderValue" class="sliderValue_Class"></div>
 	</div>
+</div>
+
 </div>
 </body>
 </html>

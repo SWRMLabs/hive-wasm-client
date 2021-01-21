@@ -488,7 +488,7 @@ func SetEarningDropDown() js.Func {
 				return
 			}
 			OutputArea.Set("innerHTML", "Select Device")
-			OutputArea.Set("selected", "selected")
+			OutputArea.Set("selected", "true")
 			OutputArea.Set("disabled", "true")
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			OutputArea = jsDoc.Call("createElement", "option")
