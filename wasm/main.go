@@ -647,17 +647,6 @@ func GetEarning() js.Func {
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-				// jsDoc := js.Global().Get("document")
-				// if !jsDoc.Truthy() {
-				// 	log.Error("Unable to get document object in GetEarning")
-				// 	return
-				// }
-				// OutputArea := jsDoc.Call("getElementById", "DevicesDropDown")
-				// if !OutputArea.Truthy() {
-				// 	log.Error("Unable to get output area in GetEarning")
-				// 	return
-				// }
-				// value := fmt.Sprintf("%s", OutputArea.Get("value"))
 				value := GetValue("DevicesDropDown", "value")
 				var earned, download, served string
 				if value == "ALL DEVICES" {

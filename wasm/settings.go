@@ -120,8 +120,6 @@ func SetStorageSize() js.Func {
 				return
 			}
 			log.Debug(out.Data)
-			// path := fmt.Sprintf("%s", out.Data)
-
 		}()
 		return nil
 	})
