@@ -37,11 +37,19 @@ function CloseBanner(){
 </script>
 <script>
 function SliderColour(){
+	document.getElementById('StorageMax').style.display = "block";
+	document.getElementById('StorageMin').style.display = "block";
 	rangeSlider = document.getElementById('rangeSlider');
 	var val = rangeSlider.value;
 	var max = rangeSlider.getAttribute('max');
-	var min =  rangeSlider.getAttribute('min')
+	var min =  rangeSlider.getAttribute('min');
 	var value = (val - min) / (max - min);
+	if (val > (max - 6)) {
+		document.getElementById('StorageMax').style.display = "none";
+	}
+	else if (val < (min + 5)) {
+		document.getElementById('StorageMin').style.display = "none";
+	}
 	rangeSlider.style.backgroundImage = '-webkit-gradient(linear, left top, right top,' +
 										'color-stop(' + value + ', rgba(244,105,50,1)),' +
 										'color-stop(' + value + ', #c7c7c7)' + ')';
@@ -49,7 +57,7 @@ function SliderColour(){
 	sliderValue = document.getElementById('sliderValue');
 	sliderValue.innerHTML = val;
 	var newVal = Number(((val - min) * 100) / (max - min));
-	sliderValue.style.left = `calc(${newVal}% + (${- 5 - newVal * 0.15}px))`;
+	sliderValue.style.left = `calc(${newVal}% + (${- 12 - newVal * 0.15}px))`;
 }
 </script>
 </head>
@@ -221,7 +229,7 @@ function SliderColour(){
 		<div class="Group_55_ca_Class">
 			<div class="Group_54_ca_Class">
 				<svg class="Rectangle_10_ca">
-					<rect class="Rectangle_10_ca_Class" rx="40.5" ry="40.5" x="0" y="0" width="351" height="81">
+					<rect class="Rectangle_10_ca_Class" rx="40.5" ry="40.5" x="0" y="0" width="500" height="81">
 					</rect>
 				</svg>
 				<div id="PortForward" class="PortForward_Class">
@@ -232,7 +240,7 @@ function SliderColour(){
 						</button>
 					</div>
 				<svg class="Rectangle_11_cb">
-					<rect class="Rectangle_11_cb_Class" rx="40.5" ry="40.5" x="0" y="0" width="351" height="81">
+					<rect class="Rectangle_11_cb_Class" rx="40.5" ry="40.5" x="0" y="0" width="500" height="81">
 					</rect>
 				</svg>
 			</div>
@@ -269,6 +277,8 @@ function SliderColour(){
 	<div id="StorageSize" class="StorageSize_Class">
 		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" min="1" max="100" step="0.1" precision="0.1">
 		<div id="sliderValue" class="sliderValue_Class"></div>
+		<div id="StorageMin" class="StorageMin_Class">Min</div>
+		<div id="StorageMax" class="StorageMax_Class">Max</div>
 	</div>
 </div>
 

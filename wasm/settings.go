@@ -4,10 +4,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"strings"
 	"syscall/js"
 	"time"
+	"strconv"
 )
 
 var DNSState bool
@@ -96,6 +96,7 @@ func GetConfig() js.Func {
 				Attributes["aria-hidden"] = "true"
 				Attributes["visibility"] = "hidden"
 				SetMultipleDisplay("Group_62_ID", Attributes)
+				SetDisplay("Settings", "style", "height: 75em;")
 				return
 			}
 			SetDisplay("WebSocketPortNumber", "placeholder", config.WebsocketPort)
@@ -124,21 +125,18 @@ func SetStorageSize() js.Func {
 		return nil
 	})
 }
-func Check(port string) (status bool, err error) {
-	// Concatenate a colon and the port
-	log.Debug("Checking port availability")
-	host := ":" + port
-	// Try to create a server with the port
-	server, err := net.Listen("tcp", host)
-	// if it fails then the port is likely taken
-	if err != nil {
-		return false, err
+func CheckPort(port string) (status bool, condition string) {
+	if port == "" {
+		return false, fmt.Sprintf("Enter A Valid Port Number")
 	}
-	// close the server
-	server.Close()
-	// we successfully used and closed the port
-	// so it's now available to be used again
-	return true, nil
+	val, err := strconv.Atoi(port)
+    if err != nil {
+		return false, fmt.Sprintf("Port %s is Not a Number", port)
+    }
+	if val < 1025 || val > 49150 {
+	 	return false, fmt.Sprintf("Port %s is Unavailable", port)
+	}
+	return true, ""
 }
 func SetSwrmPortNumber() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -146,20 +144,32 @@ func SetSwrmPortNumber() js.Func {
 			log.Debug("Updating SwarmPort Number")
 			SetDisplay("SwrmPortStatus", "innerHTML", "")
 			port := GetValue("SwrmPortNumber", "value")
-
-			log.Debug("Port Available")
+			Attributes := make(map[string]string)
+			status, condition := CheckPort(port)
+			if status == true {
 			payload := map[string]interface{}{
 				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "SwarmPort", port}, splicer),
 			}
+
 			log.Debugf("Payload in SetSwrmPortNumber: %s", payload)
-			_, err := ModifyConfig(payload, "SetSwrmPortNumber")
-			if err != nil {
-				log.Error("Error in Modifying Config in SetSwrmPortNumber ", err.Error())
-			} else if err == nil {
+			val, _ := ModifyConfig(payload, "SetSwrmPortNumber")
+			if strings.Contains(val, "not") {
+				Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
+				Attributes["style"] = "color: red;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
+				return
+			}
 				log.Debug("SwrmPort Updated Successfully")
 				SetDisplay("SwrmPortNumber", "placeholder", port)
 				SetDisplay("RestartBanner", "style", "display: block;")
-
+				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
+				Attributes["style"] = "color: #32CD32;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
+				return
+			} else if status == false {
+				Attributes["innerHTML"] = condition
+				Attributes["style"] = "color: red;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
 			}
 		}()
 		return nil
@@ -171,20 +181,32 @@ func SetWebsocketPortNumber() js.Func {
 			log.Debug("Updating SetWebsocketPortNumber Number")
 			SetDisplay("WebsocketPortStatus", "innerHTML", "")
 			port := GetValue("WebSocketPortNumber", "value")
-
-			log.Debug("Port Available")
-			payload := map[string]interface{}{
-				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "WebsocketPort", port}, splicer),
-			}
-			log.Debugf("Payload in SetWebsocketPortNumber: %s", payload)
-			_, err := ModifyConfig(payload, "SetWebsocketPortNumber")
-			if err != nil {
-				log.Error("Error in Modifying Config in SetWebsocketPortNumber ", err.Error())
-			} else if err == nil {
-				log.Debug("WebsocketPort Updated Successfully")
-				SetDisplay("WebSocketPortNumber", "placeholder", port)
-				SetDisplay("RestartBanner", "style", "display: block;")
-			}
+			Attributes := make(map[string]string)
+			status, condition := CheckPort(port)
+			if status == true {
+				payload := map[string]interface{}{
+					"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "WebsocketPort", port}, splicer),
+				}
+				log.Debugf("Payload in SetWebsocketPortNumber: %s", payload)
+				val, _ := ModifyConfig(payload, "SetWebsocketPortNumber")
+				if strings.Contains(val, "not") {
+					Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
+					Attributes["style"] = "color: red;"
+					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					return
+				}
+					log.Debug("SwrmPort Updated Successfully")
+					SetDisplay("WebSocketPortNumber", "placeholder", port)
+					SetDisplay("RestartBanner", "style", "display: block;")
+					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
+					Attributes["style"] = "color: #32CD32;"
+					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					return
+		} else if status == false {
+			Attributes["innerHTML"] = condition
+			Attributes["style"] = "color: red;"
+			SetMultipleDisplay("WebsocketPortStatus", Attributes)
+		}
 		}()
 		return nil
 	})
@@ -213,7 +235,7 @@ func VerifyPort() js.Func {
 			if strings.Contains(val, "NOT") {
 				log.Debug("Port Forward Not Verified")
 				Attributes["innerHTML"] = "Not Forwarded &#10008;"
-				Attributes["style"] = "color: red;"
+				Attributes["style"] = "color: rgba(244,105,50,1);"
 				SetMultipleDisplay("PortForward", Attributes)
 				return
 			}
