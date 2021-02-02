@@ -150,9 +150,9 @@ func Events() js.Func {
 							}
 							SetDisplay(name, "innerHTML", sValue)
 						}
-						timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
-						sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-						SetDisplay("LastConnected", "innerHTML", sTimeStamp)
+						// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
+						// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
+						// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
 						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 						sValue := fmt.Sprintf("%s %s", sFloat, "%")
 						SetDisplay("percentageNumber", "innerHTML", sValue)
