@@ -1,419 +1,257 @@
+// GOOS=js GOARCH=wasm go build -o  ../assets/hive.wasm
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"strings"
 	"syscall/js"
-	"time"
-	// "net"
+	// "time"
+	"strconv"
 )
 
+var DNSState bool
+
 func GetSettings() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#settings%$#-g%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "settings", "-g", "-j"}, splicer),
 			}
 			log.Debug("Settings Hit")
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in GetSettings: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in GetSettings: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			respBuf, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Error("Error in Reading Body in GetSettings: ", err.Error())
-				return
-			}
-			data := make(map[string]string)
-			err = json.Unmarshal(respBuf, &data)
-			if err != nil {
-				log.Error("Error in Unmarshalling respBuf in GetSettings: ", err.Error())
-				return
-			}
-
-			var out Out
-			err = json.Unmarshal([]byte(data["val"]), &out)
-			if err != nil {
-				log.Error("Error in Unmarshalling data in GetSettings: ", err.Error())
-				return
-			}
-			val, err := json.MarshalIndent(out.Data, "", " ")
-			if err != nil {
-				log.Error("Error in Marshalling in GetSettings: ", err.Error())
-				return
-			}
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in GetSettings")
-				return
-			}
+			val := GetData(payload, "GetSettings")
 			var settings Settings
-			err = json.Unmarshal(val, &settings)
+			err := json.Unmarshal(val, &settings)
 			if err != nil {
 				log.Error("Error in unmarshalling val in GetSettings: ", err.Error())
 				return
 			}
-			jsDoc = js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in settings")
-				return
-			}
-			OutputArea := jsDoc.Call("getElementById", "Name")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in Name")
-				return
-			}
-			OutputArea.Set("innerHTML", settings.Name)
-
 			log.Debug(settings)
-			usedSpace := (settings.UsedStorage * settings.MaxStorage) / 100
-			jsDoc = js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in settings")
-				return
-			}
-			OutputArea = jsDoc.Call("getElementById", "UsedSpace")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in UsedSpace")
-				return
-			}
-			sUsedSpace := fmt.Sprintf("%.2f %s", usedSpace*1024, "MB")
-			OutputArea.Set("innerHTML", sUsedSpace)
+			SetDisplay("Name", "innerHTML", settings.Name)
 
-			OutputArea = jsDoc.Call("getElementById", "FreeSpace")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in UsedSpace")
-				return
-			}
-			freeSpace := (settings.MaxStorage - usedSpace)
+			sUsedSpace := fmt.Sprintf("%.2f %s", settings.UsedStorage*1024, "MB")
+			SetDisplay("UsedSpace", "innerHTML", sUsedSpace)
+
+			freeSpace := (settings.MaxStorage - settings.UsedStorage)
 			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
-			OutputArea.Set("innerHTML", sFreeSpace)
+			SetDisplay("FreeSpace", "innerHTML", sFreeSpace)
+			DNSState = settings.IsDNSEligible
+			log.Debugf("MaxStorage: %f", settings.MaxStorage)
+			SetDisplay("rangeSlider", "value", fmt.Sprintf("%s", settings.MaxStorage))
 		}()
 		return nil
 	})
-	return jsonFunc
 }
 
 func GetStatus() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#status%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "status", "-j"}, splicer),
 			}
 			log.Debug("GetStatus Hit")
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in GetStatus: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in GetStatus: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			respBuf, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Error("Error in Reading Body in GetStatus: ", err.Error())
-				return
-			}
-			data := make(map[string]string)
-			err = json.Unmarshal(respBuf, &data)
-			if err != nil {
-				log.Error("Error in Unmarshalling respBuf in GetStatus: ", err.Error())
-				return
-			}
+			val := GetData(payload, "GetStatus")
 
-			var out Out
-			err = json.Unmarshal([]byte(data["val"]), &out)
-			if err != nil {
-				log.Error("Error in Unmarshalling data in GetStatus: ", err.Error())
-				return
-			}
-			val, err := json.MarshalIndent(out.Data, "", " ")
-			if err != nil {
-				log.Error("Error in Marshalling in GetStatus: ", err.Error())
-				return
-			}
 			var status Status
-			err = json.Unmarshal(val, &status)
+			err := json.Unmarshal(val, &status)
 			if err != nil {
 				log.Error("Error in unmarshalling val in GetStatus: ", err.Error())
 				return
 			}
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in GetStatus")
-				return
-			}
-			OutputArea := jsDoc.Call("getElementById", "LoggedIn")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in LoggedIn")
-				return
-			}
 			var sValue string
 			if status.LoggedIn == true {
-				sValue = "LoggedIn &#x1f7e2;"
+				sValue = "LoggedIn"
 			} else if status.LoggedIn == false {
-				sValue = "LoggedOut &#10060;"
+				sValue = "LoggedOut"
 			}
-			OutputArea.Set("innerHTML", sValue)
+			SetDisplay("LoggedIn", "innerHTML", sValue)
 
-			OutputArea = jsDoc.Call("getElementById", "LastConnected")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output text area in Last Connected")
-				return
-			}
-			timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
+			// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
+			// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
+			// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
 
-			sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-			OutputArea.Set("innerHTML", sTimeStamp)
 		}()
 		return nil
 	})
-	return jsonFunc
 }
-
 func GetConfig() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			payload := map[string]interface{}{
-				"val": "hive-cli.exe%$#config%$#show%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "config", "show", "-j"}, splicer),
 			}
 			log.Debug("GetConfig Hit")
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in GetConfig: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in GetConfig: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			respBuf, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Error("Error in Reading Body in GetConfig: ", err.Error())
-				return
-			}
-			data := make(map[string]string)
-			err = json.Unmarshal(respBuf, &data)
-			if err != nil {
-				log.Error("Error in Unmarshalling respBuf in GetConfig: ", err.Error())
-				return
-			}
-
-			var out Out
-			err = json.Unmarshal([]byte(data["val"]), &out)
-			if err != nil {
-				log.Error("Error in Unmarshalling data in GetConfig: ", err.Error())
-				return
-			}
-			val, err := json.MarshalIndent(out.Data, "", " ")
-			if err != nil {
-				log.Error("Error in Marshalling in GetConfig: ", err.Error())
-				return
-			}
-			log.Debug(data["val"])
+			val := GetData(payload, "GetConfig")
 			var config Config
-			err = json.Unmarshal(val, &config)
+			err := json.Unmarshal(val, &config)
 			if err != nil {
 				log.Error("Error in unmarshalling val in GetConfig: ", err.Error())
 				return
 			}
 			log.Debug(config)
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in GetConfig")
+			SetDisplay("SwrmPortNumber", "placeholder", config.SwarmPort)
+			Attributes := make(map[string]string)
+			if DNSState == false {
+				Attributes["style"] = "display: none;"
+				Attributes["aria-hidden"] = "true"
+				Attributes["visibility"] = "hidden"
+				SetMultipleDisplay("Group_62_ID", Attributes)
 				return
 			}
-			OutputArea := jsDoc.Call("getElementById", "SwrmPortNumber")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in SwrmPortNumber")
-				return
-			}
-			OutputArea.Set("placeholder", config.SwarmPort)
-
-			OutputArea = jsDoc.Call("getElementById", "WebSocketPortNumber")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in WebSocketPortNumber")
-				return
-			}
-			OutputArea.Set("placeholder", config.WebsocketPort)
+			SetDisplay("WebSocketPortNumber", "placeholder", config.WebsocketPort)
 		}()
 		return nil
 	})
-	return jsonFunc
 }
-
+func SetStorageSize() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			payload := map[string]interface{}{
+				"val": strings.Join([]string{"hive-cli.exe", "config", "get-storage-location", "-j"}, splicer),
+			}
+			val, err := ModifyConfig(payload, "SetStorageSize")
+			if err != nil {
+				log.Error("Error in Getting Storage Location ", err.Error())
+			}
+			var out Out
+			err = json.Unmarshal([]byte(val), &out)
+			if err != nil {
+				log.Error("Error in Unmarshalling data in GetStorageLocation: ", err.Error())
+				return
+			}
+			log.Debug(out.Data)
+		}()
+		return nil
+	})
+}
+func CheckPort(port string) (status bool, condition string) {
+	if port == "" {
+		return false, fmt.Sprintf("Enter A Valid Port Number")
+	}
+	val, err := strconv.Atoi(port)
+    if err != nil {
+		return false, fmt.Sprintf("Port %s is Not a Number", port)
+    }
+	if val < 1025 || val > 49150 {
+	 	return false, fmt.Sprintf("Port %s is Unavailable", port)
+	}
+	return true, ""
+}
 func SetSwrmPortNumber() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			log.Debug("Updating SwarmPort Number")
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in SetSwrmPortNumber")
-				return
-			}
-			OutputArea := jsDoc.Call("getElementById", "SwrmPortStatus")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in SwrmPortStatus")
-				return
-			}
-			OutputArea.Set("innerHTML", "")
-
-			OutputArea = jsDoc.Call("getElementById", "SwrmPortNumber")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in SetSwrmPortNumber")
-				return
-			}
-
-			port := fmt.Sprintf("%s", OutputArea.Get("value"))
-			// host := "127.0.0.1"
-			// log.Debugf("Checking Availability of Port: %s", port)
-			//
-			// ln, err := net.Listen("tcp", "127.0.0.1:" + port)
-			// if err != nil {
-			// 	log.Debug("server")
-			// 	log.Error(err.Error())
-			// }
-			// defer ln.Close()
-			//
-			//
-			// log.Debugf("Listening on %s", net.JoinHostPort(host, port))
-			// conn, err := net.DialTCP("tcp", nil, net.JoinHostPort(host, port))
-			// if err != nil {
-			// 	log.Debug("client")
-			// 	log.Error(err.Error())
-			// 	OutputArea := jsDoc.Call("getElementById", "SwrmPortStatus")
-			// 	if !OutputArea.Truthy() {
-			// 		log.Error("Unable to get output area in SwrmPortStatus")
-			// 		return
-			// 	}
-			// 	OutputArea.Set("innerHTML", "This Port is unavailable. Please Select a different Port.")
-			// 	OutputArea.Set("style", "color:rgba(255,15,15,1)")
-			// 	return
-			// 	}
-			// 	conn.Close()
-			// 	ln.Close()
-			// log.Debugf("Port:%s is available", port)
-
-			sValue := "hive-cli.exe%$#config%$#modify%$#SwarmPort%$#" + port
-			log.Debug(sValue)
+			SetDisplay("SwrmPortStatus", "innerHTML", "")
+			port := GetValue("SwrmPortNumber", "value")
+			Attributes := make(map[string]string)
+			status, condition := CheckPort(port)
+			if status == true {
 			payload := map[string]interface{}{
-				"val": sValue,
-			}
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in SetSwrmPortNumber: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in SetSwrmPortNumber: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			log.Debug("This is response from SetSwrmPortNumber: ", resp)
-
-			payload = map[string]interface{}{
-				"val": "hive-cli.exe%$#settings%$#-j",
+				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "SwarmPort", port}, splicer),
 			}
 
-			buf, err = json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in SetSwrmPortNumber: ", err.Error())
+			log.Debugf("Payload in SetSwrmPortNumber: %s", payload)
+			val, _ := ModifyConfig(payload, "SetSwrmPortNumber")
+			if strings.Contains(val, "not") {
+				Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
+				Attributes["style"] = "color: red;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
 				return
 			}
-			resp, err = http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in SetSwrmPortNumber: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			log.Debug("This is response from SetSwrmPortNumber: ", resp)
-
-			if err == nil {
 				log.Debug("SwrmPort Updated Successfully")
-				OutputArea.Set("placeholder", port)
+				SetDisplay("SwrmPortNumber", "placeholder", port)
+				SetDisplay("RestartBanner", "style", "display: block;")
+				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
+				Attributes["style"] = "color: #32CD32;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
+				return
+			} else if status == false {
+				Attributes["innerHTML"] = condition
+				Attributes["style"] = "color: red;"
+				SetMultipleDisplay("SwrmPortStatus", Attributes)
 			}
-
 		}()
 		return nil
 	})
-	return jsonFunc
 }
-
 func SetWebsocketPortNumber() js.Func {
-	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
-			log.Debug("Updating WebSocketPort Number")
-			jsDoc := js.Global().Get("document")
-			if !jsDoc.Truthy() {
-				log.Error("Unable to get document object in WebsocketPortNumber")
-				return
-			}
-
-			OutputArea := jsDoc.Call("getElementById", "WebSocketPortNumber")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get output area in WebSocketPortNumber")
-				return
-			}
-			value := OutputArea.Get("value")
-			log.Debug(value)
-			sep := "%$#"
-			sValue := "hive-cli.exe%$#config%$#modify%$#WebsocketPort" + sep + fmt.Sprintf("%s", value)
-			log.Debug(sValue)
-			payload := map[string]interface{}{
-				"val": sValue,
-			}
-			buf, err := json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in WebSocketPortNumber: ", err.Error())
-				return
-			}
-			resp, err := http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in WebSocketPortNumber: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			log.Debug("This is response from WebSocketPortNumber: ", resp)
-
-			payload = map[string]interface{}{
-				"val": "hive-cli.exe%$#settings%$#-j",
-			}
-
-			buf, err = json.Marshal(payload)
-			if err != nil {
-				log.Error("Error in Marshalling Payload in WebSocketPortNumber: ", err.Error())
-				return
-			}
-			resp, err = http.Post(GATEWAY, "application/json", bytes.NewReader(buf))
-			if err != nil {
-				log.Error("Error in getting response in WebSocketPortNumber: ", err.Error())
-				return
-			}
-			defer resp.Body.Close()
-			log.Debug("This is response from WebSocketPortNumber: ", resp)
-
-			if err == nil {
-				log.Debug("WebSocketPort Updated Successfully")
-				OutputArea.Set("placeholder", value)
-			}
+			log.Debug("Updating SetWebsocketPortNumber Number")
+			SetDisplay("WebsocketPortStatus", "innerHTML", "")
+			port := GetValue("WebSocketPortNumber", "value")
+			Attributes := make(map[string]string)
+			status, condition := CheckPort(port)
+			if status == true {
+				payload := map[string]interface{}{
+					"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "WebsocketPort", port}, splicer),
+				}
+				log.Debugf("Payload in SetWebsocketPortNumber: %s", payload)
+				val, _ := ModifyConfig(payload, "SetWebsocketPortNumber")
+				if strings.Contains(val, "not") {
+					Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
+					Attributes["style"] = "color: red;"
+					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					return
+				}
+					log.Debug("SwrmPort Updated Successfully")
+					SetDisplay("WebSocketPortNumber", "placeholder", port)
+					SetDisplay("RestartBanner", "style", "display: block;")
+					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
+					Attributes["style"] = "color: #32CD32;"
+					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					return
+		} else if status == false {
+			Attributes["innerHTML"] = condition
+			Attributes["style"] = "color: red;"
+			SetMultipleDisplay("WebsocketPortStatus", Attributes)
+		}
 		}()
 		return nil
 	})
-	return jsonFunc
+}
+func VerifyPort() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Verifying Port Forwarding....")
+			Attributes := make(map[string]string)
+
+			Attributes["innerHTML"] = "Verifying...."
+			Attributes["style"] = "color: rgba(219,219,219,1);"
+			SetMultipleDisplay("PortForward", Attributes)
+
+			payload := map[string]interface{}{
+				"val": strings.Join([]string{"hive-cli.exe", "verify-port-forward"}, splicer),
+			}
+			val, err := ModifyConfig(payload, "VerifyPort")
+			if err != nil {
+				log.Error("Error in Checking Port Forwarding Status")
+				SetDisplay("PortForward", "innerHTML", "Error in Checking")
+				return
+			}
+			log.Debugf("This is val: %s", val)
+
+			if strings.Contains(val, "NOT") {
+				log.Debug("Port Forward Not Verified")
+				Attributes["innerHTML"] = "Not Forwarded &#10008;"
+				Attributes["style"] = "color: rgba(244,105,50,1);"
+				SetMultipleDisplay("PortForward", Attributes)
+				return
+			}
+			log.Debug("Port Forward Verified")
+			Attributes["innerHTML"] = "Port Forwarded &#10004;"
+			Attributes["style"] = "color: green;"
+			SetMultipleDisplay("PortForward", Attributes)
+		}()
+		return nil
+	})
+}
+func ModifyStorageSize() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Changing Storage Size....")
+			log.Debug(GetValue("rangeSlider", "value"))
+		}()
+		return nil
+	})
 }

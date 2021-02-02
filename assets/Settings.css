@@ -1,3 +1,6 @@
+html {
+  scroll-behavior: smooth;
+}
 .mediaViewInfo {
 	--web-view-name: Settings;
 	--web-view-id: Settings;
@@ -14,31 +17,46 @@
 	box-sizing: border-box;
 	border: none;
 }
-.Settings_Class {
-	position: absolute;
-	width: 1920px;
-	height: 1370px;
+body{
 	background-color: rgba(67,67,67,1);
-	overflow: hidden;
+}
+.Settings_Class {
+	zoom: 0.8;
+	left: 0;
+	position: absolute;
+	overflow-x: hidden;
+	height: 100%;
+    width: 100%;
 	--web-view-name: Settings;
 	--web-view-id: Settings;
 	--web-scale-on-resize: true;
 	--web-center-horizontally: true;
 	--web-enable-deep-linking: true;
 }
-.Rectangle_3_Class {
-	fill: rgba(38,38,38,1);
+div::-webkit-scrollbar {
+	width: 0.8rem;
 }
-.Rectangle_3 {
-	/* filter: drop-shadow(0px 3px 10px rgba(0, 0, 0, 0.22)); */
+div::-webkit-scrollbar-track{
+	 background-color: rgba(138,138,138,1);
+	 border-radius: 10px;
+}
+div::-webkit-scrollbar-button{
+	display: none;
+}
+div::-webkit-scrollbar-thumb{
+  background-color: rgba(78,78,78,1);
+  border-radius: 10px;
+}
+.Navbar {
+	background: rgba(38,38,38,1);
 	position: absolute;
 	overflow: visible;
 	width: 100%;
-	height: 132px;
+	max-width: 100%;
+	height: 6.5rem;
 	left: 0px;
 	top: 0px;
 }
-
 .RestartBanner_Class{
 	display: none;
 	left: 0px;
@@ -49,32 +67,35 @@
 	text-align: center;
 	font-size: 30px;
 	font-style: normal;
+	overflow: hidden;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	color: white;
-	/* background-color: #339cff; */
 	background-color: rgba(244,105,50,1);
 }
 .Restart_Class{
-margin-left: 20px;
+	position:relative;
 }
 .BannerCloseButton_Class{
-	position: relative;
+	top: 1px;
+	position: absolute;
 	background: none;
 	font-size: 30px;
 	color: white;
 	outline: none;
-	left: 500px;
-	padding: 5px;
+	right: 50px;
+	margin: auto;
 }
 .BannerCloseButton_Class:hover{
 	opacity: 0.8;
 }
-.PortStatus_Class{
+.SwrmPortStatus_Class{
 	position: relative;
 	top: 60px;
 	left: 35px;
+	font-size: 18px;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .Frame_169_Class {
 	position: absolute;
 	width: 192.011px;
@@ -198,7 +219,8 @@ margin-left: 20px;
 	color: rgba(244,105,50,1);
 }
 .LastConnectedLabel_Class {
-	left: 1170px;
+	display: none;
+	left: 1152px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -268,7 +290,7 @@ margin-left: 20px;
 	color: rgba(185,185,185,1);
 }
 .VersionLabel_Class {
-	left: 1526px;
+	left: 1200px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -282,7 +304,8 @@ margin-left: 20px;
 	color: rgba(133,133,133,1);
 }
 .LastConnected_Class {
-	left: 1365px;
+	display: none;
+	left: 1347px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -310,7 +333,7 @@ margin-left: 20px;
 	color: rgba(255,255,255,1);
 }
 .Version_Class {
-	left: 1633px;
+	left: 1307px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -651,6 +674,15 @@ margin-left: 20px;
 	color: rgba(219,219,219,1);
 	text-transform: uppercase;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
 ::placeholder{
 	color:rgba(219,219,219,1);
 }
@@ -664,9 +696,12 @@ input:focus::placeholder {
 	width: 50px;
 	height: 24px;
 	outline: none;
-	color: white;
+	font-weight: bold;
+	font-size: 20px;
+	color: rgba(244, 105, 50, 1);
 	border-radius: 3px;
-	background-color: rgba(244, 105, 50, 1);
+	background: none;
+	cursor: pointer;
 }
 .Group_55_bu_Class {
 	position: absolute;
@@ -722,18 +757,11 @@ input:focus::placeholder {
 	left: 0px;
 	top: 0px;
 }
-.Group_62_Class {
-	position: absolute;
-	width: 1145px;
-	height: 81px;
-	left: 153px;
-	top: 852px;
-	overflow: visible;
-}
+
 .WebSocketPortNumberLabel_Class {
 	left: 0px;
 	top: 18px;
-	position: absolute;
+	position: relative;
 	overflow: visible;
 	width: 269px;
 	white-space: nowrap;
@@ -765,6 +793,13 @@ input:focus::placeholder {
 	color: rgba(219,219,219,1);
 	text-transform: uppercase;
 }
+.WebsocketPortStatus_Class{
+	position: relative;
+	top: 60px;
+	left: 35px;
+	font-size: 18px;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 .WebSocketPortNumberButton_Class{
 	position: relative;
 	left: 50px;
@@ -772,9 +807,11 @@ input:focus::placeholder {
 	width: 50px;
 	height: 24px;
 	outline: none;
-	color: white;
-	border-radius: 3px;
-	background-color: rgba(244, 105, 50, 1);
+	font-weight: bold;
+	font-size: 20px;
+	color: rgba(244, 105, 50, 1);
+	background: none;
+	cursor: pointer;
 }
 .loader {
   border: 16px solid #f3f3f3;
@@ -848,13 +885,26 @@ input:focus::placeholder {
 	left: 0px;
 	top: 0px;
 }
+.Group_62_Class {
+	position: relative;
+	width: 1145px;
+	height: 81px;
+	left: 153px;
+	top: 852px;
+	margin-bottom: 90px;
+	overflow: visible;
+}
 .Group_63_Class {
-	position: absolute;
+	position: relative;
 	width: 904px;
 	height: 81px;
 	left: 153px;
-	top: 1017px;
+	top: 850px;
 	overflow: visible;
+}
+.StorageBox_Class{
+	position: relative;
+	top: -220px;
 }
 .PortForwardTesterLabel_Class {
 	left: 0px;
@@ -871,11 +921,11 @@ input:focus::placeholder {
 	color: rgba(219,219,219,1);
 }
 .PortForward_Class {
-	left: 394px;
-	top: 20px;
-	position: absolute;
+	left: 60px;
+	top: 25px;
+	position: relative;
 	overflow: visible;
-	width: 159px;
+	width: 30px;
 	white-space: nowrap;
 	text-align: left;
 	font-family: Segoe UI;
@@ -887,7 +937,7 @@ input:focus::placeholder {
 }
 .Group_55_ca_Class {
 	position: absolute;
-	width: 351px;
+	width: 500px;
 	height: 81px;
 	left: 338px;
 	top: 0px;
@@ -895,11 +945,37 @@ input:focus::placeholder {
 }
 .Group_54_ca_Class {
 	position: absolute;
-	width: 351px;
+	width: 500px;
 	height: 81px;
 	left: 0px;
 	top: 0px;
 	overflow: visible;
+}
+.StorageMin_Class{
+	position: absolute;
+	background:none;
+	top: 20px;
+	left: -28px;
+	white-space: nowrap;
+    text-align: left;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    color: rgba(219,219,219,1);
+}
+.StorageMax_Class{
+	position: absolute;
+	background:none;
+	top: 20px;
+	left: 765px;
+	white-space: nowrap;
+    text-align: left;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    color: rgba(219,219,219,1);
 }
 .Rectangle_10_ca_Class {
 	opacity: 0.45;
@@ -934,7 +1010,7 @@ input:focus::placeholder {
 	filter: drop-shadow(0px -3px 6px rgba(168, 168, 168, 1));
 	position: absolute;
 	overflow: visible;
-	width: 375px;
+	width: 500px;
 	height: 105px;
 	left: 0px;
 	top: 0px;
@@ -1184,19 +1260,31 @@ input:focus::placeholder {
 	left: 1088px;
 	top: 1017px;
 }
-.Verify_Class {
-	left: 1157px;
-	top: 1040px;
-	position: absolute;
-	overflow: visible;
-	width: 74px;
-	white-space: nowrap;
-	text-align: left;
+.VerifyButton_Class{
+	position: relative;
+	background: none;
+	outline: none;
 	font-family: Segoe UI;
 	font-style: normal;
 	font-weight: bold;
+	width: 210px;
+	height: 81px;
+	top: 0px;
 	font-size: 28px;
 	color: rgba(255,255,255,1);
+}
+.VerifyBox_Class {
+	border-radius: 999px;
+	position: absolute;
+	overflow: visible;
+	text-align: center;
+	width: 250px;
+	left:550px;
+	top: 0px;
+	background: rgba(100,177,2,1);
+}
+.VerifyBox_Class:hover{
+	opacity: 0.8;
 }
 .StorageSizeLabel_Class {
 	left: 153px;
@@ -1212,98 +1300,61 @@ input:focus::placeholder {
 	font-size: 24px;
 	color: rgba(219,219,219,1);
 }
-.StorageSize_Class {
+.StorageSize_Class{
+	top: 1192px;
+	left: 490px;
+	width: 800px;
+	height: 20px;
 	position: absolute;
-	width: 811px;
-	height: 48px;
-	left: 487px;
-	top: 1191px;
-	overflow: visible;
-	color: rgba(244,105,50,1);
-}
-input[type=range] {
-  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-  width: 100%; /* Specific width is required for Firefox. */
-  background: transparent; /* Otherwise white in Chrome */
 }
 
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    input[type='range'] {
+      overflow: hidden;
+      width: 100%;
+	  height: 12px;
+	  border-radius: 999px;
+	  outline: none;
+      -webkit-appearance: none;
+	  overflow: visible;
+	  background-image: -webkit-gradient(
+		  linear,
+		  left top,
+		  right top,
+		  color-stop(0.15, rgba(244,105,50,1)),
+		  color-stop(0.15, #c7c7c7)
+		  );
+    }
 
-input[type=range]:focus {
-  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
-}
+    input[type='range']::-webkit-slider-runnable-track {
+	  width: 100%;
+	  height: 20px;
+	  border-radius: 999px;
+      -webkit-appearance: none;
+    }
 
-input[type=range]::-ms-track {
-  width: 100%;
-  cursor: pointer;
+    input[type='range']::-webkit-slider-thumb {
+      width: 20px;
+      -webkit-appearance: none;
+      height: 20px;
+	  border-radius: 999px;
+      cursor: ew-resize;
+      background: rgba(244,105,50,1);
+    }
 
-  /* Hides the slider so custom styles can be added */
-  background: transparent;
-  border-color: transparent;
-  color: transparent;
 }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 999px;
-  background: rgba(244,105,50,1);
-  cursor: pointer;
-  margin-top: -4px;
-  /* box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; */
-}
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  /* box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; */
-  background: #3071a9;
-  border-radius: 5px;
-  /* border: 0.2px solid #010101; */
-}
+.sliderValue_Class{
+	position: relative;
+	top: 5px;
+	background:none;
+	white-space: nowrap;
+    text-align: left;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    color: rgba(219,219,219,1);
 
-input[type=range]:hover::-webkit-slider-runnable-track {
-  background: #367ebd;
-}
-
-input[type=range]::-moz-range-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
-  border-radius: 1.3px;
-  border: 0.2px solid #010101;
-}
-
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  border-width: 16px 0;
-  color: transparent;
-}
-input[type=range]::-ms-fill-lower {
-  background: #2a6495;
-  border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-input[type=range]:focus::-ms-fill-lower {
-  background: #3071a9;
-}
-input[type=range]::-ms-fill-upper {
-  background: #3071a9;
-  border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-input[type=range]:focus::-ms-fill-upper {
-  background: #367ebd;
 }
 .Rectangle_14_Class {
 	fill: rgba(138,138,138,1);
