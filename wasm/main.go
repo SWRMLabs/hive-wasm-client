@@ -15,10 +15,10 @@ import (
 	"time"
 
 	"github.com/hako/durafmt"
-	logger "github.com/ipfs/go-log/v2"
+	wasm "github.com/ipfs/go-log/v2"
 )
 
-var log = logger.Logger("events")
+var log = wasm.Logger("events")
 
 const (
 	EVENTS  = "http://localhost:4343/v3/events"
@@ -292,7 +292,7 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
-	log.Debug(data["val"])
+	log.Debug("This is data in GetData: ",data["val"])
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {
@@ -707,7 +707,7 @@ func GetVersion() js.Func {
 }
 
 func main() {
-	logger.SetLogLevel("*", "Error")
+	wasm.SetLogLevel("*", "Error")
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())
