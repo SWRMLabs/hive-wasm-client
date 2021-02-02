@@ -36,6 +36,62 @@ body {
 	--web-navigate-on-keypress: true;
 	--web-enable-deep-linking: true;
 }
+.TaskManager_Class{
+	position: relative;
+    top: 80px;
+    height: 310px;
+    margin: 30px;
+    overflow-y: scroll;
+}
+.taskmanagerstatusname_Class {
+	position: absolute;
+	overflow: visible;
+	width: 430px;
+	white-space: wrap;
+	word-wrap: break-word;
+	line-height: 35px;
+	margin-top: -6px;
+	text-align: left;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 23px;
+	color: rgba(255,255,255,1);
+}
+.taskmanagerstatusstatus_Class {
+	opacity: 0.87;
+    left: 495px;
+	position: absolute;
+	overflow: visible;
+	width: 86px;
+	white-space: wrap;
+	word-wrap: break-word;
+	line-height: 35px;
+	margin-top: -6px;
+	text-align: left;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 23px;
+	color: rgba(255,255,255,1);
+}
+.taskmanagerstatusAS_Class {
+	opacity: 0.87;
+    position: absolute;
+	overflow: visible;
+    left: 735px;
+	width: 166px;
+	white-space: wrap;
+	word-wrap: break-word;
+	line-height: 35px;
+	margin-top: -6px;
+	text-align: center;
+	font-family: Segoe UI;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 23px;
+	color: rgba(255,255,255,1);
+}
 .Group_74_Class {
 	position: absolute;
 	width: 394px;
@@ -1706,7 +1762,7 @@ div::-webkit-scrollbar-thumb{
 	opacity: 0.45;
 	left: 575px;
 	top: 700px;
-	position: absolute;
+	position: relative;
 	overflow: visible;
 	width: 393px;
     white-space: nowrap;
@@ -1716,42 +1772,6 @@ div::-webkit-scrollbar-thumb{
 	font-style: normal;
 	font-weight: normal;
 	font-size: 28px;
-	color: rgba(255,255,255,1);
-}
-.taskmanagerstatusstatus_Class {
-	opacity: 0.87;
-	left: 1097px;
-	top: 1045px;
-	position: absolute;
-	overflow: visible;
-	width: 86px;
-	white-space: wrap;
-	word-wrap: break-word;
-	line-height: 35px;
-	margin-top: -6px;
-	text-align: left;
-	font-family: Segoe UI;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 23px;
-	color: rgba(255,255,255,1);
-}
-.taskmanagerstatusAS_Class {
-	opacity: 0.87;
-	left: 1332px;
-	top: 1045px;
-	position: absolute;
-	overflow: visible;
-	width: 166px;
-	white-space: wrap;
-	word-wrap: break-word;
-	line-height: 35px;
-	margin-top: -6px;
-	text-align: center;
-	font-family: Segoe UI;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 23px;
 	color: rgba(255,255,255,1);
 }
 .Pending_Class {
@@ -2970,22 +2990,5 @@ div::-webkit-scrollbar-thumb{
 	font-style: normal;
 	font-weight: bold;
 	font-size: 33px;
-	color: rgba(255,255,255,1);
-}
-.taskmanagerstatusname_Class {
-	left: 609px;
-	top: 1045px;
-	position: absolute;
-	overflow: visible;
-	width: 430px;
-	white-space: wrap;
-	word-wrap: break-word;
-	line-height: 35px;
-	margin-top: -6px;
-	text-align: left;
-	font-family: Segoe UI;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 23px;
 	color: rgba(255,255,255,1);
 }
