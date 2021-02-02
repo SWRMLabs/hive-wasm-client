@@ -335,6 +335,7 @@ func ModifyConfig(payload map[string]interface{}, funcName string) (string, erro
 	log.Debug(data["val"])
 	return data["val"], nil
 }
+
 func SetDisplay(Id string, Attr string, value string) {
 	for i := 0; i < 5; i++ {
 		jsDoc := js.Global().Get("document")
@@ -706,7 +707,7 @@ func GetVersion() js.Func {
 }
 
 func main() {
-	logger.SetLogLevel("*", "Debug")
+	logger.SetLogLevel("*", "Error")
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())

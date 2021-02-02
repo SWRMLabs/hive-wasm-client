@@ -21,17 +21,14 @@
 </script>
 <script>
 function CheckBanner() {
-	console.log("checking refresh")
 	if (sessionStorage.RefreshState == "Not Refreshed"){
 		document.getElementById("RestartBanner").style.display = "block";
 	}
 }
 function SetRefresh(){
-	console.log("Set refresh")
 	sessionStorage.setItem("RefreshState", "Not Refreshed")
 }
 function CloseBanner(){
-	console.log("Closing banner")
 	document.getElementById('RestartBanner').style.display = "none";
 }
 </script>
