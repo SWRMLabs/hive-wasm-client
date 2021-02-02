@@ -1,3 +1,6 @@
+html {
+  scroll-behavior: smooth;
+}
 .mediaViewInfo {
 	--web-view-name: Settings;
 	--web-view-id: Settings;
@@ -21,7 +24,7 @@ body{
 	zoom: 0.8;
 	left: 0;
 	position: absolute;
-	overflow: visible;
+	overflow-x: hidden;
 	height: 100%;
     width: 100%;
 	--web-view-name: Settings;
@@ -30,23 +33,37 @@ body{
 	--web-center-horizontally: true;
 	--web-enable-deep-linking: true;
 }
+div::-webkit-scrollbar {
+	width: 0.8rem;
+}
+div::-webkit-scrollbar-track{
+	 background-color: rgba(138,138,138,1);
+	 border-radius: 10px;
+}
+div::-webkit-scrollbar-button{
+	display: none;
+}
+div::-webkit-scrollbar-thumb{
+  background-color: rgba(78,78,78,1);
+  border-radius: 10px;
+}
 .Navbar {
 	background: rgba(38,38,38,1);
 	position: absolute;
 	overflow: visible;
 	width: 100%;
+	max-width: 100%;
 	height: 6.5rem;
 	left: 0px;
 	top: 0px;
 }
-
 .RestartBanner_Class{
 	display: none;
 	left: 0px;
 	top: 100px;
 	width: 100%;
 	height: 50px;
-	position: absolute;
+	position: relative;
 	text-align: center;
 	font-size: 30px;
 	font-style: normal;
@@ -56,17 +73,17 @@ body{
 	background-color: rgba(244,105,50,1);
 }
 .Restart_Class{
-margin-left: 20px;
-position:relative;
+	position:relative;
 }
 .BannerCloseButton_Class{
+	top: 1px;
 	position: absolute;
 	background: none;
 	font-size: 30px;
 	color: white;
 	outline: none;
 	right: 50px;
-	padding: 5px;
+	margin: auto;
 }
 .BannerCloseButton_Class:hover{
 	opacity: 0.8;
@@ -202,6 +219,7 @@ position:relative;
 	color: rgba(244,105,50,1);
 }
 .LastConnectedLabel_Class {
+	display: none;
 	left: 1152px;
 	top: 178px;
 	position: absolute;
@@ -272,7 +290,7 @@ position:relative;
 	color: rgba(185,185,185,1);
 }
 .VersionLabel_Class {
-	left: 1508px;
+	left: 1200px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;
@@ -286,6 +304,7 @@ position:relative;
 	color: rgba(133,133,133,1);
 }
 .LastConnected_Class {
+	display: none;
 	left: 1347px;
 	top: 178px;
 	position: absolute;
@@ -314,7 +333,7 @@ position:relative;
 	color: rgba(255,255,255,1);
 }
 .Version_Class {
-	left: 1615px;
+	left: 1307px;
 	top: 178px;
 	position: absolute;
 	overflow: visible;

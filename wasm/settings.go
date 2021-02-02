@@ -90,15 +90,14 @@ func GetConfig() js.Func {
 			}
 			log.Debug(config)
 			SetDisplay("SwrmPortNumber", "placeholder", config.SwarmPort)
-			// Attributes := make(map[string]string)
-			// if DNSState == false {
-			// 	Attributes["style"] = "display: none;"
-			// 	Attributes["aria-hidden"] = "true"
-			// 	Attributes["visibility"] = "hidden"
-			// 	SetMultipleDisplay("Group_62_ID", Attributes)
-			// 	SetDisplay("Settings", "style", "height: 75em;")
-			// 	return
-			// }
+			Attributes := make(map[string]string)
+			if DNSState == false {
+				Attributes["style"] = "display: none;"
+				Attributes["aria-hidden"] = "true"
+				Attributes["visibility"] = "hidden"
+				SetMultipleDisplay("Group_62_ID", Attributes)
+				return
+			}
 			SetDisplay("WebSocketPortNumber", "placeholder", config.WebsocketPort)
 		}()
 		return nil
