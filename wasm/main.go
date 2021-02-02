@@ -15,10 +15,10 @@ import (
 	"time"
 
 	"github.com/hako/durafmt"
-	wasm "github.com/ipfs/go-log/v2"
+	logger "github.com/ipfs/go-log/v2"
 )
 
-var log = wasm.Logger("events")
+var log = logger.Logger("hive-wasm")
 
 const (
 	EVENTS  = "http://localhost:4343/v3/events"
@@ -707,7 +707,7 @@ func GetVersion() js.Func {
 }
 
 func main() {
-	wasm.SetLogLevel("*", "Error")
+	logger.SetLogLevel("*", "Error")
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())

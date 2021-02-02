@@ -44,7 +44,7 @@ function SliderColour(){
 	if (val > (max - 6)) {
 		document.getElementById('StorageMax').style.display = "none";
 	}
-	else if (val < (min + 5)) {
+	else if ((min + 5) > val) {
 		document.getElementById('StorageMin').style.display = "none";
 	}
 	rangeSlider.style.backgroundImage = '-webkit-gradient(linear, left top, right top,' +
