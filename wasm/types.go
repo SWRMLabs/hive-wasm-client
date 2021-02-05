@@ -205,6 +205,7 @@ type Settings struct {
 	DesktopApplicationAutoStart    bool    `json:"isAutoStartEnabled"`
 	DNS                            string  `json:"dnsAddress"`
 	Role                           string  `json:"role,omitempty"`
+	FreeDiskSpace				   float64 `json:"freeDiskSpace,omitempty"`
 }
 
 func (b *Settings) GetNamespace() string {
@@ -264,7 +265,7 @@ type Config struct {
 	MaxPeers                       int      `json:"MaxPeers, omitempty"`
 	ProxyPort                      string   `json:"ProxyPort, omitempty"`
 	ReproviderInterval             string   `json:"ReproviderInterval, omitempty"`
-	Storage                        int      `json:"Storage, omitempty"`
+	Storage                        float64   `json:"Storage, omitempty"`
 	StorageGCWatermark             int      `json:"StorageGCWatermark, omitempty"`
 	Store                          string   `json:"Store, omitempty"`
 	SwarmPort                      string   `json:"SwarmPort, omitempty"`

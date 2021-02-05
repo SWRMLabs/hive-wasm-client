@@ -379,7 +379,7 @@ func SetMultipleDisplay(Id string, Attributes map[string]string) {
 			break
 		}
 	}
-
+	return
 }
 
 func GetValue(Id string, Attr string) string {
@@ -707,12 +707,11 @@ func GetVersion() js.Func {
 }
 
 func main() {
-	logger.SetLogLevel("*", "Error")
+	logger.SetLogLevel("*", "Debug")
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())
 	js.Global().Set("ModifyStorageSize", ModifyStorageSize())
-	js.Global().Set("SetStorageSize", SetStorageSize())
 	js.Global().Set("GetStatus", GetStatus())
 	js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("VerifyPort", VerifyPort())

@@ -10,7 +10,10 @@ import (
 	"strconv"
 )
 
-var DNSState bool
+var (
+	DNSState bool
+	DriveFreeSpace float64
+)
 
 func GetSettings() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -29,15 +32,27 @@ func GetSettings() js.Func {
 			log.Debug(settings)
 			SetDisplay("Name", "innerHTML", settings.Name)
 
-			sUsedSpace := fmt.Sprintf("%.2f %s", settings.UsedStorage*1024, "MB")
+			UsedSpace := settings.UsedStorage
+			sUsedSpace := fmt.Sprintf("%.2f %s", UsedSpace*1024, "MB")
 			SetDisplay("UsedSpace", "innerHTML", sUsedSpace)
 
 			freeSpace := (settings.MaxStorage - settings.UsedStorage)
 			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
 			SetDisplay("FreeSpace", "innerHTML", sFreeSpace)
+
+			SetDisplay("StorageMin", "innerHTML", fmt.Sprintf("%.1f GB", UsedSpace))
+			SetDisplay("rangeSlider", "min", fmt.Sprintf("%.1f", UsedSpace))
+
+			DriveFreeSpace = settings.FreeDiskSpace / (1024*1024*1024)
+			log.Debugf("Free Space in Drive: %.1f", DriveFreeSpace)
+			SetDisplay("StorageMax", "innerHTML", fmt.Sprintf("%.1f GB",DriveFreeSpace))
+			SetDisplay("rangeSlider", "max", fmt.Sprintf("%.1f", DriveFreeSpace))
+
+			MaxStorage := fmt.Sprintf("%.1f", settings.MaxStorage)
+			log.Debugf("MaxStorage: %s", MaxStorage)
+			SetDisplay("rangeSlider", "value", MaxStorage)
+
 			DNSState = settings.IsDNSEligible
-			log.Debugf("MaxStorage: %f", settings.MaxStorage)
-			SetDisplay("rangeSlider", "value", fmt.Sprintf("%s", settings.MaxStorage))
 		}()
 		return nil
 	})
@@ -103,27 +118,6 @@ func GetConfig() js.Func {
 		return nil
 	})
 }
-func SetStorageSize() js.Func {
-	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go func() {
-			payload := map[string]interface{}{
-				"val": strings.Join([]string{"hive-cli.exe", "config", "get-storage-location", "-j"}, splicer),
-			}
-			val, err := ModifyConfig(payload, "SetStorageSize")
-			if err != nil {
-				log.Error("Error in Getting Storage Location ", err.Error())
-			}
-			var out Out
-			err = json.Unmarshal([]byte(val), &out)
-			if err != nil {
-				log.Error("Error in Unmarshalling data in GetStorageLocation: ", err.Error())
-				return
-			}
-			log.Debug(out.Data)
-		}()
-		return nil
-	})
-}
 func CheckPort(port string) (status bool, condition string) {
 	if port == "" {
 		return false, fmt.Sprintf("Enter A Valid Port Number")
@@ -136,6 +130,18 @@ func CheckPort(port string) (status bool, condition string) {
 	 	return false, fmt.Sprintf("Port %s is Unavailable", port)
 	}
 	return true, ""
+}
+func SaveSettings() {
+	payload := map[string]interface{}{
+		"val": strings.Join([]string{"hive-cli.exe", "settings", "-j"}, splicer),
+	}
+	val, err := ModifyConfig(payload, "SaveSettings")
+	if err != nil {
+		log.Error("Error in Saving Settings")
+		return
+	}
+	log.Debug("Saved Settings: ", val)
+	return
 }
 func SetSwrmPortNumber() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -158,12 +164,19 @@ func SetSwrmPortNumber() js.Func {
 				SetMultipleDisplay("SwrmPortStatus", Attributes)
 				return
 			}
-				log.Debug("SwrmPort Updated Successfully")
 				SetDisplay("SwrmPortNumber", "placeholder", port)
 				SetDisplay("RestartBanner", "style", "display: block;")
 				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
 				Attributes["style"] = "color: #32CD32;"
 				SetMultipleDisplay("SwrmPortStatus", Attributes)
+				log.Debug("Setting Local Storage....")
+				jsDoc := js.Global().Get("localStorage")
+				if !jsDoc.Truthy() {
+					log.Error("Unable to get localStorage in SwrmPort")
+					return
+				}
+				jsDoc.Set("RefreshState", "Not Refreshed")
+				log.Debug("Refresh State Set")
 				return
 			} else if status == false {
 				Attributes["innerHTML"] = condition
@@ -200,6 +213,14 @@ func SetWebsocketPortNumber() js.Func {
 					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
 					Attributes["style"] = "color: #32CD32;"
 					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					log.Debug("Setting Local Storage....")
+					jsDoc := js.Global().Get("localStorage")
+					if !jsDoc.Truthy() {
+						log.Error("Unable to get localStorage in WebsocketPort")
+						return
+					}
+					jsDoc.Set("RefreshState", "Not Refreshed")
+					log.Debug("Refresh State Set")
 					return
 		} else if status == false {
 			Attributes["innerHTML"] = condition
@@ -240,7 +261,7 @@ func VerifyPort() js.Func {
 			}
 			log.Debug("Port Forward Verified")
 			Attributes["innerHTML"] = "Port Forwarded &#10004;"
-			Attributes["style"] = "color: green;"
+			Attributes["style"] = "color: rgba(244,105,50,1);"
 			SetMultipleDisplay("PortForward", Attributes)
 		}()
 		return nil
@@ -249,8 +270,22 @@ func VerifyPort() js.Func {
 func ModifyStorageSize() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
-			log.Debug("Changing Storage Size....")
-			log.Debug(GetValue("rangeSlider", "value"))
+			val := GetValue("rangeSlider", "value")
+			log.Debug("Changing Storage Size to: ",val)
+
+			payload := map[string]interface{}{
+				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "Storage", val}, splicer),
+			}
+			log.Debug("Payload in Modify Storage Size: ", payload)
+			val, err := ModifyConfig(payload, "ModifyStorageSize")
+			if err != nil {
+				log.Error("Error in Modifying Storage Size", err.Error())
+				return
+			}
+			log.Debug("val in ModifyStorageSize: ",val)
+			log.Debug("Saving Settings")
+			SaveSettings()
+			log.Debug("Settings Saved Successfully")
 		}()
 		return nil
 	})

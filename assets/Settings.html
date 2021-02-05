@@ -13,20 +13,21 @@
 	WebAssembly.instantiateStreaming(fetch("hive.wasm"), go.importObject).then((result) => {
 		go.run(result.instance);
 		GetStorageLocation();
-		GetSettings();
 		GetVersion();
 		GetStatus();
 		GetConfig();
+		GetSettings()
+		RunSettings();
 	});
 </script>
 <script>
+function RunSettings(){
+	setTimeout(function() {SliderColour()}, 500);
+}
 function CheckBanner() {
-	if (sessionStorage.RefreshState == "Not Refreshed"){
+	if (localStorage.RefreshState == "Not Refreshed"){
 		document.getElementById("RestartBanner").style.display = "block";
 	}
-}
-function SetRefresh(){
-	sessionStorage.setItem("RefreshState", "Not Refreshed")
 }
 function CloseBanner(){
 	document.getElementById('RestartBanner').style.display = "none";
@@ -34,31 +35,23 @@ function CloseBanner(){
 </script>
 <script>
 function SliderColour(){
-	document.getElementById('StorageMax').style.display = "block";
-	document.getElementById('StorageMin').style.display = "block";
 	rangeSlider = document.getElementById('rangeSlider');
 	var val = rangeSlider.value;
 	var max = rangeSlider.getAttribute('max');
 	var min =  rangeSlider.getAttribute('min');
 	var value = (val - min) / (max - min);
-	if (val > (max - 6)) {
-		document.getElementById('StorageMax').style.display = "none";
-	}
-	else if ((min + 5) > val) {
-		document.getElementById('StorageMin').style.display = "none";
-	}
 	rangeSlider.style.backgroundImage = '-webkit-gradient(linear, left top, right top,' +
 										'color-stop(' + value + ', rgba(244,105,50,1)),' +
 										'color-stop(' + value + ', #c7c7c7)' + ')';
 
 	sliderValue = document.getElementById('sliderValue');
-	sliderValue.innerHTML = val;
+	sliderValue.innerHTML = val + " GB";
 	var newVal = Number(((val - min) * 100) / (max - min));
-	sliderValue.style.left = `calc(${newVal}% + (${- 12 - newVal * 0.15}px))`;
+	sliderValue.style.left = `calc(${newVal}% + (${- 18 - newVal * 0.15}px))`;
 }
 </script>
 </head>
-<body onload="SliderColour(), CheckBanner()">
+<body onload="CheckBanner()">
 <div id="Settings" class="Settings_Class">
 	<div class="Navbar">
 		<div id="RestartBanner" class="RestartBanner_Class">
@@ -188,7 +181,7 @@ function SliderColour(){
 				</svg>
 				<div class="SwrmPortNumberBox_Class">
 					<input id="SwrmPortNumber" class="SwrmPortNumber_Class" type="number">
-					<button id="SetSwrmPortNumberButton" class="SetSwrmPortNumberButton_Class" onclick="SetSwrmPortNumber(), SetRefresh()">Set</button>
+					<button id="SetSwrmPortNumberButton" class="SetSwrmPortNumberButton_Class" onclick="SetSwrmPortNumber()">Set</button>
 				</div>
 				<div id="SwrmPortStatus" class="SwrmPortStatus_Class"></div>
 			</div>
@@ -210,7 +203,7 @@ function SliderColour(){
 				</svg>
 				<div id = "WebSocketPortNumberBox" class="WebSocketPortNumberBox_Class">
 					<input id="WebSocketPortNumber" class="WebSocketPortNumber_Class" type="number">
-					<button id="WebSocketPortNumberButton" class="WebSocketPortNumberButton_Class" onclick="SetWebsocketPortNumber(), SetRefresh()">Set</button>
+					<button id="WebSocketPortNumberButton" class="WebSocketPortNumberButton_Class" onclick="SetWebsocketPortNumber()">Set</button>
 				</div>
 				<div id="WebsocketPortStatus" class="WebsocketPortStatus_Class">
 				</div>
@@ -270,10 +263,10 @@ function SliderColour(){
 		<span>Storage Size</span>
 	</div>
 	<div id="StorageSize" class="StorageSize_Class">
-		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" min="1" max="100" step="0.1" precision="0.1">
+		<input id = "rangeSlider" oninput="SliderColour()" onmouseup="ModifyStorageSize()" class="Slider_Class" type="range" step="0.1" precision="0.1">
 		<div id="sliderValue" class="sliderValue_Class"></div>
-		<div id="StorageMin" class="StorageMin_Class">Min</div>
-		<div id="StorageMax" class="StorageMax_Class">Max</div>
+		<div id="StorageMin" class="StorageMin_Class"></div>
+		<div id="StorageMax" class="StorageMax_Class"></div>
 	</div>
 </div>
 

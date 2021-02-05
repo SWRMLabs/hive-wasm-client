@@ -105,13 +105,25 @@
                 console.error('Caught exception', err)
             }
         }
+	function CheckBanner() {
+		if (localStorage.RefreshState == "Not Refreshed"){
+			document.getElementById("RestartBanner").style.display = "block";
+		}
+	}
+	function CloseBanner(){
+		document.getElementById('RestartBanner').style.display = "none";
+	}
 </script>
 <script id="applicationScript" type="text/javascript" src="index.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
-<body>
+<body onload="CheckBanner()">
 <div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class mediaViewInfo">
 	<div class="Navbar">
+		<div id="RestartBanner" class="RestartBanner_Class">
+			<span id="Restart" class="Restart_Class">Please close this tab and restart the daemon for changes to take effect</span>
+			<button id="BannerCloseButton" class="BannerCloseButton_Class" onclick="CloseBanner()">&#10005;</button>
+		</div>
 	</div>
 	<div class="Group_74_Class">
 		<div class="Group_38_Class">
