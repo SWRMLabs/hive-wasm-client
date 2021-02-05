@@ -18,16 +18,13 @@
 		GetConfig();
 		GetSettings()
 		RunSettings();
+
 	});
 </script>
 <script>
 function RunSettings(){
 	setTimeout(function() {SliderColour()}, 500);
-}
-function CheckBanner() {
-	if (localStorage.RefreshState == "Not Refreshed"){
-		document.getElementById("RestartBanner").style.display = "block";
-	}
+	setTimeout(function() {CheckBanner()}, 800);
 }
 function CloseBanner(){
 	document.getElementById('RestartBanner').style.display = "none";
@@ -51,7 +48,7 @@ function SliderColour(){
 }
 </script>
 </head>
-<body onload="CheckBanner()">
+<body>
 <div id="Settings" class="Settings_Class">
 	<div class="Navbar">
 		<div id="RestartBanner" class="RestartBanner_Class">

@@ -89,6 +89,7 @@ func GetStatus() js.Func {
 		return nil
 	})
 }
+
 func GetConfig() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -114,6 +115,28 @@ func GetConfig() js.Func {
 				return
 			}
 			SetDisplay("WebSocketPortNumber", "placeholder", config.WebsocketPort)
+		}()
+		return nil
+	})
+}
+func CheckBanner() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		go func() {
+			log.Debug("Checking Banner")
+			localStorage := js.Global().Get("localStorage")
+			if !localStorage.Truthy() {
+				log.Error("Unable to get localStorage in CheckBanner")
+				return
+			}
+			DaemonStartedAt := fmt.Sprintf("%s", localStorage.Get("DaemonStartedAt"))
+			log.Debug("DaemonStartedAt: ", DaemonStartedAt)
+			log.Debug("StartTime: ", fmt.Sprintf("%d", StartTime))
+			if (fmt.Sprintf("%d", StartTime) == DaemonStartedAt){
+				SetDisplay("RestartBanner", "style", "display: block;")
+			} else {
+				SetDisplay("RestartBanner", "style", "display: none;")
+				localStorage.Set("DaemonStartedAt", StartTime)
+			}
 		}()
 		return nil
 	})
@@ -169,14 +192,6 @@ func SetSwrmPortNumber() js.Func {
 				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
 				Attributes["style"] = "color: #32CD32;"
 				SetMultipleDisplay("SwrmPortStatus", Attributes)
-				log.Debug("Setting Local Storage....")
-				jsDoc := js.Global().Get("localStorage")
-				if !jsDoc.Truthy() {
-					log.Error("Unable to get localStorage in SwrmPort")
-					return
-				}
-				jsDoc.Set("RefreshState", "Not Refreshed")
-				log.Debug("Refresh State Set")
 				return
 			} else if status == false {
 				Attributes["innerHTML"] = condition
@@ -213,14 +228,6 @@ func SetWebsocketPortNumber() js.Func {
 					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
 					Attributes["style"] = "color: #32CD32;"
 					SetMultipleDisplay("WebsocketPortStatus", Attributes)
-					log.Debug("Setting Local Storage....")
-					jsDoc := js.Global().Get("localStorage")
-					if !jsDoc.Truthy() {
-						log.Error("Unable to get localStorage in WebsocketPort")
-						return
-					}
-					jsDoc.Set("RefreshState", "Not Refreshed")
-					log.Debug("Refresh State Set")
 					return
 		} else if status == false {
 			Attributes["innerHTML"] = condition

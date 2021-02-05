@@ -156,7 +156,16 @@ func Events() js.Func {
 						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 						sValue := fmt.Sprintf("%s %s", sFloat, "%")
 						SetDisplay("percentageNumber", "innerHTML", sValue)
+
 						StartTime = status.SessionStartTime
+						log.Debug("Daemon Started at: ",StartTime)
+						localStorage := js.Global().Get("localStorage")
+						if !localStorage.Truthy() {
+							log.Error("Unable to get localStorage in CheckBanner")
+							return
+						}
+						localStorage.Set("DaemonStartedAt", StartTime)
+
 					}
 				case "Balance":
 					{
@@ -715,6 +724,7 @@ func main() {
 	js.Global().Set("GetStatus", GetStatus())
 	js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("VerifyPort", VerifyPort())
+	js.Global().Set("CheckBanner", CheckBanner())
 	js.Global().Set("SetEarningDropDown", SetEarningDropDown())
 	js.Global().Set("GetVersion", GetVersion())
 	js.Global().Set("GetProfile", GetProfile())
