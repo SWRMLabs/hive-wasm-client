@@ -158,7 +158,7 @@ func Events() js.Func {
 						SetDisplay("percentageNumber", "innerHTML", sValue)
 
 						StartTime = status.SessionStartTime
-						log.Debug("Daemon Started at: ",StartTime)
+						log.Debug("Daemon Started at: ", StartTime)
 						CheckBanner()
 					}
 				case "Balance":
@@ -295,7 +295,7 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
-	log.Debug("This is data in GetData: ",data["val"])
+	log.Debug("This is data in GetData: ", data["val"])
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	DNSState bool
+	DNSState       bool
 	DriveFreeSpace float64
 )
 
@@ -43,9 +43,9 @@ func GetSettings() js.Func {
 			SetDisplay("StorageMin", "innerHTML", fmt.Sprintf("%.1f GB", UsedSpace))
 			SetDisplay("rangeSlider", "min", fmt.Sprintf("%.1f", UsedSpace))
 
-			DriveFreeSpace = settings.FreeDiskSpace / (1024*1024*1024)
+			DriveFreeSpace = settings.FreeDiskSpace / (1024 * 1024 * 1024)
 			log.Debugf("Free Space in Drive: %.1f", DriveFreeSpace)
-			SetDisplay("StorageMax", "innerHTML", fmt.Sprintf("%.1f GB",DriveFreeSpace))
+			SetDisplay("StorageMax", "innerHTML", fmt.Sprintf("%.1f GB", DriveFreeSpace))
 			SetDisplay("rangeSlider", "max", fmt.Sprintf("%.1f", DriveFreeSpace))
 
 			MaxStorage := fmt.Sprintf("%.1f", settings.MaxStorage)
@@ -123,32 +123,32 @@ func GetConfig() js.Func {
 }
 
 func CheckBanner() {
-			log.Debug("Checking Banner")
-			localStorage := js.Global().Get("localStorage")
-			if !localStorage.Truthy() {
-				log.Error("Unable to get localStorage in CheckBanner")
-				return
-			}
-			DaemonStartedAt := fmt.Sprintf("%s", localStorage.Get("DaemonStartedAt"))
-			sStartTime := fmt.Sprintf("%d", StartTime)
-			sRefreshState := fmt.Sprintf("%s", localStorage.Get("RefreshState"))
+	log.Debug("Checking Banner")
+	localStorage := js.Global().Get("localStorage")
+	if !localStorage.Truthy() {
+		log.Error("Unable to get localStorage in CheckBanner")
+		return
+	}
+	DaemonStartedAt := fmt.Sprintf("%s", localStorage.Get("DaemonStartedAt"))
+	sStartTime := fmt.Sprintf("%d", StartTime)
+	sRefreshState := fmt.Sprintf("%s", localStorage.Get("RefreshState"))
 
-			log.Debug("DaemonStartedAt: ", DaemonStartedAt)
-			log.Debug("StartTime: ", sStartTime)
+	log.Debug("DaemonStartedAt: ", DaemonStartedAt)
+	log.Debug("StartTime: ", sStartTime)
 
-			if (sRefreshState == "Not Refreshed") {
-				if (sStartTime == DaemonStartedAt) {
-					SetDisplay("RestartBanner", "style", "display: block;")
-					return
-				} else if (sStartTime != DaemonStartedAt) {
-					SetDisplay("RestartBanner", "style", "display: none;")
-					localStorage.Set("DaemonStartedAt", StartTime)
-					localStorage.Set("RefreshState", "Refreshed")
-					return
-				}
-			}
+	if sRefreshState == "Not Refreshed" {
+		if sStartTime == DaemonStartedAt {
+			SetDisplay("RestartBanner", "style", "display: block;")
+			return
+		} else if sStartTime != DaemonStartedAt {
+			SetDisplay("RestartBanner", "style", "display: none;")
 			localStorage.Set("DaemonStartedAt", StartTime)
 			localStorage.Set("RefreshState", "Refreshed")
+			return
+		}
+	}
+	localStorage.Set("DaemonStartedAt", StartTime)
+	localStorage.Set("RefreshState", "Refreshed")
 }
 
 func CheckPort(port string) (status bool, condition string) {
@@ -156,11 +156,11 @@ func CheckPort(port string) (status bool, condition string) {
 		return false, fmt.Sprintf("Enter A Valid Port Number")
 	}
 	val, err := strconv.Atoi(port)
-    if err != nil {
+	if err != nil {
 		return false, fmt.Sprintf("Port %s is Not a Number", port)
-    }
+	}
 	if val < 1025 || val > 49150 {
-	 	return false, fmt.Sprintf("Port %s is Unavailable", port)
+		return false, fmt.Sprintf("Port %s is Unavailable", port)
 	}
 	return true, ""
 }
@@ -185,18 +185,18 @@ func SetSwrmPortNumber() js.Func {
 			Attributes := make(map[string]string)
 			status, condition := CheckPort(port)
 			if status == true {
-			payload := map[string]interface{}{
-				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "SwarmPort", port}, splicer),
-			}
+				payload := map[string]interface{}{
+					"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "SwarmPort", port}, splicer),
+				}
 
-			log.Debugf("Payload in SetSwrmPortNumber: %s", payload)
-			val, _ := ModifyConfig(payload, "SetSwrmPortNumber")
-			if strings.Contains(val, "not") {
-				Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
-				Attributes["style"] = "color: red;"
-				SetMultipleDisplay("SwrmPortStatus", Attributes)
-				return
-			}
+				log.Debugf("Payload in SetSwrmPortNumber: %s", payload)
+				val, _ := ModifyConfig(payload, "SetSwrmPortNumber")
+				if strings.Contains(val, "not") {
+					Attributes["innerHTML"] = fmt.Sprintf("Port %s is Unavailable", port)
+					Attributes["style"] = "color: red;"
+					SetMultipleDisplay("SwrmPortStatus", Attributes)
+					return
+				}
 				SetDisplay("SwrmPortNumber", "placeholder", port)
 				SetDisplay("RestartBanner", "style", "display: block;")
 				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
@@ -238,24 +238,24 @@ func SetWebsocketPortNumber() js.Func {
 					SetMultipleDisplay("WebsocketPortStatus", Attributes)
 					return
 				}
-					log.Debug("SwrmPort Updated Successfully")
-					SetDisplay("WebSocketPortNumber", "placeholder", port)
-					SetDisplay("RestartBanner", "style", "display: block;")
-					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
-					Attributes["style"] = "color: #32CD32;"
-					SetMultipleDisplay("WebsocketPortStatus", Attributes)
-					localStorage := js.Global().Get("localStorage")
-					if !localStorage.Truthy() {
-						log.Error("Unable to get localStorage in WebsocketPortNumber")
-						return
-					}
-					localStorage.Set("RefreshState", "Not Refreshed")
+				log.Debug("SwrmPort Updated Successfully")
+				SetDisplay("WebSocketPortNumber", "placeholder", port)
+				SetDisplay("RestartBanner", "style", "display: block;")
+				Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
+				Attributes["style"] = "color: #32CD32;"
+				SetMultipleDisplay("WebsocketPortStatus", Attributes)
+				localStorage := js.Global().Get("localStorage")
+				if !localStorage.Truthy() {
+					log.Error("Unable to get localStorage in WebsocketPortNumber")
 					return
-		} else if status == false {
-			Attributes["innerHTML"] = condition
-			Attributes["style"] = "color: red;"
-			SetMultipleDisplay("WebsocketPortStatus", Attributes)
-		}
+				}
+				localStorage.Set("RefreshState", "Not Refreshed")
+				return
+			} else if status == false {
+				Attributes["innerHTML"] = condition
+				Attributes["style"] = "color: red;"
+				SetMultipleDisplay("WebsocketPortStatus", Attributes)
+			}
 		}()
 		return nil
 	})
@@ -300,7 +300,7 @@ func ModifyStorageSize() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			val := GetValue("rangeSlider", "value")
-			log.Debug("Changing Storage Size to: ",val)
+			log.Debug("Changing Storage Size to: ", val)
 
 			payload := map[string]interface{}{
 				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "Storage", val}, splicer),
@@ -311,7 +311,7 @@ func ModifyStorageSize() js.Func {
 				log.Error("Error in Modifying Storage Size", err.Error())
 				return
 			}
-			log.Debug("val in ModifyStorageSize: ",val)
+			log.Debug("val in ModifyStorageSize: ", val)
 			log.Debug("Saving Settings")
 			SaveSettings()
 			log.Debug("Settings Saved Successfully")
