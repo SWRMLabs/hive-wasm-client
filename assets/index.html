@@ -23,7 +23,6 @@
 		setTimeout(function() {GetProfile()}, 3000);
 		setTimeout(function() {GetStorageLocation()}, 3500);
 		setTimeout(function() {GetID()}, 4000);
-		setTimeout(function() {CheckBanner()}, 4000);
 	}
 	setInterval(function() { GetBandwidth() }, 5000);
 	setInterval(function() { GetUptime() }, 1000);
@@ -117,7 +116,7 @@
 <div id="Hive-CLI_WEBUI" class="Hive-CLI_WEBUI_Class mediaViewInfo">
 	<div class="Navbar">
 		<div id="RestartBanner" class="RestartBanner_Class">
-			<span id="Restart" class="Restart_Class">Please close this tab and restart the daemon for changes to take effect</span>
+			<span id="Restart" class="Restart_Class">Please restart the daemon for changes to take effect</span>
 			<button id="BannerCloseButton" class="BannerCloseButton_Class" onclick="CloseBanner()">&#10005;</button>
 		</div>
 	</div>

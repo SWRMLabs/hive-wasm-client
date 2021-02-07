@@ -16,15 +16,14 @@
 		GetVersion();
 		GetStatus();
 		GetConfig();
-		GetSettings()
-		RunSettings();
+		GetSettings();
+		GetSliderColour();
 
 	});
 </script>
 <script>
-function RunSettings(){
+function GetSliderColour(){
 	setTimeout(function() {SliderColour()}, 500);
-	setTimeout(function() {CheckBanner()}, 800);
 }
 function CloseBanner(){
 	document.getElementById('RestartBanner').style.display = "none";
@@ -52,7 +51,7 @@ function SliderColour(){
 <div id="Settings" class="Settings_Class">
 	<div class="Navbar">
 		<div id="RestartBanner" class="RestartBanner_Class">
-			<span id="Restart" class="Restart_Class">Please close this tab and restart the daemon for changes to take effect</span>
+			<span id="Restart" class="Restart_Class">Please restart the daemon for changes to take effect</span>
 			<button id="BannerCloseButton" class="BannerCloseButton_Class" onclick="CloseBanner()">&#10005;</button>
 		</div>
 	</div>

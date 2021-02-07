@@ -53,6 +53,7 @@ func GetSettings() js.Func {
 			SetDisplay("rangeSlider", "value", MaxStorage)
 
 			DNSState = settings.IsDNSEligible
+
 		}()
 		return nil
 	})
@@ -80,7 +81,8 @@ func GetStatus() js.Func {
 				sValue = "LoggedOut"
 			}
 			SetDisplay("LoggedIn", "innerHTML", sValue)
-
+			StartTime = status.SessionStartTime
+			CheckBanner()
 			// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
 			// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
 			// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
@@ -119,9 +121,8 @@ func GetConfig() js.Func {
 		return nil
 	})
 }
-func CheckBanner() js.Func {
-	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go func() {
+
+func CheckBanner() {
 			log.Debug("Checking Banner")
 			localStorage := js.Global().Get("localStorage")
 			if !localStorage.Truthy() {
@@ -129,18 +130,27 @@ func CheckBanner() js.Func {
 				return
 			}
 			DaemonStartedAt := fmt.Sprintf("%s", localStorage.Get("DaemonStartedAt"))
+			sStartTime := fmt.Sprintf("%d", StartTime)
+			sRefreshState := fmt.Sprintf("%s", localStorage.Get("RefreshState"))
+
 			log.Debug("DaemonStartedAt: ", DaemonStartedAt)
-			log.Debug("StartTime: ", fmt.Sprintf("%d", StartTime))
-			if (fmt.Sprintf("%d", StartTime) == DaemonStartedAt){
-				SetDisplay("RestartBanner", "style", "display: block;")
-			} else {
-				SetDisplay("RestartBanner", "style", "display: none;")
-				localStorage.Set("DaemonStartedAt", StartTime)
+			log.Debug("StartTime: ", sStartTime)
+
+			if (sRefreshState == "Not Refreshed") {
+				if (sStartTime == DaemonStartedAt) {
+					SetDisplay("RestartBanner", "style", "display: block;")
+					return
+				} else if (sStartTime != DaemonStartedAt) {
+					SetDisplay("RestartBanner", "style", "display: none;")
+					localStorage.Set("DaemonStartedAt", StartTime)
+					localStorage.Set("RefreshState", "Refreshed")
+					return
+				}
 			}
-		}()
-		return nil
-	})
+			localStorage.Set("DaemonStartedAt", StartTime)
+			localStorage.Set("RefreshState", "Refreshed")
 }
+
 func CheckPort(port string) (status bool, condition string) {
 	if port == "" {
 		return false, fmt.Sprintf("Enter A Valid Port Number")
@@ -192,6 +202,12 @@ func SetSwrmPortNumber() js.Func {
 				Attributes["innerHTML"] = fmt.Sprintf("SwrmPort Changed to %s", port)
 				Attributes["style"] = "color: #32CD32;"
 				SetMultipleDisplay("SwrmPortStatus", Attributes)
+				localStorage := js.Global().Get("localStorage")
+				if !localStorage.Truthy() {
+					log.Error("Unable to get localStorage in SwrmPortNumber")
+					return
+				}
+				localStorage.Set("RefreshState", "Not Refreshed")
 				return
 			} else if status == false {
 				Attributes["innerHTML"] = condition
@@ -228,6 +244,12 @@ func SetWebsocketPortNumber() js.Func {
 					Attributes["innerHTML"] = fmt.Sprintf("WebsocketPort Changed to %s", port)
 					Attributes["style"] = "color: #32CD32;"
 					SetMultipleDisplay("WebsocketPortStatus", Attributes)
+					localStorage := js.Global().Get("localStorage")
+					if !localStorage.Truthy() {
+						log.Error("Unable to get localStorage in WebsocketPortNumber")
+						return
+					}
+					localStorage.Set("RefreshState", "Not Refreshed")
 					return
 		} else if status == false {
 			Attributes["innerHTML"] = condition
