@@ -491,17 +491,9 @@ func SetEarningDropDown() js.Func {
 				log.Error("Unable to get create option in DevicesDropDown")
 				return
 			}
-			OutputArea.Set("innerHTML", "Select Device")
-			OutputArea.Set("selected", "true")
-			OutputArea.Set("disabled", "true")
-			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
-			OutputArea = jsDoc.Call("createElement", "option")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get create option in DevicesDropDown")
-				return
-			}
 			OutputArea.Set("innerHTML", "ALL DEVICES")
 			OutputArea.Set("value", "ALL DEVICES")
+			OutputArea.Set("selected", "true")
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			for _, value := range netEarnings.Devices {
 				OutputArea := jsDoc.Call("createElement", "option")

@@ -18,16 +18,25 @@
 	<script>
 	function StartWebUI(){
 		Events();
-		setTimeout(function() {SetEarningDropDown()}, 2000);
-		setTimeout(function() {GetVersion()}, 2500);
+		setTimeout(function() {GetVersion()}, 2000);
+		setTimeout(function() {GetStorageLocation()}, 2500);
 		setTimeout(function() {GetProfile()}, 3000);
-		setTimeout(function() {GetStorageLocation()}, 3500);
+		setTimeout(function() {SetEarningDropDown()}, 3500);
+		setTimeout(function() {CreateGraph(document.getElementById('DevicesDropDown').value)}, 3800);
 		setTimeout(function() {GetID()}, 4000);
+
 	}
 	setInterval(function() { GetBandwidth() }, 5000);
 	setInterval(function() { GetUptime() }, 1000);
 
+	// function selectauto()
+	// {
+    // 	var element = document.getElementById('DevicesDropDown');
+    // 	CreateGraph(element.value)
+	// }
+
 	async function CreateGraph(PeerId) {
+		console.log("Making Graph")
             try {
                 const data = await GetEarning();
                 jsonOP = JSON.parse(data);
