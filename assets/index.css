@@ -1976,11 +1976,11 @@ div::-webkit-scrollbar-thumb{
 	color: rgba(244,105,50,1);
 }
 .ServedCycle_Class {
-	left: 75px;
+	left: 65px;
 	top: 26px;
 	position: absolute;
 	overflow: visible;
-	width: 53px;
+	width: 135px;
 	white-space: nowrap;
 	text-align: center;
 	font-family: Segoe UI;

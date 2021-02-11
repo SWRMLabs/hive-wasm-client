@@ -166,8 +166,8 @@ func (b *Balance) Unmarshal(val []byte) error {
 type BCNBalance struct {
 	Owned           float64 `json:"owned"`
 	Owe             float64 `json:"owe"`
-	BytesServed     int64   `json:"served"`
-	BytesDownloaded int64   `json:"downloaded"`
+	BytesServed     float64   `json:"served"`
+	BytesDownloaded float64   `json:"downloaded"`
 	Id              string  `json:"id"`
 }
 

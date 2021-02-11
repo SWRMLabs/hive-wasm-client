@@ -208,11 +208,8 @@ func Events() js.Func {
 						sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
 						SetDisplay("Pending", "innerHTML", sValue)
 
-						sDownloaded := fmt.Sprintf("%d %s", (bcnBalance.BytesDownloaded)/1048576, "MB")
-						SetDisplay("CycleDownloaded", "innerHTML", sDownloaded)
-
-						sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
-						SetDisplay("CycleServed", "innerHTML", sServed)
+						SetDisplay("CycleDownloaded", "innerHTML", Humanize(bcnBalance.BytesDownloaded))
+						SetDisplay("CycleServed", "innerHTML", Humanize(bcnBalance.BytesServed))
 					}
 				case "Peers":
 					{
@@ -267,6 +264,29 @@ func Events() js.Func {
 		}()
 		return nil
 	})
+}
+
+func Humanize(value float64) string {
+	var rVal string
+	switch true {
+	case (value > 1073741823):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1073741824), "GB")
+		}
+	case (value > 1048575):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1048576), "MB")
+		}
+	case (value > 1023):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1024), "KB")
+		}
+	default:
+		{
+			rVal = fmt.Sprintf("%.1f %s", value, "B")
+		}
+	}
+	return rVal
 }
 
 func GetData(payload map[string]interface{}, funcName string) []uint8 {
@@ -583,11 +603,9 @@ func GetBandwidth() js.Func {
 				log.Error("Error in unmarshalling val in GetBandwidth: ", err.Error())
 				return
 			}
-			sIncoming := fmt.Sprintf("%.3f %s", (bandwidth.Incoming)/1048576, "MB")
-			SetDisplay("Incoming", "innerHTML", sIncoming)
+			SetDisplay("Incoming", "innerHTML", Humanize(bandwidth.Incoming))
 
-			sOutgoing := fmt.Sprintf("%.3f %s", (bandwidth.Outgoing)/1048576, "MB")
-			SetDisplay("Outgoing", "innerHTML", sOutgoing)
+			SetDisplay("Outgoing", "innerHTML", Humanize(bandwidth.Outgoing))
 		}()
 		return nil
 	})
