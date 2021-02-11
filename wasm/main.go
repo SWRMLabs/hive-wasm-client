@@ -19,19 +19,15 @@ import (
 )
 
 var log = logger.Logger("hive-wasm")
-
+var StartTime int64
 const (
 	EVENTS  = "http://localhost:4343/v3/events"
 	GATEWAY = "http://localhost:4343/v3/execute"
 	splicer = "%$#"
 )
 
-var StartTime int64
-
 func Events() js.Func {
-
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
 		go func() {
 			log.Debug("Events Called")
 			resp, err := http.Post(EVENTS, "application/json", nil)
@@ -114,9 +110,7 @@ func Events() js.Func {
 							}
 							CreateElement("taskmanagerstatusAS", "div", "innerHTML", sAdditionalStatus)
 						}
-
 						serverStatus := reflect.ValueOf(&status.ServerDetails).Elem()
-
 						for key := 0; key < serverStatus.NumField(); key++ {
 							name := serverStatus.Type().Field(key).Name
 							value := serverStatus.Field(key).Interface()
@@ -153,7 +147,6 @@ func Events() js.Func {
 						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 						sValue := fmt.Sprintf("%s %s", sFloat, "%")
 						SetDisplay("percentageNumber", "innerHTML", sValue)
-
 						StartTime = status.SessionStartTime
 						log.Debug("Daemon Started at: ", StartTime)
 						CheckBanner()
@@ -204,10 +197,8 @@ func Events() js.Func {
 							return
 						}
 						log.Debug("This is Balance Cycle: ", bcnBalance)
-
 						sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
 						SetDisplay("Pending", "innerHTML", sValue)
-
 						SetDisplay("CycleDownloaded", "innerHTML", Humanize(bcnBalance.BytesDownloaded))
 						SetDisplay("CycleServed", "innerHTML", Humanize(bcnBalance.BytesServed))
 					}
@@ -319,7 +310,6 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling data in : ", funcName, err.Error())
 		return nil
 	}
-
 	val, err := json.Marshal(out.Data)
 	if err != nil {
 		log.Error("Error in marshalling out in : ", funcName, err.Error())
@@ -460,6 +450,7 @@ func GetID() js.Func {
 		return nil
 	})
 }
+
 func GetPeers() {
 	payload := map[string]interface{}{
 		"val": strings.Join([]string{"hive-cli.exe", "swarm", "peers", "-j"}, splicer),
@@ -528,6 +519,7 @@ func SetEarningDropDown() js.Func {
 		return nil
 	})
 }
+
 func GetStorageLocation() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {

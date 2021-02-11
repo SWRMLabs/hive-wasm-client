@@ -4,9 +4,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"syscall/js"
-	"strconv"
 )
 
 var (
@@ -30,29 +30,22 @@ func GetSettings() js.Func {
 			}
 			log.Debug(settings)
 			SetDisplay("Name", "innerHTML", settings.Name)
-
 			UsedSpace := settings.UsedStorage
 			sUsedSpace := fmt.Sprintf("%.2f %s", UsedSpace*1024, "MB")
 			SetDisplay("UsedSpace", "innerHTML", sUsedSpace)
-
 			freeSpace := (settings.MaxStorage - settings.UsedStorage)
 			sFreeSpace := fmt.Sprintf("%.2f %s", freeSpace*1024, "MB")
 			SetDisplay("FreeSpace", "innerHTML", sFreeSpace)
-
 			SetDisplay("StorageMin", "innerHTML", fmt.Sprintf("%.1f GB", UsedSpace))
 			SetDisplay("rangeSlider", "min", fmt.Sprintf("%.1f", UsedSpace))
-
 			DriveFreeSpace = settings.FreeDiskSpace / (1024 * 1024 * 1024)
 			log.Debugf("Free Space in Drive: %.1f", DriveFreeSpace)
 			SetDisplay("StorageMax", "innerHTML", fmt.Sprintf("%.1f GB", DriveFreeSpace))
 			SetDisplay("rangeSlider", "max", fmt.Sprintf("%.1f", DriveFreeSpace))
-
 			MaxStorage := fmt.Sprintf("%.1f", settings.MaxStorage)
 			log.Debugf("MaxStorage: %s", MaxStorage)
 			SetDisplay("rangeSlider", "value", MaxStorage)
-
 			DNSState = settings.IsDNSEligible
-
 		}()
 		return nil
 	})
@@ -66,7 +59,6 @@ func GetStatus() js.Func {
 			}
 			log.Debug("GetStatus Hit")
 			val := GetData(payload, "GetStatus")
-
 			var status Status
 			err := json.Unmarshal(val, &status)
 			if err != nil {
@@ -127,10 +119,7 @@ func CheckBanner() {
 	DaemonStartedAt := fmt.Sprintf("%s", localStorage.Get("DaemonStartedAt"))
 	sStartTime := fmt.Sprintf("%d", StartTime)
 	sRefreshState := fmt.Sprintf("%s", localStorage.Get("RefreshState"))
-
-	log.Debug("DaemonStartedAt: ", DaemonStartedAt)
-	log.Debug("StartTime: ", sStartTime)
-
+	log.Debugf("DaemonStartedAt: %s \n StartTime: %s", DaemonStartedAt, sStartTime)
 	if sRefreshState == "Not Refreshed" {
 		if sStartTime == DaemonStartedAt {
 			SetDisplay("RestartBanner", "style", "display: block;")
@@ -159,6 +148,7 @@ func CheckPort(port string) (status bool, condition string) {
 	}
 	return true, ""
 }
+
 func SaveSettings() {
 	payload := map[string]interface{}{
 		"val": strings.Join([]string{"hive-cli.exe", "settings", "-j"}, splicer),
@@ -171,6 +161,7 @@ func SaveSettings() {
 	log.Debug("Saved Settings: ", val)
 	return
 }
+
 func SetSwrmPortNumber() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -183,7 +174,6 @@ func SetSwrmPortNumber() js.Func {
 				payload := map[string]interface{}{
 					"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "SwarmPort", port}, splicer),
 				}
-
 				log.Debugf("Payload in SetSwrmPortNumber: %s", payload)
 				val, _ := ModifyConfig(payload, "SetSwrmPortNumber")
 				if strings.Contains(val, "not") {
@@ -213,6 +203,7 @@ func SetSwrmPortNumber() js.Func {
 		return nil
 	})
 }
+
 func SetWebsocketPortNumber() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -255,6 +246,7 @@ func SetWebsocketPortNumber() js.Func {
 		return nil
 	})
 }
+
 func VerifyPort() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -291,12 +283,12 @@ func VerifyPort() js.Func {
 		return nil
 	})
 }
+
 func ModifyStorageSize() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
 			val := GetValue("rangeSlider", "value")
 			log.Debug("Changing Storage Size to: ", val)
-
 			payload := map[string]interface{}{
 				"val": strings.Join([]string{"hive-cli.exe", "config", "modify", "Storage", val}, splicer),
 			}
@@ -309,7 +301,6 @@ func ModifyStorageSize() js.Func {
 			log.Debug("val in ModifyStorageSize: ", val)
 			log.Debug("Saving Settings")
 			SaveSettings()
-			log.Debug("Settings Saved Successfully")
 		}()
 		return nil
 	})
