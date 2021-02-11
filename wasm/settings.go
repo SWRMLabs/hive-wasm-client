@@ -150,6 +150,7 @@ func CheckPort(port string) (status bool, condition string) {
 }
 
 func SaveSettings() {
+	log.Debug("Saving Settings")
 	payload := map[string]interface{}{
 		"val": strings.Join([]string{"hive-cli.exe", "settings", "-j"}, splicer),
 	}
@@ -158,7 +159,7 @@ func SaveSettings() {
 		log.Error("Error in Saving Settings")
 		return
 	}
-	log.Debug("Saved Settings: ", val)
+	log.Debug("Settings Saved: ", val)
 	return
 }
 
@@ -299,7 +300,6 @@ func ModifyStorageSize() js.Func {
 				return
 			}
 			log.Debug("val in ModifyStorageSize: ", val)
-			log.Debug("Saving Settings")
 			SaveSettings()
 		}()
 		return nil
