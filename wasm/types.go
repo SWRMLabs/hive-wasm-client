@@ -15,9 +15,9 @@ type Event struct {
 
 type Out struct {
 	Status  int         `json:"status"`
-	Message string      `json:"message"` // Message is for the curators
+	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
-	Details string      `json:"details,omitempty"` // For Debugging
+	Details string      `json:"details,omitempty"`
 }
 
 type ID struct {
@@ -166,8 +166,8 @@ func (b *Balance) Unmarshal(val []byte) error {
 type BCNBalance struct {
 	Owned           float64 `json:"owned"`
 	Owe             float64 `json:"owe"`
-	BytesServed     int64   `json:"served"`
-	BytesDownloaded int64   `json:"downloaded"`
+	BytesServed     float64   `json:"served"`
+	BytesDownloaded float64   `json:"downloaded"`
 	Id              string  `json:"id"`
 }
 
@@ -205,6 +205,7 @@ type Settings struct {
 	DesktopApplicationAutoStart    bool    `json:"isAutoStartEnabled"`
 	DNS                            string  `json:"dnsAddress"`
 	Role                           string  `json:"role,omitempty"`
+	FreeDiskSpace				   float64 `json:"freeDiskSpace,omitempty"`
 }
 
 func (b *Settings) GetNamespace() string {
@@ -264,7 +265,7 @@ type Config struct {
 	MaxPeers                       int      `json:"MaxPeers, omitempty"`
 	ProxyPort                      string   `json:"ProxyPort, omitempty"`
 	ReproviderInterval             string   `json:"ReproviderInterval, omitempty"`
-	Storage                        int      `json:"Storage, omitempty"`
+	Storage                        float64   `json:"Storage, omitempty"`
 	StorageGCWatermark             int      `json:"StorageGCWatermark, omitempty"`
 	Store                          string   `json:"Store, omitempty"`
 	SwarmPort                      string   `json:"SwarmPort, omitempty"`
@@ -436,10 +437,6 @@ func (f *CustomerFile) FileStatus() FileStatus {
 	}
 	return FileStatus(f.Status)
 }
-
-// type Version struct {
-// 	Version string
-// }
 
 func (v *Version) GetNamespace() string {
 	return "Version"

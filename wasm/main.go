@@ -19,19 +19,15 @@ import (
 )
 
 var log = logger.Logger("hive-wasm")
-
+var StartTime int64
 const (
 	EVENTS  = "http://localhost:4343/v3/events"
 	GATEWAY = "http://localhost:4343/v3/execute"
 	splicer = "%$#"
 )
 
-var StartTime int64
-
 func Events() js.Func {
-
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-
 		go func() {
 			log.Debug("Events Called")
 			resp, err := http.Post(EVENTS, "application/json", nil)
@@ -114,9 +110,7 @@ func Events() js.Func {
 							}
 							CreateElement("taskmanagerstatusAS", "div", "innerHTML", sAdditionalStatus)
 						}
-
 						serverStatus := reflect.ValueOf(&status.ServerDetails).Elem()
-
 						for key := 0; key < serverStatus.NumField(); key++ {
 							name := serverStatus.Type().Field(key).Name
 							value := serverStatus.Field(key).Interface()
@@ -150,13 +144,12 @@ func Events() js.Func {
 							}
 							SetDisplay(name, "innerHTML", sValue)
 						}
-						// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
-						// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-						// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
 						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 						sValue := fmt.Sprintf("%s %s", sFloat, "%")
 						SetDisplay("percentageNumber", "innerHTML", sValue)
 						StartTime = status.SessionStartTime
+						log.Debug("Daemon Started at: ", StartTime)
+						CheckBanner()
 					}
 				case "Balance":
 					{
@@ -204,15 +197,10 @@ func Events() js.Func {
 							return
 						}
 						log.Debug("This is Balance Cycle: ", bcnBalance)
-
 						sValue := fmt.Sprintf("%f %s", (bcnBalance.Owned - bcnBalance.Owe), "SWRM")
 						SetDisplay("Pending", "innerHTML", sValue)
-
-						sDownloaded := fmt.Sprintf("%d %s", (bcnBalance.BytesDownloaded)/1048576, "MB")
-						SetDisplay("CycleDownloaded", "innerHTML", sDownloaded)
-
-						sServed := fmt.Sprintf("%d %s", (bcnBalance.BytesServed)/1048576, "MB")
-						SetDisplay("CycleServed", "innerHTML", sServed)
+						SetDisplay("CycleDownloaded", "innerHTML", Humanize(bcnBalance.BytesDownloaded))
+						SetDisplay("CycleServed", "innerHTML", Humanize(bcnBalance.BytesServed))
 					}
 				case "Peers":
 					{
@@ -269,6 +257,29 @@ func Events() js.Func {
 	})
 }
 
+func Humanize(value float64) string {
+	var rVal string
+	switch true {
+	case (value > 1073741823):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1073741824), "GB")
+		}
+	case (value > 1048575):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1048576), "MB")
+		}
+	case (value > 1023):
+		{
+			rVal = fmt.Sprintf("%.1f %s", (value / 1024), "KB")
+		}
+	default:
+		{
+			rVal = fmt.Sprintf("%.1f %s", value, "B")
+		}
+	}
+	return rVal
+}
+
 func GetData(payload map[string]interface{}, funcName string) []uint8 {
 	buf, err := json.Marshal(payload)
 	if err != nil {
@@ -292,14 +303,13 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
-	log.Debug("This is data in GetData: ",data["val"])
+	log.Debug("This is data in : ", funcName, data["val"])
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {
 		log.Error("Error in unmarshalling data in : ", funcName, err.Error())
 		return nil
 	}
-
 	val, err := json.Marshal(out.Data)
 	if err != nil {
 		log.Error("Error in marshalling out in : ", funcName, err.Error())
@@ -379,7 +389,7 @@ func SetMultipleDisplay(Id string, Attributes map[string]string) {
 			break
 		}
 	}
-
+	return
 }
 
 func GetValue(Id string, Attr string) string {
@@ -440,6 +450,7 @@ func GetID() js.Func {
 		return nil
 	})
 }
+
 func GetPeers() {
 	payload := map[string]interface{}{
 		"val": strings.Join([]string{"hive-cli.exe", "swarm", "peers", "-j"}, splicer),
@@ -488,17 +499,9 @@ func SetEarningDropDown() js.Func {
 				log.Error("Unable to get create option in DevicesDropDown")
 				return
 			}
-			OutputArea.Set("innerHTML", "Select Device")
-			OutputArea.Set("selected", "true")
-			OutputArea.Set("disabled", "true")
-			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
-			OutputArea = jsDoc.Call("createElement", "option")
-			if !OutputArea.Truthy() {
-				log.Error("Unable to get create option in DevicesDropDown")
-				return
-			}
 			OutputArea.Set("innerHTML", "ALL DEVICES")
 			OutputArea.Set("value", "ALL DEVICES")
+			OutputArea.Set("selected", "true")
 			jsDoc.Call("getElementById", "DevicesDropDown").Call("appendChild", OutputArea)
 			for _, value := range netEarnings.Devices {
 				OutputArea := jsDoc.Call("createElement", "option")
@@ -516,6 +519,7 @@ func SetEarningDropDown() js.Func {
 		return nil
 	})
 }
+
 func GetStorageLocation() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		go func() {
@@ -591,11 +595,9 @@ func GetBandwidth() js.Func {
 				log.Error("Error in unmarshalling val in GetBandwidth: ", err.Error())
 				return
 			}
-			sIncoming := fmt.Sprintf("%.3f %s", (bandwidth.Incoming)/1048576, "MB")
-			SetDisplay("Incoming", "innerHTML", sIncoming)
+			SetDisplay("Incoming", "innerHTML", Humanize(bandwidth.Incoming))
 
-			sOutgoing := fmt.Sprintf("%.3f %s", (bandwidth.Outgoing)/1048576, "MB")
-			SetDisplay("Outgoing", "innerHTML", sOutgoing)
+			SetDisplay("Outgoing", "innerHTML", Humanize(bandwidth.Outgoing))
 		}()
 		return nil
 	})
@@ -648,20 +650,6 @@ func GetEarning() js.Func {
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-				value := GetValue("DevicesDropDown", "value")
-				var earned, download, served string
-				if value == "ALL DEVICES" {
-					earned = fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
-					download = fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1048576, "MB")
-					served = fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1048576, "MB")
-				} else if value != "" {
-					earned = fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
-					download = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1048576, "MB")
-					served = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1048576, "MB")
-				}
-				SetDisplay("EarnedCycle", "innerHTML", earned)
-				SetDisplay("DownloadedCycle", "innerHTML", download)
-				SetDisplay("ServedCycle", "innerHTML", served)
 				log.Debug("Sending details to CreateGraph from GetEarning")
 				resolve.Invoke(data["val"])
 			}()
@@ -712,7 +700,6 @@ func main() {
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())
 	js.Global().Set("ModifyStorageSize", ModifyStorageSize())
-	js.Global().Set("SetStorageSize", SetStorageSize())
 	js.Global().Set("GetStatus", GetStatus())
 	js.Global().Set("GetConfig", GetConfig())
 	js.Global().Set("VerifyPort", VerifyPort())
