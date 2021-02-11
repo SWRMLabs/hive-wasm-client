@@ -87,10 +87,22 @@
 					} else if (PeerId != "") {
 					BillingCycles = netEarnings['billingCycles'].reverse();
 					var Earnings = []
+					TotalDownloaded = 0;
+					TotalServed = 0;
+					TotalEarned = 0;
 					for (i = BillingCycles.length-1; i > -1; i--) {
 						Earnings.push({label : BillingCycles[BillingCycles.length- i - 1],
 									  y : netEarnings['earnings'][PeerId][i]['earned']});
+
+						TotalEarned = TotalEarned + netEarnings['earnings'][PeerId][i]['earned']
+						TotalDownloaded = TotalDownloaded + netEarnings['earnings'][PeerId][i]['download']
+						TotalServed = TotalServed + netEarnings['earnings'][PeerId][i]['served']
+
 					}
+					document.getElementById('EarnedCycle').innerHTML = TotalEarned + " SWRM";
+					document.getElementById('DownloadedCycle').innerHTML = TotalDownloaded + " MB";
+					document.getElementById('ServedCycle').innerHTML = TotalServed + " MB";
+
 					CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 					var chart = new CanvasJS.Chart("GraphBox", {
 					axisX:{
