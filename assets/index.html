@@ -30,25 +30,25 @@
 	setInterval(function() { GetUptime() }, 1000);
 
 	function Humanize(value) {
-		switch (value) {
-		  case (value => 1073741824):
+		switch (true) {
+		  case (value > 1073741823):
 			  value = value / 1073741824;
 		 	  value = value.toFixed(1) + " GB";
 		      break;
 
-		  case (value => 1048576):
+		  case (value > 1048575):
 			  value = value / 1048576;
 			  value = value.toFixed(1) + " MB";
 		      break;
 
-		  case (value => 1024):
+		  case (value > 1023):
 			  value = value / 1024;
 			  value = value.toFixed(1) + " KB";
 			  break;
 
 		  default:
 		    value = value.toFixed(1) + " B";
-		    break;
+
 		}
 		return value
 	}
