@@ -44,7 +44,7 @@ div::-webkit-scrollbar-button{
 	display: none;
 }
 div::-webkit-scrollbar-thumb{
-  background-color: rgba(78,78,78,1);
+  background-color: rgba(38,38,38,1);
   border-radius: 10px;
 }
 .Navbar {

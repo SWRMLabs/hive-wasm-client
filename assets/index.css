@@ -1688,8 +1688,10 @@ div::-webkit-scrollbar-button{
 	display: none;
 }
 div::-webkit-scrollbar-thumb{
-  background-color: rgba(78,78,78,1);
+  background-color: rgba(38,38,38,1);
   border-radius: 10px;
+  opacity: 1;
+  z-index: 999;
 }
 .ip4122172338tcp4342p2p12D3KooW_ek_Class {
 	left: 1254px;
