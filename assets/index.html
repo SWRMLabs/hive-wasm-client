@@ -53,29 +53,6 @@
 		return value
 	}
 
-
-	function Humanize(value) {
-		if (value => 1073741824) {
-			value = value / 1073741824
-			value = value.toFixed(1) + " GB"
-			return value
-		}
-		else if (value => 1048576) {
-			value = value / 1048576
-			value = value.toFixed(1) + " MB"
-			return value
-		}
-		else if (value => 1024) {
-			value = value / 1024
-			value = value.toFixed(1) + " KB"
-			return value
-		}
-		else {
-			value = value.toFixed(1) + " B"
-			return value
-		}
-	}
-
 	async function CreateGraph(PeerId) {
             try {
                 const data = await GetEarning();
@@ -101,7 +78,6 @@
 						document.getElementById('EarnedCycle').innerHTML = TotalEarned.toFixed(8) + " SWRM";
 						document.getElementById('DownloadedCycle').innerHTML = Humanize(TotalDownloaded);
 						document.getElementById('ServedCycle').innerHTML = Humanize(TotalServed);
-
 
 						CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 						var chart = new CanvasJS.Chart("GraphBox", {
