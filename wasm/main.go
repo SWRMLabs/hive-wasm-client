@@ -643,20 +643,6 @@ func GetEarning() js.Func {
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-				// value := GetValue("DevicesDropDown", "value")
-				// var earned, download, served string
-				// if value == "ALL DEVICES" {
-				// 	earned = fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
-				// 	download = fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1048576, "MB")
-				// 	served = fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1048576, "MB")
-				// } else if value != "" {
-				// 	earned = fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
-				// 	download = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1048576, "MB")
-				// 	served = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1048576, "MB")
-				// }
-				// SetDisplay("EarnedCycle", "innerHTML", earned)
-				// SetDisplay("DownloadedCycle", "innerHTML", download)
-				// SetDisplay("ServedCycle", "innerHTML", served)
 				log.Debug("Sending details to CreateGraph from GetEarning")
 				log.Debug("Device Earnings: ",data["val"])
 				resolve.Invoke(data["val"])

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 	"syscall/js"
-	// "time"
 	"strconv"
 )
 
