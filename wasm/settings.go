@@ -253,11 +253,9 @@ func VerifyPort() js.Func {
 		go func() {
 			log.Debug("Verifying Port Forwarding....")
 			Attributes := make(map[string]string)
-
 			Attributes["innerHTML"] = "Verifying...."
 			Attributes["style"] = "color: rgba(219,219,219,1);"
 			SetMultipleDisplay("PortForward", Attributes)
-
 			payload := map[string]interface{}{
 				"val": strings.Join([]string{"hive-cli.exe", "verify-port-forward"}, splicer),
 			}
@@ -268,7 +266,6 @@ func VerifyPort() js.Func {
 				return
 			}
 			log.Debugf("This is val: %s", val)
-
 			if strings.Contains(val, "NOT") {
 				log.Debug("Port Forward Not Verified")
 				Attributes["innerHTML"] = "Not Forwarded &#10008;"
