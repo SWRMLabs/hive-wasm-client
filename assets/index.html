@@ -29,12 +29,6 @@
 	setInterval(function() { GetBandwidth() }, 5000);
 	setInterval(function() { GetUptime() }, 1000);
 
-	// function selectauto()
-	// {
-    // 	var element = document.getElementById('DevicesDropDown');
-    // 	CreateGraph(element.value)
-	// }
-
 	async function CreateGraph(PeerId) {
 		console.log("Making Graph")
             try {
@@ -44,15 +38,29 @@
 				////////////////////////////////////////////////////////
 				if (PeerId === "ALL DEVICES"){
 					Earnings = [];
+					TotalDownloaded = 0;
+					TotalServed = 0;
+					TotalEarned = 0;
 					for (var i = 0;  i < netEarnings['devices'].length; i++){
 						Id = netEarnings['devices'][i]['peerId'];
 						earnings = 0;
 						for (var j = 0;j < netEarnings['earnings'][Id].length; j++){
-							earned = netEarnings['earnings'][Id][j]['earned']
+							earned = netEarnings['earnings'][Id][j]['earned'];
+							downloaded =  netEarnings['earnings'][Id][j]['download'];
+							served = netEarnings['earnings'][Id][j]['served'];
+
 							earnings = earnings + earned;
+							TotalEarned = TotalEarned + earned;
+							TotalDownloaded = TotalDownloaded + downloaded;
+							TotalServed = TotalServed + served;
 						}
 						Earnings.push({y : earnings, label : Id});
 						}
+						document.getElementById('EarnedCycle').innerHTML = TotalEarned + " SWRM";
+						document.getElementById('DownloadedCycle').innerHTML = TotalDownloaded + " MB";
+						document.getElementById('ServedCycle').innerHTML = TotalServed + " MB";
+
+
 						CanvasJS.addColorSet("orange",["rgba(244,105,49,1)"])
 						var chart = new CanvasJS.Chart("GraphBox", {
 						axisX:{
