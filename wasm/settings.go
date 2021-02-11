@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 	"syscall/js"
-	// "time"
 	"strconv"
 )
 
@@ -83,10 +82,6 @@ func GetStatus() js.Func {
 			SetDisplay("LoggedIn", "innerHTML", sValue)
 			StartTime = status.SessionStartTime
 			CheckBanner()
-			// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
-			// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-			// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
-
 		}()
 		return nil
 	})

@@ -150,9 +150,6 @@ func Events() js.Func {
 							}
 							SetDisplay(name, "innerHTML", sValue)
 						}
-						// timeStamp := time.Unix(status.TotalUptimePercentage.Timestamp, 0)
-						// sTimeStamp := fmt.Sprintf("%s", timeStamp.Format(time.Kitchen))
-						// SetDisplay("LastConnected", "innerHTML", sTimeStamp)
 						sFloat := fmt.Sprintf("%.2f", status.TotalUptimePercentage.Percentage)
 						sValue := fmt.Sprintf("%s %s", sFloat, "%")
 						SetDisplay("percentageNumber", "innerHTML", sValue)
@@ -295,7 +292,7 @@ func GetData(payload map[string]interface{}, funcName string) []uint8 {
 		log.Error("Error in unmarshalling respbuf in : ", funcName, err.Error())
 		return nil
 	}
-	log.Debug("This is data in GetData: ", data["val"])
+	log.Debug("This is data in : ", funcName, data["val"])
 	var out Out
 	err = json.Unmarshal([]byte(data["val"]), &out)
 	if err != nil {
@@ -643,22 +640,7 @@ func GetEarning() js.Func {
 					log.Error("Error in Unmarshalling Net Earnings in GetEarning: ", err.Error())
 					return
 				}
-				// value := GetValue("DevicesDropDown", "value")
-				// var earned, download, served string
-				// if value == "ALL DEVICES" {
-				// 	earned = fmt.Sprintf("%.5f %s", netEarnings.DeviceTotal.Earned, "SWRM")
-				// 	download = fmt.Sprintf("%.0f %s", (netEarnings.DeviceTotal.Download)/1048576, "MB")
-				// 	served = fmt.Sprintf("%.2f %s", (netEarnings.DeviceTotal.Served)/1048576, "MB")
-				// } else if value != "" {
-				// 	earned = fmt.Sprintf("%.5f %s", netEarnings.Data[value][0].Earned, "SWRM")
-				// 	download = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Download)/1048576, "MB")
-				// 	served = fmt.Sprintf("%.2f %s", (netEarnings.Data[value][0].Served)/1048576, "MB")
-				// }
-				// SetDisplay("EarnedCycle", "innerHTML", earned)
-				// SetDisplay("DownloadedCycle", "innerHTML", download)
-				// SetDisplay("ServedCycle", "innerHTML", served)
 				log.Debug("Sending details to CreateGraph from GetEarning")
-				log.Debug("Device Earnings: ",data["val"])
 				resolve.Invoke(data["val"])
 			}()
 			return nil
@@ -703,7 +685,7 @@ func GetVersion() js.Func {
 }
 
 func main() {
-	logger.SetLogLevel("*", "Debug")
+	logger.SetLogLevel("*", "Error")
 	js.Global().Set("SetSwrmPortNumber", SetSwrmPortNumber())
 	js.Global().Set("SetWebsocketPortNumber", SetWebsocketPortNumber())
 	js.Global().Set("GetSettings", GetSettings())

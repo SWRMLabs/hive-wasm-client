@@ -15,9 +15,9 @@ type Event struct {
 
 type Out struct {
 	Status  int         `json:"status"`
-	Message string      `json:"message"` // Message is for the curators
+	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
-	Details string      `json:"details,omitempty"` // For Debugging
+	Details string      `json:"details,omitempty"`
 }
 
 type ID struct {
@@ -437,10 +437,6 @@ func (f *CustomerFile) FileStatus() FileStatus {
 	}
 	return FileStatus(f.Status)
 }
-
-// type Version struct {
-// 	Version string
-// }
 
 func (v *Version) GetNamespace() string {
 	return "Version"

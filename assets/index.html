@@ -30,12 +30,11 @@
 	setInterval(function() { GetUptime() }, 1000);
 
 	async function CreateGraph(PeerId) {
-		console.log("Making Graph")
             try {
                 const data = await GetEarning();
                 jsonOP = JSON.parse(data);
 				netEarnings = jsonOP.data;
-				////////////////////////////////////////////////////////
+
 				if (PeerId === "ALL DEVICES"){
 					Earnings = [];
 					TotalDownloaded = 0;
@@ -347,25 +346,18 @@
 			</path>
 		</svg>
 	</div>
-
 	<div class="EmailLabel_Class">
 		<span>Email:</span>
 	</div>
 	<div class="Your_Hive_Dashboard_Class">
 		<span>Your Hive Dashboard</span>
 	</div>
-	<!-- <div class="LastConnectedLabel_Class">
-		<span>Last connected:</span>
-	</div> -->
 	<div id="StatusLabel" class="StatusLabel_Class">
 		<span>Status:</span>
 	</div>
 	<div class="VersionLabel_Class">
 		<span>Version:</span>
 	</div>
-	<!-- <div id = "LastConnected" class="LastConnected_Class">
-
-	</div> -->
 	<div id="LoggedIn" class="LoggedIn_Class">
 
 	</div>
@@ -452,16 +444,6 @@
 	<div id="Version" class="Version_Class">
 
 	</div>
-	<!-- <div class="Group_4_Class">
-		<svg class="Path_24" viewBox="0 0 32 33">
-			<path class="Path_24_Class" d="M 16 0 C 24.83655548095703 0 32 7.387302398681641 32 16.5 C 32 25.61269760131836 24.83655548095703 33 16 33 C 7.163444519042969 33 0 25.61269760131836 0 16.5 C 0 7.387302398681641 7.163444519042969 0 16 0 Z">
-			</path>
-		</svg>
-		<svg class="Path_8" viewBox="1356.205 581.597 17.526 10.882">
-			<path class="Path_8_Class" d="M 1356.205322265625 587.65869140625 L 1361.155883789063 592.4794921875 L 1373.730834960938 581.597412109375">
-			</path>
-		</svg>
-	</div> -->
 	<div class="IncomingLabel_Class">
 		<span>INCOMING</span>
 	</div>
